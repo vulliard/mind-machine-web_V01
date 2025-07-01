@@ -1,0 +1,74 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+.panel {
+    flex: 1;
+    height: 100%;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circle {
+    /* ANCIENNES LIGNES : */
+    /* width: calc(100% - 40px); */
+    /* height: calc(100% - 40px); */
+
+    /* NOUVELLES LIGNES POUR UN CERCLE PARFAIT : */
+    width: 200px; /* Définissez une taille fixe pour la largeur */
+    height: 200px; /* Définissez la même taille fixe pour la hauteur */
+    max-width: calc(100% - 40px); /* Assurez-vous qu'il ne déborde pas du panel */
+    max-height: calc(100% - 40px); /* Assurez-vous qu'il ne déborde pas du panel */
+    
+    border-radius: 50%;
+    background-color: white;
+}
+
+#center-panel {
+    background-color: black;
+}
+
+#controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    z-index: 100;
+}
+
+#controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+}
+
+#controls input[type="color"] {
+    width: 40px;
+    height: 40px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+#controls input[type="range"] {
+    width: 120px;
+    cursor: grab;
+}

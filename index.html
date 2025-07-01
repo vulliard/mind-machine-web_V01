@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind-Machine Chrome</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="left-panel" class="panel"></div>
+    <div id="center-panel" class="panel"></div>
+    <div id="right-panel" class="panel"></div>
+
+    <div id="controls">
+        <button id="startButton">Démarrer / Arrêter</button>
+        <label for="colorPicker">Couleur du rond : </label>
+        <input type="color" id="colorPicker" value="#FFFFFF">
+        <label for="frequencySlider">Fréquence Sonore (Hz): </label>
+        <input type="range" id="frequencySlider" min="100" max="1000" value="440">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
