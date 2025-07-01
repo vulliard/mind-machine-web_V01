@@ -1,19 +1,17 @@
-// script.js
 const leftPanel = document.getElementById('left-panel');
 const centerPanel = document.getElementById('center-panel');
 const rightPanel = document.getElementById('right-panel');
 const startButton = document.getElementById('startButton');
 const colorPicker = document.getElementById('colorPicker');
 const frequencySlider = document.getElementById('frequencySlider');
+// NOUVEAU : Référence au curseur de fréquence de clignotement
+const blinkRateSlider = document.getElementById('blinkRateSlider');
 
 let isLeftLight = false;
 let intervalId = null;
-const BLINK_INTERVAL = 250; // 0.25 secondes (équivalent à 0.05 * 5)
-
-// CHANGEMENT ICI : Duree du son encore divisee par 2 (ou plus, selon l'effet désiré)
-// Ancienne valeur: BLINK_INTERVAL / 4 (soit 62.5ms)
-// Nouvelle valeur: par exemple 0.02 secondes (20ms) pour un son très court.
-// Ou BLINK_INTERVAL / 8 si vous voulez le lier au clignotement.
+// ANCIENNE LIGNE: const BLINK_INTERVAL = 250;
+// NOUVEAU : La valeur initiale est lue depuis le curseur
+let BLINK_INTERVAL = parseInt(blinkRateSlider.value);
 const SOUND_DURATION = 20; // 20 millisecondes pour un son très court et percutant
 
 // --- Configuration audio ---
@@ -45,8 +43,6 @@ function playSound(panDirection) {
     const fadeDuration = 0.01; // 10 ms pour le fade
     gainNode.gain.linearRampToValueAtTime(1.0, audioContext.currentTime + fadeDuration);
     // Fade-out (linéaire)
-    // Attention: SOUND_DURATION est en millisecondes pour l'intervalle, mais AudioContext.currentTime est en secondes
-    // Donc, divisez SOUND_DURATION par 1000 pour les calculs de temps.
     gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + (SOUND_DURATION / 1000));
 
     const panner = audioContext.createStereoPanner(); // Pour la stéréo
@@ -105,6 +101,7 @@ startButton.addEventListener('click', () => {
         rightPanel.style.backgroundColor = 'black';
     } else {
         updateVisuals(); // Première exécution immédiate
+        // NOUVEAU : Utilise la variable BLINK_INTERVAL qui est mise à jour par le curseur
         intervalId = setInterval(updateVisuals, BLINK_INTERVAL);
         startButton.textContent = "Arrêter";
     }
@@ -112,4 +109,14 @@ startButton.addEventListener('click', () => {
 
 frequencySlider.addEventListener('input', (event) => {
     currentFrequency = parseFloat(event.target.value);
+});
+
+// NOUVEAU : Écouteur d'événement pour le curseur de fréquence de clignotement
+blinkRateSlider.addEventListener('input', (event) => {
+    BLINK_INTERVAL = parseInt(event.target.value); // Met à jour l'intervalle
+    // Si l'animation est déjà en cours, il faut la redémarrer pour appliquer le nouvel intervalle
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = setInterval(updateVisuals, BLINK_INTERVAL);
+    }
 });

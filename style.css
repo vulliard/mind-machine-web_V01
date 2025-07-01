@@ -8,7 +8,7 @@ body, html {
 }
 
 .panel {
-    flex: 1;
+    /* ANCIENNE LIGNE: flex: 1; */
     height: 100%;
     background-color: black;
     display: flex;
@@ -16,23 +16,23 @@ body, html {
     align-items: center;
 }
 
-.circle {
-    /* ANCIENNES LIGNES : */
-    /* width: calc(100% - 40px); */
-    /* height: calc(100% - 40px); */
-
-    /* NOUVELLES LIGNES POUR UN CERCLE PARFAIT : */
-    width: 200px; /* Définissez une taille fixe pour la largeur */
-    height: 200px; /* Définissez la même taille fixe pour la hauteur */
-    max-width: calc(100% - 40px); /* Assurez-vous qu'il ne déborde pas du panel */
-    max-height: calc(100% - 40px); /* Assurez-vous qu'il ne déborde pas du panel */
-    
-    border-radius: 50%;
-    background-color: white;
+/* NOUVELLES RÈGLES POUR LES TAILLES DES PANNEAUX */
+#left-panel, #right-panel {
+    flex: 2; /* Les panneaux latéraux prennent 2 parts */
 }
 
 #center-panel {
+    flex: 1; /* Le panneau central prend 1 part (donc moitié de la taille des autres) */
     background-color: black;
+}
+
+.circle {
+    width: 200px;
+    height: 200px;
+    max-width: calc(100% - 40px);
+    max-height: calc(100% - 40px);
+    border-radius: 50%;
+    background-color: white;
 }
 
 #controls {
