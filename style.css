@@ -1,3 +1,4 @@
+/* style.css */
 body, html {
     margin: 0;
     padding: 0;
@@ -5,24 +6,84 @@ body, html {
     height: 100%;
     width: 100%;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #222;
+}
+
+#app-container {
+    border: 5px solid #007bff;
+    border-radius: 15px;
+    width: 98%;
+    height: 98%;
+    max-width: 1600px;
+    max-height: 900px;
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    position: relative;
+    box-sizing: border-box;
+}
+
+#app-title {
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a1a1a;
+    border-bottom: 2px solid #0056b3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Espace entre les éléments (images et le nouveau conteneur de texte) */
+}
+
+/* NOUVEAU : Style pour le conteneur du texte du titre */
+#title-text-container {
+    display: flex;
+    flex-direction: column; /* Empile h1 et p verticalement */
+    align-items: center; /* Centre le texte horizontalement dans ce conteneur */
+}
+
+#app-title h1 {
+    margin: 0; /* Supprime la marge par défaut */
+    font-size: 2.5em;
+    letter-spacing: 2px;
+}
+
+#app-title p {
+    margin: 0; /* Supprime la marge supérieure par défaut pour le coller sous le h1 */
+    font-size: 1em;
+    color: #bbb;
+}
+
+/* MODIFIÉ : Styles pour les images du logo (hauteur doublée à nouveau) */
+#app-logo-left, #app-logo-right {
+    height: 200px; /* Taille de l'image, doublée */
+    width: auto;
+    vertical-align: middle;
+}
+
+#visual-panels-wrapper {
+    flex: 1;
+    display: flex;
+    width: 100%;
 }
 
 .panel {
-    /* ANCIENNE LIGNE: flex: 1; */
-    height: 100%;
     background-color: black;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
-/* NOUVELLES RÈGLES POUR LES TAILLES DES PANNEAUX */
 #left-panel, #right-panel {
-    flex: 2; /* Les panneaux latéraux prennent 2 parts */
+    flex: 2;
 }
 
 #center-panel {
-    flex: 1; /* Le panneau central prend 1 part (donc moitié de la taille des autres) */
+    flex: 1;
     background-color: black;
 }
 
@@ -36,10 +97,12 @@ body, html {
 }
 
 #controls {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    margin-top: 20px; 
+    margin-bottom: 20px;
+    align-self: center;
+    width: fit-content;
+    max-width: 95%;
+
     background-color: rgba(0, 0, 0, 0.7);
     padding: 15px 25px;
     border-radius: 10px;
@@ -49,6 +112,11 @@ body, html {
     gap: 15px;
     align-items: center;
     z-index: 100;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    border: 2px solid #007bff;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
 }
 
 #controls button {
@@ -61,6 +129,19 @@ body, html {
     color: white;
 }
 
+.attention-button {
+    background-color: #dc3545 !important;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+
 #controls input[type="color"] {
     width: 40px;
     height: 40px;
@@ -71,4 +152,151 @@ body, html {
 #controls input[type="range"] {
     width: 120px;
     cursor: grab;
+}
+
+.frequency-display-input {
+    width: 60px;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #007bff;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    margin-left: 5px;
+    -moz-appearance: textfield;
+}
+.frequency-display-input::-webkit-outer-spin-button,
+.frequency-display-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+.audio-mode, .binaural-sync-multiplier {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-left: 15px;
+}
+
+.audio-mode legend, .binaural-sync-multiplier legend {
+    font-size: 14px;
+    color: #eee;
+    padding: 0 5px;
+}
+
+.audio-mode label, .binaural-sync-multiplier label {
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.audio-mode input[type="radio"], .binaural-sync-multiplier input[type="radio"] {
+    margin-left: 0;
+    cursor: pointer;
+}
+
+#binauralBeatFrequencyDisplay {
+    font-size: 14px;
+    min-width: 60px;
+    text-align: left;
+    margin-left: 5px;
+}
+
+
+/* Styles pour la fenêtre modale (inchangés) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 200;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #333;
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    position: relative;
+    color: white;
+    font-family: sans-serif;
+    text-align: left;
+}
+
+.modal-content h2 {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 0;
+    font-size: 1.8em;
+    border-bottom: 1px solid #dc3545;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.modal-content p {
+    font-size: 1.1em;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.modal-content ul {
+    margin-top: 0;
+    padding-left: 25px;
+    list-style-type: '🚨 ';
+}
+
+.modal-content ul li {
+    margin-bottom: 10px;
+    font-size: 1em;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#understoodButton {
+    display: block;
+    width: 80%;
+    margin: 20px auto 0;
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#understoodButton:hover {
+    background-color: #0056b3;
 }

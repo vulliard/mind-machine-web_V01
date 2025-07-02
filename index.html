@@ -3,22 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mind-Machine Chrome</title>
+    <title>e-mindmachine</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="left-panel" class="panel"></div>
-    <div id="center-panel" class="panel"></div>
-    <div id="right-panel" class="panel"></div>
+    <div id="app-container">
+        <div id="app-title">
+            <img src="Gemini_Generated_Image_01.png" alt="Logo" id="app-logo-left"> 
+            <div id="title-text-container"> <h1>e-mindmachine</h1>
+                <p>by PHV</p>
+            </div>
+            <img src="Gemini_Generated_Image_02.png" alt="Logo Droit" id="app-logo-right"> 
+        </div>
 
-    <div id="controls">
-        <button id="startButton">Démarrer / Arrêter</button>
-        <label for="colorPicker">Couleur du rond : </label>
-        <input type="color" id="colorPicker" value="#FFFFFF">
-        <label for="frequencySlider">Fréquence Sonore (Hz): </label>
-        <input type="range" id="frequencySlider" min="100" max="1000" value="440">
-        <label for="blinkRateSlider">Intervalle Clignotement (ms): </label>
-        <input type="range" id="blinkRateSlider" min="50" max="1000" value="250">
+        <div id="visual-panels-wrapper">
+            <div id="left-panel" class="panel"></div>
+            <div id="center-panel" class="panel"></div>
+            <div id="right-panel" class="panel"></div>
+        </div>
+
+        <div id="controls">
+            <button id="startButton">Démarrer / Arrêter</button>
+            <label for="colorPicker">Couleur du rond : </label>
+            <input type="color" id="colorPicker" value="#FFFFFF">
+            
+            <label for="carrierFrequencySlider">Fréquence Porteuse (Hz): </label>
+            <input type="range" id="carrierFrequencySlider" min="100" max="1000" value="220">
+            <input type="number" id="carrierFrequencyInputDisplay" min="100" max="1000" value="220" class="frequency-display-input"> 
+            
+            <label for="blinkRateSlider">Fréquence Clignotement (Hz): </label>
+            <input type="range" id="blinkRateSlider" min="1" max="20" value="4" step="0.1">
+            <input type="number" id="blinkFrequencyInputDisplay" min="1" max="20" value="4" step="0.1" class="frequency-display-input"> 
+
+            <fieldset class="audio-mode">
+                <legend>Mode Audio :</legend>
+                <input type="radio" id="mode-binaural" name="audioMode" value="binaural" checked>
+                <label for="mode-binaural">Battements Binauraux</label><br>
+                <input type="radio" id="mode-isochronen" name="audioMode" value="isochronen">
+                <label for="mode-isochronen">Sons Isochrones</label><br>
+                <input type="radio" id="mode-both" name="audioMode" value="both">
+                <label for="mode-both">Les Deux</label>
+            </fieldset>
+
+            <fieldset class="binaural-sync-multiplier">
+                <legend>BB x Fréq. Clignotement :</legend>
+                <input type="radio" id="multiplier-0-5" name="bbMultiplier" value="0.5">
+                <label for="multiplier-0-5">x0.5</label><br>
+                <input type="radio" id="multiplier-1" name="bbMultiplier" value="1" checked>
+                <label for="multiplier-1">x1</label><br>
+                <input type="radio" id="multiplier-2" name="bbMultiplier" value="2">
+                <label for="multiplier-2">x2</label><br>
+                <input type="radio" id="multiplier-3" name="bbMultiplier" value="3">
+                <label for="multiplier-3">x3</label>
+            </fieldset>
+
+            <label for="binauralVolumeSlider">Volume BB : </label>
+            <input type="range" id="binauralVolumeSlider" min="0" max="100" value="50">
+            
+            <label for="isochronenVolumeSlider">Volume Sons Isochrones : </label>
+            <input type="range" id="isochronenVolumeSlider" min="0" max="100" value="50">
+
+            <span id="binauralBeatFrequencyDisplay" style="margin-left: 15px;">BB: 8 Hz</span>
+
+            <button id="warningButton" class="attention-button">ATTENTION !</button>
+        </div>
+    </div>
+
+    <div id="warningModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>⚠️ Avertissement Important ⚠️</h2>
+            <p>Cette application de stimulation visuelle et sonore est conçue pour être utilisée **les yeux FERMÉS**.</p>
+            <p>La stimulation lumineuse rapide est très intense et peut avoir des effets indésirables.</p>
+            <ul>
+                <li>Elle est **FORTEMENT DÉCONSEILLÉE** aux personnes sujettes à l'**épilepsie photosensible**, même avec les yeux fermés.</li>
+                <li>**Déconseillée aux femmes enceintes.**</li>
+                <li>**Déconseillée aux personnes ayant des antécédents de troubles neurologiques, de migraines sévères ou de problèmes cardiaques.**</li>
+                <li>Commencez toujours avec des paramètres faibles (fréquence, volume) et augmentez progressivement si vous le souhaitez.</li>
+                <li>Utilisez-la dans un environnement sûr et détendu.</li>
+                <li>**Interrompez immédiatement** l'utilisation en cas de malaise, de nausées, de maux de tête, de vertiges, de désorientation ou de tout autre symptôme inhabituel.</li>
+                <li>Ne pas utiliser en conduisant, en opérant des machines lourdes, ou dans toute situation nécessitant une attention soutenue.</li>
+                <li>Pour les battements binauraux, l'utilisation d'**écouteurs** est indispensable pour que l'effet soit perceptible.</li>
+            </ul>
+            <p>En utilisant cette application, vous reconnaissez avoir lu et compris ces avertissements et assumez l'entière responsabilité de votre utilisation.</p>
+            <button id="understoodButton">J'ai compris</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
