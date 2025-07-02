@@ -539,55 +539,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Écouteurs pour Fréquence Porteuse (Curseur et Champ Numérique)
+    // --- MODIFICATION : Logique de validation déplacée dans des fonctions dédiées ---
+    const handleCarrierFrequencyValidation = () => {
+        console.log("Validation de la fréquence porteuse déclenchée.");
+        validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
+        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
+            startBinauralBeats();
+        }
+    };
+
+    const handleBlinkFrequencyValidation = () => {
+        console.log("Validation de la fréquence de clignotement déclenchée.");
+        validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
+        if (intervalId) { 
+            clearInterval(intervalId); 
+            intervalId = setInterval(updateVisuals, BLINK_INTERVAL_MS); 
+        }
+        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
+            startBinauralBeats();
+        }
+    };
+
+    // Écouteur pour le curseur de Fréquence Porteuse (mise à jour en temps réel)
     carrierFrequencySlider.addEventListener('input', () => {
         console.log("Curseur Fréquence Porteuse bougé. Valeur:", carrierFrequencySlider.value);
-        // Met explicitement à jour la valeur de l'input numérique
         carrierFrequencyInput.value = carrierFrequencySlider.value; 
-        validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
-        // Redémarrage audio si nécessaire
-        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
-            startBinauralBeats();
-        }
+        handleCarrierFrequencyValidation(); // On valide directement pour un effet temps réel
     });
     
-    // NOUVEAU : Écouteur pour le champ de saisie de la fréquence porteuse
-    carrierFrequencyInput.addEventListener('input', () => {
-        console.log("Input Fréquence Porteuse modifié. Valeur:", carrierFrequencyInput.value);
-        validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
-        // Redémarrage audio si nécessaire
-        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
-            startBinauralBeats();
+    // Écouteurs pour la saisie de la fréquence porteuse (validation sur 'change' et 'Enter')
+    carrierFrequencyInput.addEventListener('change', handleCarrierFrequencyValidation);
+    carrierFrequencyInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            handleCarrierFrequencyValidation();
+            event.target.blur(); // Retire le focus du champ pour éviter une re-validation
         }
     });
 
-    // Écouteurs pour Fréquence Clignotement (Curseur et Champ Numérique)
+    // Écouteur pour le curseur de Fréquence Clignotement (mise à jour en temps réel)
     blinkRateSlider.addEventListener('input', () => {
         console.log("Curseur Fréquence Clignotement bougé. Valeur:", blinkRateSlider.value);
-        // Met explicitement à jour la valeur de l'input numérique
         blinkFrequencyInput.value = blinkRateSlider.value;
-        validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
-        // Redémarrage animation et audio si nécessaire
-        if (intervalId) { 
-            clearInterval(intervalId); 
-            intervalId = setInterval(updateVisuals, BLINK_INTERVAL_MS); 
-        }
-        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
-            startBinauralBeats();
-        }
+        handleBlinkFrequencyValidation(); // On valide directement pour un effet temps réel
     });
 
-    // NOUVEAU : Écouteur pour le champ de saisie de la fréquence de clignotement
-    blinkFrequencyInput.addEventListener('input', () => {
-        console.log("Input Fréquence Clignotement modifié. Valeur:", blinkFrequencyInput.value);
-        validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
-        // Redémarrage animation et audio si nécessaire
-        if (intervalId) { 
-            clearInterval(intervalId); 
-            intervalId = setInterval(updateVisuals, BLINK_INTERVAL_MS); 
-        }
-        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
-            startBinauralBeats();
+    // Écouteurs pour la saisie de la fréquence de clignotement (validation sur 'change' et 'Enter')
+    blinkFrequencyInput.addEventListener('change', handleBlinkFrequencyValidation);
+    blinkFrequencyInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            handleBlinkFrequencyValidation();
+            event.target.blur(); // Retire le focus du champ
         }
     });
 
