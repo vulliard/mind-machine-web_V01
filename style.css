@@ -36,6 +36,7 @@ body, html {
     align-items: center;
     justify-content: center;
     gap: 10px; /* Espace entre les éléments (images et le nouveau conteneur de texte) */
+    position: relative; /* Add this for absolute positioning of child elements */
 }
 
 /* NOUVEAU : Style pour le conteneur du texte du titre */
@@ -64,6 +65,36 @@ body, html {
     vertical-align: middle;
 }
 
+/* NOUVEAU : Styles pour le conteneur des drapeaux */
+#language-flags {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 10px; /* Espace entre les drapeaux */
+}
+
+/* NOUVEAU : Styles pour les drapeaux individuels */
+.lang-flag {
+    width: 30px; /* Taille des drapeaux */
+    height: auto;
+    cursor: pointer;
+    border: 1px solid #ccc; /* Petite bordure pour les distinguer */
+    border-radius: 3px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.lang-flag:hover {
+    transform: scale(1.1);
+}
+
+.lang-flag.active {
+    border: 2px solid #007bff; /* Mettre en évidence le drapeau actif */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+}
+
+
 #visual-panels-wrapper {
     flex: 1;
     display: flex;
@@ -89,7 +120,8 @@ body, html {
 
 .circle {
     width: 200px;
-    height: 200px;
+    /* height: 200px;  <-- Supprimé */
+    aspect-ratio: 1 / 1; /* <-- Ajouté : garantit que la hauteur est égale à la largeur */
     max-width: calc(100% - 40px);
     max-height: calc(100% - 40px);
     border-radius: 50%;
@@ -154,7 +186,7 @@ body, html {
     cursor: grab;
 }
 
-.frequency-display-input {
+.frequency-input { /* Renommé de frequency-display-input pour être plus générique */
     width: 60px;
     padding: 5px;
     font-size: 14px;
@@ -166,8 +198,8 @@ body, html {
     margin-left: 5px;
     -moz-appearance: textfield;
 }
-.frequency-display-input::-webkit-outer-spin-button,
-.frequency-display-input::-webkit-inner-spin-button {
+.frequency-input::-webkit-outer-spin-button,
+.frequency-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
