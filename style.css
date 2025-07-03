@@ -12,7 +12,8 @@ body, html {
 }
 
 #app-container {
-    border: 5px solid #007bff;
+    /* MODIFIÉ : Couleur de la bordure */
+    border: 5px solid #444; 
     border-radius: 15px;
     width: 98%;
     height: 98%;
@@ -87,9 +88,8 @@ body, html {
     gap: 10px;
 }
 
-/* MODIFIÉ : Taille des drapeaux augmentée */
 .lang-flag {
-    width: 40px; /* Anciennement 30px */
+    width: 40px;
     height: auto;
     cursor: pointer;
     border: 1px solid #ccc;
@@ -102,8 +102,9 @@ body, html {
 }
 
 .lang-flag.active {
-    border: 2px solid #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+    /* MODIFIÉ : Couleur de surbrillance */
+    border: 2px solid #fff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
 }
 
 
