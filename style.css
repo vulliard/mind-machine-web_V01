@@ -12,6 +12,7 @@ body, html {
 }
 
 #app-container {
+    /* MODIFIÉ : Couleur de la bordure */
     border: 5px solid #444; 
     border-radius: 15px;
     width: 98%;
@@ -23,14 +24,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-}
-
-#main-content-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden; /* CORRECTION AJOUTÉE : Empêche le contenu de déborder et stabilise la mise en page */
+    overflow: hidden;
 }
 
 #app-title {
@@ -108,6 +102,7 @@ body, html {
 }
 
 .lang-flag.active {
+    /* MODIFIÉ : Couleur de surbrillance */
     border: 2px solid #fff;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
 }
@@ -119,7 +114,6 @@ body, html {
     width: 100%;
     position: relative;
     cursor: pointer;
-    min-height: 0;
 }
 
 .panel {
@@ -413,10 +407,7 @@ input[type="color"]::-webkit-color-swatch {
     align-items: center;
 }
 
-#app-container.immersive-mode #main-content-wrapper {
-    overflow: hidden;
-}
-
+/* Quand le conteneur a la classe 'immersive-mode' */
 #app-container.immersive-mode #app-title {
     flex: 0 0 60px;
     padding: 0;
@@ -451,7 +442,7 @@ input[type="color"]::-webkit-color-swatch {
     border: none;
     backdrop-filter: none;
     padding: 0;
-    order: 2;
+    order: 2; /* Pour le centrer */
 }
 #app-container.immersive-mode #controls #warningButton {
     display: none;
@@ -459,14 +450,14 @@ input[type="color"]::-webkit-color-swatch {
 
 #app-container.immersive-mode #immersive-message {
     display: flex; 
-    order: 1;
+    order: 1; /* Pour le mettre à gauche */
 }
 #app-container.immersive-mode #immersive-exit-button {
     display: flex; 
-    order: 3;
+    order: 3; /* Pour le mettre à droite */
 }
 
-/* --- Styles pour la fenêtre modale --- */
+/* --- Styles pour la fenêtre modale (inchangés) --- */
 .modal {
     display: none;
     position: fixed;
@@ -550,36 +541,4 @@ input[type="color"]::-webkit-color-swatch {
 }
 #understoodButton:hover {
     background-color: #0056b3;
-}
-
-/* Styles spécifiques pour le mode paysage */
-@media (orientation: landscape) {
-    #app-container {
-        flex-direction: row;
-        max-width: 100vw; 
-        max-height: 100vh;
-    }
-
-    #controls {
-        flex-direction: column;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        align-items: center;
-        flex-shrink: 0;
-        width: 320px;
-        height: 100%;
-        overflow-y: auto;
-        border-top: none;
-        border-left: 2px solid #c5a15a;
-    }
-
-    #app-title h1 {
-        font-size: 2.5em;
-    }
-    #app-title p {
-        font-size: 1.2em;
-    }
-    #app-logo-left, #app-logo-right {
-        height: 120px;
-    }
 }
