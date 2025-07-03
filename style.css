@@ -55,6 +55,7 @@ body, html {
     letter-spacing: 3px;
     color: #fff;
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ffc107, 0 0 30px #ffc107, 0 0 40px #ffc107;
+    transition: font-size 0.4s ease-in-out;
 }
 
 #app-title p {
@@ -62,6 +63,7 @@ body, html {
     font-size: 1.8em;
     color: #f5e6d3;
      text-shadow: 0 0 4px #fff, 0 0 10px #ffc107, 0 0 20px #ffc107;
+     transition: font-size 0.4s ease-in-out;
 }
 
 #app-logo-left, #app-logo-right {
@@ -85,8 +87,9 @@ body, html {
     gap: 10px;
 }
 
+/* MODIFIÉ : Taille des drapeaux augmentée */
 .lang-flag {
-    width: 30px;
+    width: 40px; /* Anciennement 30px */
     height: auto;
     cursor: pointer;
     border: 1px solid #ccc;
@@ -376,59 +379,88 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 /* --- STYLES POUR LE MODE IMMERSIF --- */
+#immersive-exit-button, #immersive-message {
+    display: none; 
+}
+
 #immersive-exit-button {
-    display: none;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: 2px solid white;
-    border-radius: 50%;
-    font-size: 2em;
-    line-height: 48px;
-    text-align: center;
+    border-radius: 8px;
     cursor: pointer;
     z-index: 2000; 
+    padding: 5px 15px;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2em;
+}
+#immersive-exit-button span {
+    font-size: 0.8em;
 }
 
 #immersive-message {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 3em;
-    font-family: 'Segoe UI', sans-serif;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-    pointer-events: none;
-    z-index: 1900;
+    color: #ffc107;
+    font-size: 1.5em;
+    text-shadow: 0 0 5px #ffc107;
+    align-items: center;
 }
-
 
 /* Quand le conteneur a la classe 'immersive-mode' */
-#app-container.immersive-mode #app-title,
-#app-container.immersive-mode #controls {
-    flex-basis: 0;
-    height: 0;
+#app-container.immersive-mode #app-title {
+    flex: 0 0 60px;
     padding: 0;
-    border: none;
-    overflow: hidden;
+}
+#app-container.immersive-mode #app-title > * {
+    display: none;
+}
+#app-container.immersive-mode #app-title #title-text-container {
+    display: flex;
+}
+#app-container.immersive-mode #app-title h1 {
+    font-size: 2em;
+}
+#app-container.immersive-mode #app-title p {
+    font-size: 1em;
 }
 
-#app-container.immersive-mode #immersive-exit-button,
+#app-container.immersive-mode #controls {
+    flex: 0 0 80px;
+    padding: 0 25px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#app-container.immersive-mode #controls > .dashboard-column:not(.master-controls) {
+    display: none;
+}
+
+#app-container.immersive-mode #controls .master-controls {
+    display: flex;
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
+    padding: 0;
+    order: 2; /* Pour le centrer */
+}
+#app-container.immersive-mode #controls #warningButton {
+    display: none;
+}
+
 #app-container.immersive-mode #immersive-message {
-    display: block;
+    display: flex; 
+    order: 1; /* Pour le mettre à gauche */
+}
+#app-container.immersive-mode #immersive-exit-button {
+    display: flex; 
+    order: 3; /* Pour le mettre à droite */
 }
 
 /* --- Styles pour la fenêtre modale (inchangés) --- */
 .modal {
     display: none;
     position: fixed;
-    z-index: 200;
+    z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
@@ -440,7 +472,6 @@ input[type="color"]::-webkit-color-swatch {
     align-items: center;
     backdrop-filter: blur(5px);
 }
-
 .modal-content {
     background-color: #333;
     margin: auto;
@@ -455,7 +486,6 @@ input[type="color"]::-webkit-color-swatch {
     font-family: sans-serif;
     text-align: left;
 }
-
 .modal-content h2 {
     color: #dc3545;
     text-align: center;
@@ -465,24 +495,20 @@ input[type="color"]::-webkit-color-swatch {
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
-
 .modal-content p {
     font-size: 1.1em;
     line-height: 1.5;
     margin-bottom: 15px;
 }
-
 .modal-content ul {
     margin-top: 0;
     padding-left: 25px;
     list-style-type: '🚨 ';
 }
-
 .modal-content ul li {
     margin-bottom: 10px;
     font-size: 1em;
 }
-
 .close-button {
     color: #aaa;
     float: right;
@@ -493,14 +519,12 @@ input[type="color"]::-webkit-color-swatch {
     right: 15px;
     cursor: pointer;
 }
-
 .close-button:hover,
 .close-button:focus {
     color: white;
     text-decoration: none;
     cursor: pointer;
 }
-
 #understoodButton {
     display: block;
     width: 80%;
@@ -514,7 +538,6 @@ input[type="color"]::-webkit-color-swatch {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-
 #understoodButton:hover {
     background-color: #0056b3;
 }

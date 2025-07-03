@@ -12,18 +12,16 @@ let currentBinauralVolume;
 let currentIsochronenVolume; 
 let currentLanguage = 'en';
 
-// Binaural nodes
+// Audio nodes
 let binauralOscillatorLeft = null;
 let binauralOscillatorRight = null;
 let binauralMasterGain = null;
-
-// Isochronic nodes
 let isochronicOscillator = null;
 let isochronicEnvelopeGain = null;
 let isochronicPanner = null;
 let isochronicMasterGain = null;
 
-const SOUND_DURATION_S = 0.02; // 20ms
+const SOUND_DURATION_S = 0.02;
 
 // --- Global DOM References ---
 let leftPanel, centerPanel, rightPanel, startButton, colorPicker;
@@ -85,20 +83,16 @@ function startBinauralBeats() {
     binauralOscillatorLeft = audioContext.createOscillator();
     binauralOscillatorLeft.type = 'sine';
     binauralOscillatorLeft.frequency.setValueAtTime(freqLeftEar, audioContext.currentTime);
-
     binauralOscillatorRight = audioContext.createOscillator();
     binauralOscillatorRight.type = 'sine';
     binauralOscillatorRight.frequency.setValueAtTime(freqRightEar, audioContext.currentTime);
-
     const gainLeft = audioContext.createGain();
     const gainRight = audioContext.createGain();
     const merger = audioContext.createChannelMerger(2);
     binauralMasterGain = audioContext.createGain();
-
     binauralOscillatorLeft.connect(gainLeft).connect(merger, 0, 0);
     binauralOscillatorRight.connect(gainRight).connect(merger, 0, 1);
     merger.connect(binauralMasterGain).connect(masterGainNode);
-
     binauralMasterGain.gain.setValueAtTime(currentBinauralVolume, audioContext.currentTime);
     binauralOscillatorLeft.start(audioContext.currentTime);
     binauralOscillatorRight.start(audioContext.currentTime);
@@ -122,22 +116,17 @@ function startIsochronicTones() {
     initAudioContext();
     stopIsochronicTones();
     if (!audioContext) return;
-
     isochronicOscillator = audioContext.createOscillator();
     isochronicOscillator.type = 'sine';
     isochronicOscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-
     isochronicEnvelopeGain = audioContext.createGain();
     isochronicEnvelopeGain.gain.setValueAtTime(0, audioContext.currentTime);
-
     isochronicPanner = audioContext.createStereoPanner();
     isochronicMasterGain = audioContext.createGain();
-
     isochronicOscillator.connect(isochronicEnvelopeGain);
     isochronicEnvelopeGain.connect(isochronicPanner);
     isochronicPanner.connect(isochronicMasterGain);
     isochronicMasterGain.connect(masterGainNode);
-    
     isochronicOscillator.start();
 }
 
@@ -151,10 +140,8 @@ function stopIsochronicTones() {
 
 function playSound(panDirection) {
     if (!isochronicOscillator || (currentAudioMode !== 'isochronen' && currentAudioMode !== 'both')) return;
-
     isochronicPanner.pan.setValueAtTime(panDirection === 'left' ? -1 : 1, audioContext.currentTime);
     isochronicMasterGain.gain.setValueAtTime(currentIsochronenVolume, audioContext.currentTime);
-
     isochronicEnvelopeGain.gain.cancelScheduledValues(audioContext.currentTime);
     isochronicEnvelopeGain.gain.setValueAtTime(0, audioContext.currentTime);
     isochronicEnvelopeGain.gain.linearRampToValueAtTime(1.0, audioContext.currentTime + 0.01);
@@ -165,10 +152,8 @@ function updateVisuals() {
     const circle = document.createElement('div');
     circle.className = 'circle';
     circle.style.backgroundColor = colorPicker.value;
-    
     leftPanel.innerHTML = '';
     rightPanel.innerHTML = '';
-
     if (isLeftLight) {
         leftPanel.appendChild(circle);
     } else {
@@ -326,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
     flagFr.addEventListener('click', () => setLanguage('fr'));
     flagEn.addEventListener('click', () => setLanguage('en'));
 
+    // --- LOGIQUE DU MODE IMMERSIF ---
     visualPanelsWrapper.addEventListener('click', (e) => {
         if (e.target.id === 'immersive-exit-button') return;
         appContainer.classList.add('immersive-mode');
