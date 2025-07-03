@@ -23,6 +23,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 #app-title {
@@ -30,57 +31,65 @@ body, html {
     text-align: center;
     padding: 10px 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1a1a1a;
-    border-bottom: 2px solid #0056b3;
+    background-image: url('bronze-texture.jpg');
+    background-size: cover;
+    background-position: center;
+    border-bottom: 2px solid #a0743c;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; /* Espace entre les éléments (images et le nouveau conteneur de texte) */
-    position: relative; /* Add this for absolute positioning of child elements */
+    gap: 10px;
+    position: relative;
+    transition: all 0.4s ease-in-out;
 }
 
-/* NOUVEAU : Style pour le conteneur du texte du titre */
 #title-text-container {
     display: flex;
-    flex-direction: column; /* Empile h1 et p verticalement */
-    align-items: center; /* Centre le texte horizontalement dans ce conteneur */
+    flex-direction: column;
+    align-items: center;
 }
 
 #app-title h1 {
-    margin: 0; /* Supprime la marge par défaut */
-    font-size: 2.5em;
-    letter-spacing: 2px;
+    margin: 0;
+    font-size: 3.5em;
+    letter-spacing: 3px;
+    color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ffc107, 0 0 30px #ffc107, 0 0 40px #ffc107;
 }
 
 #app-title p {
-    margin: 0; /* Supprime la marge supérieure par défaut pour le coller sous le h1 */
-    font-size: 1em;
-    color: #bbb;
+    margin: 0;
+    font-size: 1.8em;
+    color: #f5e6d3;
+     text-shadow: 0 0 4px #fff, 0 0 10px #ffc107, 0 0 20px #ffc107;
 }
 
-/* MODIFIÉ : Styles pour les images du logo (hauteur doublée à nouveau) */
 #app-logo-left, #app-logo-right {
-    height: 200px; /* Taille de l'image, doublée */
+    height: 180px;
     width: auto;
     vertical-align: middle;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 5px;
+    border: 2px solid #a0743c;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+    transition: all 0.4s ease;
 }
 
-/* NOUVEAU : Styles pour le conteneur des drapeaux */
 #language-flags {
     position: absolute;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
-    gap: 10px; /* Espace entre les drapeaux */
+    gap: 10px;
 }
 
-/* NOUVEAU : Styles pour les drapeaux individuels */
 .lang-flag {
-    width: 30px; /* Taille des drapeaux */
+    width: 30px;
     height: auto;
     cursor: pointer;
-    border: 1px solid #ccc; /* Petite bordure pour les distinguer */
+    border: 1px solid #ccc;
     border-radius: 3px;
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
@@ -90,7 +99,7 @@ body, html {
 }
 
 .lang-flag.active {
-    border: 2px solid #007bff; /* Mettre en évidence le drapeau actif */
+    border: 2px solid #007bff;
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
 }
 
@@ -99,6 +108,8 @@ body, html {
     flex: 1;
     display: flex;
     width: 100%;
+    position: relative;
+    cursor: pointer;
 }
 
 .panel {
@@ -120,8 +131,7 @@ body, html {
 
 .circle {
     width: 200px;
-    /* height: 200px;  <-- Supprimé */
-    aspect-ratio: 1 / 1; /* <-- Ajouté : garantit que la hauteur est égale à la largeur */
+    aspect-ratio: 1 / 1;
     max-width: calc(100% - 40px);
     max-height: calc(100% - 40px);
     border-radius: 50%;
@@ -129,116 +139,292 @@ body, html {
 }
 
 #controls {
-    margin-top: 20px; 
-    margin-bottom: 20px;
-    align-self: center;
-    width: fit-content;
-    max-width: 95%;
-
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 15px 25px;
-    border-radius: 10px;
-    color: white;
-    font-family: sans-serif;
+    font-family: 'Orbitron', sans-serif;
+    background-image: url('ronce-de-noyer.jpg');
+    background-size: cover;
+    background-position: center;
+    border-top: 2px solid #c5a15a;
+    box-shadow: 0 -5px 25px rgba(255, 193, 7, 0.3);
+    padding: 15px;
     display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 20px;
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    transition: all 0.4s ease-in-out;
+}
+
+.dashboard-column {
+    display: flex;
+    flex-direction: column;
     gap: 15px;
     align-items: center;
-    z-index: 100;
-    flex-wrap: wrap;
-    justify-content: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(2px);
+}
 
-    border: 2px solid #007bff;
-    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+.dashboard-header {
+    font-size: 1em;
+    color: #ffc107;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 1px solid #ffc107;
+    padding-bottom: 5px;
+    text-shadow: 0 0 5px rgba(255, 193, 7, 0.7);
+    width: 100%;
+    text-align: center;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.control-group label {
+    font-size: 0.8em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.master-controls {
+    justify-content: center;
+    gap: 20px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
 }
 
 #controls button {
+    background: linear-gradient(145deg, #4a3f2a, #2a2316);
+    border: 1px solid #ffc107;
+    color: #fff;
     padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
+    font-size: 1em;
+    font-family: inherit;
     border-radius: 5px;
-    background-color: #007bff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+}
+
+#controls button:hover {
+    background: #ffc107;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 25px rgba(255, 193, 7, 0.5);
+}
+
+#controls .attention-button {
+    border-color: #dc3545;
+    background: linear-gradient(145deg, #8c232c, #5a161d);
+    color: #fff;
+}
+#controls .attention-button:hover {
+    background: #dc3545;
     color: white;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.8), 0 0 25px rgba(220, 53, 69, 0.5);
 }
 
-.attention-button {
-    background-color: #dc3545 !important;
-    font-weight: bold;
-    animation: pulse 1.5s infinite;
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 150px;
+    height: 5px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #c5a15a;
 }
 
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #ffc107;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid #111;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+}
 
-#controls input[type="color"] {
+input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #ffc107;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid #111;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+}
+
+.frequency-input {
+    width: 55px;
+    background-color: rgba(0,0,0,0.7);
+    border: 1px solid #c5a15a;
+    color: #eee;
+    border-radius: 4px;
+    text-align: center;
+    font-family: inherit;
+    font-size: 0.9em;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
     width: 40px;
     height: 40px;
     border: none;
     padding: 0;
     cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #c5a15a;
+    box-shadow: 0 0 10px rgba(197, 161, 90, 0.5);
 }
-#controls input[type="range"] {
-    width: 120px;
-    cursor: grab;
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
 }
 
-.frequency-input { /* Renommé de frequency-display-input pour être plus générique */
-    width: 60px;
-    padding: 5px;
-    font-size: 14px;
+.radio-switch {
+    display: flex;
+    background: rgba(0,0,0,0.5);
     border-radius: 5px;
-    border: 1px solid #007bff;
-    background-color: #333;
-    color: white;
-    text-align: center;
-    margin-left: 5px;
-    -moz-appearance: textfield;
+    border: 1px solid #c5a15a;
+    overflow: hidden;
 }
-.frequency-input::-webkit-outer-spin-button,
-.frequency-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+
+.radio-switch input[type="radio"] {
+    display: none;
+}
+
+.radio-switch label {
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8em;
+    margin: 0;
+    color: #fff;
+}
+
+.radio-switch input[type="radio"]:checked + label {
+    background: #c5a15a;
+    color: #000;
+    text-shadow: none;
+    box-shadow: 0 0 10px rgba(197, 161, 90, 0.7);
+}
+
+.control-group fieldset {
+    border: none;
+    padding: 0;
     margin: 0;
 }
+.control-group legend {
+    font-size: 0.8em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    text-align: center;
+    width: 100%;
+}
 
-
-.audio-mode, .binaural-sync-multiplier {
-    border: 1px solid rgba(255, 255, 255, 0.5);
+.info-display {
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
     border-radius: 5px;
-    padding: 5px 10px;
-    margin-left: 15px;
+    border: 1px solid #c5a15a;
+    width: auto;
+    margin-top: 10px;
 }
-
-.audio-mode legend, .binaural-sync-multiplier legend {
-    font-size: 14px;
-    color: #eee;
-    padding: 0 5px;
-}
-
-.audio-mode label, .binaural-sync-multiplier label {
-    font-size: 13px;
-    margin-left: 5px;
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-.audio-mode input[type="radio"], .binaural-sync-multiplier input[type="radio"] {
-    margin-left: 0;
-    cursor: pointer;
-}
-
 #binauralBeatFrequencyDisplay {
-    font-size: 14px;
-    min-width: 60px;
-    text-align: left;
-    margin-left: 5px;
+    font-size: 1.2em;
+    color: #ffc107;
+    text-shadow: 0 0 5px #ffc107;
+}
+
+.audio-layout-grid {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.audio-main-controls, .audio-volume-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.audio-volume-controls {
+    padding-left: 20px;
+    border-left: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+/* --- STYLES POUR LE MODE IMMERSIF --- */
+#immersive-exit-button {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    font-size: 2em;
+    line-height: 48px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 2000; 
+}
+
+#immersive-message {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 3em;
+    font-family: 'Segoe UI', sans-serif;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    z-index: 1900;
 }
 
 
-/* Styles pour la fenêtre modale (inchangés) */
+/* Quand le conteneur a la classe 'immersive-mode' */
+#app-container.immersive-mode #app-title,
+#app-container.immersive-mode #controls {
+    flex-basis: 0;
+    height: 0;
+    padding: 0;
+    border: none;
+    overflow: hidden;
+}
+
+#app-container.immersive-mode #immersive-exit-button,
+#app-container.immersive-mode #immersive-message {
+    display: block;
+}
+
+/* --- Styles pour la fenêtre modale (inchangés) --- */
 .modal {
     display: none;
     position: fixed;

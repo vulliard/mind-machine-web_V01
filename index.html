@@ -25,59 +25,101 @@
             <div id="left-panel" class="panel"></div>
             <div id="center-panel" class="panel"></div>
             <div id="right-panel" class="panel"></div>
+            <div id="immersive-message" data-en="Close Your Eyes" data-fr="Fermez les Yeux"></div>
+            <button id="immersive-exit-button">&times;</button>
         </div>
 
         <div id="controls">
-            <button id="startButton">Start / Stop</button>
-            <label for="colorPicker">Circle Color : </label>
-            <input type="color" id="colorPicker" value="#FFFFFF">
-            
-            <label for="carrierFrequencySlider" data-en="Carrier Frequency (Hz):" data-fr="Fréquence Porteuse (Hz):">Carrier Frequency (Hz): </label>
-            <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="220"> 
-            <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="220" step="any" class="frequency-input"> 
-            
-            <label for="blinkRateSlider" data-en="Blink Frequency (Hz):" data-fr="Fréquence Clignotement (Hz):">Blink Frequency (Hz): </label>
-            <input type="range" id="blinkRateSlider" min="1" max="20" value="4" step="0.1">
-            <input type="number" id="blinkFrequencyInputDisplay" min="1" max="20" value="4" step="0.1" class="frequency-input">
+            <div class="dashboard-column master-controls">
+                <button id="startButton" data-en="Start / Stop" data-fr="Démarrer / Arrêter"></button>
+                <button id="warningButton" class="attention-button" data-en="WARNING !" data-fr="ATTENTION !"></button>
+            </div>
 
-            <fieldset class="audio-mode">
-                <legend data-en="Audio Mode :" data-fr="Mode Audio :">Audio Mode :</legend>
-                <input type="radio" id="mode-binaural" name="audioMode" value="binaural" checked>
-                <label for="mode-binaural" data-en="Binaural Beats" data-fr="Battements Binauraux">Binaural Beats</label><br>
-                <input type="radio" id="mode-isochronen" name="audioMode" value="isochronen">
-                <label for="mode-isochronen" data-en="Isochronic Tones" data-fr="Sons Isochrones">Isochronic Tones</label><br>
-                <input type="radio" id="mode-both" name="audioMode" value="both">
-                <label for="mode-both" data-en="Both" data-fr="Les Deux">Both</label>
-            </fieldset>
+            <div class="dashboard-column visual-controls">
+                <h3 class="dashboard-header" data-en="VISUALS" data-fr="VISUELS"></h3>
+                <div class="control-group">
+                    <label for="blinkRateSlider" data-en="Blink Freq (Hz)" data-fr="Fréq Clign (Hz)"></label>
+                    <div class="slider-container">
+                        <input type="range" id="blinkRateSlider" min="1" max="20" value="4" step="0.1">
+                        <input type="number" id="blinkFrequencyInputDisplay" min="1" max="20" value="4" step="0.1" class="frequency-input">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="colorPicker" data-en="Circle Color" data-fr="Couleur Cercle"></label>
+                    <input type="color" id="colorPicker" value="#FFFFFF">
+                </div>
+            </div>
 
-            <fieldset class="binaural-sync-multiplier">
-                <legend data-en="BB x Blink Freq :" data-fr="BB x Fréq Clignotement :">BB x Blink Freq :</legend>
-                <input type="radio" id="multiplier-0-5" name="bbMultiplier" value="0.5">
-                <label for="multiplier-0-5">x0.5</label><br>
-                <input type="radio" id="multiplier-1" name="bbMultiplier" value="1" checked>
-                <label for="multiplier-1">x1</label><br>
-                <input type="radio" id="multiplier-2" name="bbMultiplier" value="2">
-                <label for="multiplier-2">x2</label><br>
-                <input type="radio" id="multiplier-3" name="bbMultiplier" value="3">
-                <label for="multiplier-3">x3</label>
-            </fieldset>
+            <div class="dashboard-column audio-controls">
+                <h3 class="dashboard-header" data-en="AUDIO" data-fr="AUDIO"></h3>
+                <div class="audio-layout-grid">
+                    <div class="audio-main-controls">
+                        <div class="control-group">
+                            <label for="carrierFrequencySlider" data-en="Carrier Freq (Hz)" data-fr="Fréq Porteuse (Hz)"></label>
+                            <div class="slider-container">
+                                <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="220"> 
+                                <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="220" step="any" class="frequency-input"> 
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <fieldset class="audio-mode">
+                                <legend data-en="Audio Mode" data-fr="Mode Audio"></legend>
+                                <div class="radio-switch">
+                                    <input type="radio" id="mode-binaural" name="audioMode" value="binaural" checked>
+                                    <label for="mode-binaural" data-en="Binaural" data-fr="Binaural"></label>
+                                    <input type="radio" id="mode-isochronen" name="audioMode" value="isochronen">
+                                    <label for="mode-isochronen" data-en="Isochronic" data-fr="Isochrone"></label>
+                                    <input type="radio" id="mode-both" name="audioMode" value="both">
+                                    <label for="mode-both" data-en="Both" data-fr="Les Deux"></label>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="audio-volume-controls">
+                         <div class="control-group">
+                            <label for="binauralVolumeSlider" data-en="BB Volume" data-fr="Volume BB"></label>
+                            <div class="slider-container">
+                                <input type="range" id="binauralVolumeSlider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="isochronenVolumeSlider" data-en="Isochronic Vol" data-fr="Volume Isochrone"></label>
+                            <div class="slider-container">
+                                <input type="range" id="isochronenVolumeSlider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <label for="binauralVolumeSlider" data-en="BB Volume :" data-fr="Volume BB :">BB Volume : </label>
-            <input type="range" id="binauralVolumeSlider" min="0" max="100" value="50">
-            
-            <label for="isochronenVolumeSlider" data-en="Isochronic Vol :" data-fr="Volume Isochrone :">Isochronic Vol : </label>
-            <input type="range" id="isochronenVolumeSlider" min="0" max="100" value="50">
-
-            <span id="binauralBeatFrequencyDisplay" style="margin-left: 15px;">BB: 8 Hz</span>
-
-            <button id="warningButton" class="attention-button" data-en="WARNING !" data-fr="ATTENTION !">WARNING !</button>
+            <div class="dashboard-column binaural-controls">
+                <h3 class="dashboard-header" data-en="BINAURAL BEAT" data-fr="BATTEMENT BINAURAL"></h3>
+                <div class="control-group">
+                    <fieldset class="binaural-sync-multiplier">
+                        <legend data-en="BB x Blink Freq" data-fr="BB x Fréq Cligno"></legend>
+                        <div class="radio-switch">
+                             <input type="radio" id="multiplier-0-5" name="bbMultiplier" value="0.5">
+                             <label for="multiplier-0-5">x0.5</label>
+                             <input type="radio" id="multiplier-1" name="bbMultiplier" value="1" checked>
+                             <label for="multiplier-1">x1</label>
+                             <input type="radio" id="multiplier-2" name="bbMultiplier" value="2">
+                             <label for="multiplier-2">x2</label>
+                             <input type="radio" id="multiplier-3" name="bbMultiplier" value="3">
+                             <label for="multiplier-3">x3</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="control-group info-display">
+                    <span id="binauralBeatFrequencyDisplay">BB: 8 Hz</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="warningModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2 data-en="⚠️ Important Warning ⚠️" data-fr="⚠️ Avertissement Important ⚠️">⚠️ Important Warning ⚠️</h2>
+            <h2 data-en="⚠️ Important Warning ⚠️" data-fr="⚠️ Avertissement Important ⚠️"></h2>
             <p data-en="This visual and auditory stimulation application is designed to be used **with EYES CLOSED**." data-fr="Cette application de stimulation visuelle et auditive est conçue pour être utilisée **les YEUX FERMÉS**."></p>
             <p data-en="Rapid light stimulation is very intense and can have adverse effects." data-fr="La stimulation lumineuse rapide est très intense et peut avoir des effets indésirables."></p>
             <ul>
@@ -91,7 +133,7 @@
                 <li data-en="For binaural beats, the use of **headphones** is essential for the effect to be perceptible." data-fr="Pour les battements binauraux, l'utilisation d'un **casque audio** est indispensable pour que l'effet soit perceptible."></li>
             </ul>
             <p data-en="By using this application, you acknowledge having read and understood these warnings and assume full responsibility for your use." data-fr="En utilisant cette application, vous reconnaissez avoir lu et compris ces avertissements et assumez l'entière responsabilité de votre utilisation."></p>
-            <button id="understoodButton" data-en="I Understand" data-fr="J'ai compris">I Understand</button>
+            <button id="understoodButton" data-en="I Understand" data-fr="J'ai compris"></button>
         </div>
     </div>
 
