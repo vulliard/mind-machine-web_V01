@@ -8,23 +8,25 @@
 </head>
 <body>
     <div id="app-container">
-        <div id="app-title">
-            <img src="Gemini_Generated_Image_01.png" alt="Left Logo" id="app-logo-left"> 
-            <div id="title-text-container"> 
-                <h1>e-mindmachine</h1>
-                <p>by PHV</p>
+        <div id="main-content-wrapper">
+            <div id="app-title">
+                <img src="Gemini_Generated_Image_01.png" alt="Left Logo" id="app-logo-left"> 
+                <div id="title-text-container"> 
+                    <h1>e-mindmachine</h1>
+                    <p>by PHV</p>
+                </div>
+                <img src="Gemini_Generated_Image_02.png" alt="Right Logo" id="app-logo-right"> 
+                <div id="language-flags">
+                    <img src="https://flagcdn.com/w40/fr.png" alt="French Flag" id="flag-fr" class="lang-flag" data-lang="fr">
+                    <img src="https://flagcdn.com/w40/gb.png" alt="English Flag" id="flag-en" class="lang-flag" data-lang="en">
+                </div>
             </div>
-            <img src="Gemini_Generated_Image_02.png" alt="Right Logo" id="app-logo-right"> 
-            <div id="language-flags">
-                <img src="https://flagcdn.com/w20/fr.png" alt="French Flag" id="flag-fr" class="lang-flag" data-lang="fr">
-                <img src="https://flagcdn.com/w20/gb.png" alt="English Flag" id="flag-en" class="lang-flag" data-lang="en">
-            </div>
-        </div>
 
-        <div id="visual-panels-wrapper">
-            <div id="left-panel" class="panel"></div>
-            <div id="center-panel" class="panel"></div>
-            <div id="right-panel" class="panel"></div>
+            <div id="visual-panels-wrapper">
+                <div id="left-panel" class="panel"></div>
+                <div id="center-panel" class="panel"></div>
+                <div id="right-panel" class="panel"></div>
+            </div>
         </div>
 
         <div id="controls">
@@ -42,13 +44,43 @@
                 <div class="control-group">
                     <label for="blinkRateSlider" data-en="Blink Freq (Hz)" data-fr="Fréq Clign (Hz)"></label>
                     <div class="slider-container">
-                        <input type="range" id="blinkRateSlider" min="1" max="20" value="4" step="0.1">
-                        <input type="number" id="blinkFrequencyInputDisplay" min="1" max="20" value="4" step="0.1" class="frequency-input">
+                        <input type="range" id="blinkRateSlider" min="1" max="20" value="8" step="0.1">
+                        <input type="number" id="blinkFrequencyInputDisplay" min="1" max="20" value="8" step="0.1" class="frequency-input">
                     </div>
                 </div>
                 <div class="control-group">
                     <label for="colorPicker" data-en="Circle Color" data-fr="Couleur Cercle"></label>
                     <input type="color" id="colorPicker" value="#FFFFFF">
+                </div>
+            </div>
+
+            <div class="dashboard-column ambiance-controls">
+                <h3 class="dashboard-header" data-en="AMBIANCE" data-fr="AMBIANCE"></h3>
+                <div class="ambiance-grid">
+                    <div class="ambiance-group">
+                        <div class="control-group">
+                            <label for="wave-toggle-button" data-en="Ocean Waves" data-fr="Vagues Océan"></label>
+                            <button id="wave-toggle-button"></button>
+                        </div>
+                        <div class="control-group">
+                            <label for="wave-volume-slider" data-en="Waves Volume" data-fr="Volume Vagues"></label>
+                            <div class="slider-container">
+                                <input type="range" id="wave-volume-slider" min="0" max="100" value="30">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ambiance-group">
+                        <div class="control-group">
+                            <label for="crackle-toggle-button" data-en="ASMR" data-fr="ASMR"></label>
+                            <button id="crackle-toggle-button"></button>
+                        </div>
+                        <div class="control-group">
+                            <label for="crackle-volume-slider" data-en="ASMR Volume" data-fr="Volume ASMR"></label>
+                            <div class="slider-container">
+                                <input type="range" id="crackle-volume-slider" min="0" max="100" value="40">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -59,8 +91,8 @@
                         <div class="control-group">
                             <label for="carrierFrequencySlider" data-en="Carrier Freq (Hz)" data-fr="Fréq Porteuse (Hz)"></label>
                             <div class="slider-container">
-                                <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="220"> 
-                                <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="220" step="any" class="frequency-input"> 
+                                <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="110"> 
+                                <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="110" step="any" class="frequency-input"> 
                             </div>
                         </div>
                         <div class="control-group">
