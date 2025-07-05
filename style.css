@@ -59,7 +59,8 @@ body, html {
     padding: 0 15px;
     border-radius: 20px;
     border: 2px solid white;
-    background-color: rgba(255, 255, 255, 0.2);
+    /* MODIFIÉ : Couleur de fond plus visible */
+    background-color: rgba(0, 0, 0, 0.6); 
     color: white;
     font-size: 1.2em;
     font-weight: bold;
@@ -243,7 +244,7 @@ body, html {
     backdrop-filter: none;
 }
 
-#controls button:not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton) {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton) {
     background: linear-gradient(145deg, #4a3f2a, #2a2316);
     border: 1px solid #ffc107;
     color: #fff;
@@ -257,16 +258,22 @@ body, html {
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
 }
 
-#controls button:not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):hover {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):hover {
     background: #ffc107;
     color: #000;
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 25px rgba(255, 193, 7, 0.5);
 }
 
-#controls .attention-button {
-    border-color: #dc3545;
-    background: #dc3545;
-    color: #fff;
+.attention-button {
+    border-color: #dc3545 !important;
+    background: #dc3545 !important;
+    color: #fff !important;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-family: inherit;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
     animation: pulse 1.5s infinite;
 }
 
@@ -276,9 +283,9 @@ body, html {
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
 }
 
-#controls .attention-button:hover {
-    background: #c82333;
-    border-color: #c82333;
+.attention-button:hover {
+    background: #c82333 !important;
+    border-color: #c82333 !important;
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.8), 0 0 25px rgba(220, 53, 69, 0.5);
 }
 
