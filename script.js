@@ -42,6 +42,7 @@ let bbMultiplierRadios;
 let binauralVolumeSlider, isochronenVolumeSlider;
 let binauralBeatFrequencyDisplay;
 let warningButton, warningModal, closeButton, understoodButton;
+let helpButton, helpModal, helpCloseButton;
 let flagFr, flagEn;
 let appContainer, visualPanelsWrapper, immersiveExitButton;
 let waveToggleButton, waveVolumeSlider;
@@ -261,7 +262,6 @@ function startCrackles() {
         const source = audioContext.createBufferSource();
         source.buffer = crackleNoiseBuffer;
         
-        // MODIFIÉ : Variation de la hauteur (pitch)
         source.playbackRate.value = 0.5 + Math.random() * 1.0; 
 
         const envelope = audioContext.createGain();
@@ -276,7 +276,6 @@ function startCrackles() {
 
         const now = audioContext.currentTime;
         const attackTime = 0.005;
-        // MODIFIÉ : Durée de "queue" plus longue et plus variable
         const decayTime = 0.4 + Math.random() * 0.6; 
 
         envelope.gain.setValueAtTime(0, now);
@@ -374,6 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
     warningModal = document.getElementById('warningModal');
     closeButton = document.querySelector('.close-button');
     understoodButton = document.getElementById('understoodButton');
+    helpButton = document.getElementById('helpButton');
+    helpModal = document.getElementById('helpModal');
+    helpCloseButton = helpModal.querySelector('.close-button');
     flagFr = document.getElementById('flag-fr');
     flagEn = document.getElementById('flag-en');
     visualPanelsWrapper = document.getElementById('visual-panels-wrapper');
@@ -440,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     blinkRateSlider.addEventListener('input', () => { blinkFrequencyInput.value = blinkRateSlider.value; handleFrequencyValidation(true); });
     blinkFrequencyInput.addEventListener('change', () => handleFrequencyValidation(true));
-    blinkFrequencyInput.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(true); e.target.blur(); } });
+    blinkRateSlider.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(true); e.target.blur(); } });
 
     audioModeRadios.forEach(radio => radio.addEventListener('change', e => {
         currentAudioMode = e.target.value;
@@ -497,7 +499,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     closeButton.addEventListener('click', () => warningModal.style.display = 'none');
     understoodButton.addEventListener('click', () => warningModal.style.display = 'none');
-    window.addEventListener('click', e => { if (e.target == warningModal) warningModal.style.display = 'none'; });
+    
+    helpButton.addEventListener('click', () => {
+        helpModal.style.display = 'flex';
+    });
+    helpCloseButton.addEventListener('click', () => {
+        helpModal.style.display = 'none';
+    });
+    
+    window.addEventListener('click', e => { 
+        if (e.target == warningModal) warningModal.style.display = 'none';
+        if (e.target == helpModal) helpModal.style.display = 'none';
+    });
 
     flagFr.addEventListener('click', () => setLanguage('fr'));
     flagEn.addEventListener('click', () => setLanguage('en'));
