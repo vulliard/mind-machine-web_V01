@@ -27,19 +27,179 @@
                 <div id="left-panel" class="panel"></div>
                 <div id="center-panel" class="panel"></div>
                 <div id="right-panel" class="panel"></div>
-                <div id="frequency-display-overlay"></div>
             </div>
         </div>
 
         <div id="controls">
+            <div id="immersive-message" data-en="Caution: Close your eyes" data-fr="Attention : Fermez les yeux"></div>
+
+            <div class="dashboard-column master-controls">
+                <button id="startButton" data-en="Start / Stop" data-fr="Démarrer / Arrêter"></button>
+                <button id="warningButton" class="attention-button" data-en="WARNING !" data-fr="ATTENTION !"></button>
             </div>
+            
+            <button id="immersive-exit-button">&times; <span data-en="Back" data-fr="Retour"></span></button>
+
+            <div class="dashboard-column visual-controls">
+                <h3 class="dashboard-header" data-en="VISUALS" data-fr="VISUELS"></h3>
+                <div class="control-group">
+                    <label for="blinkRateSlider" data-en="Blink Freq (Hz)" data-fr="Fréq Clign (Hz)"></label>
+                    <div class="slider-container">
+                        <input type="range" id="blinkRateSlider" min="1" max="20" value="8" step="0.1">
+                        <input type="number" id="blinkFrequencyInputDisplay" min="1" max="20" value="8" step="0.1" class="frequency-input">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="colorPicker" data-en="Circle Color" data-fr="Couleur Cercle"></label>
+                    <input type="color" id="colorPicker" value="#FFFFFF">
+                </div>
+            </div>
+
+            <div class="dashboard-column ambiance-controls">
+                <h3 class="dashboard-header" data-en="AMBIANCE" data-fr="AMBIANCE"></h3>
+                <div class="ambiance-grid">
+                    <div class="ambiance-group">
+                        <div class="control-group">
+                            <label for="wave-toggle-button" data-en="Ocean Waves" data-fr="Vagues Océan"></label>
+                            <button id="wave-toggle-button"></button>
+                        </div>
+                        <div class="control-group">
+                            <label for="wave-volume-slider" data-en="Waves Volume" data-fr="Volume Vagues"></label>
+                            <div class="slider-container">
+                                <input type="range" id="wave-volume-slider" min="0" max="100" value="30">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ambiance-group">
+                        <div class="control-group">
+                            <label for="crackle-toggle-button" data-en="ASMR" data-fr="ASMR"></label>
+                            <button id="crackle-toggle-button"></button>
+                        </div>
+                        <div class="control-group">
+                            <label for="crackle-volume-slider" data-en="ASMR Volume" data-fr="Volume ASMR"></label>
+                            <div class="slider-container">
+                                <input type="range" id="crackle-volume-slider" min="0" max="100" value="40">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-column audio-controls">
+                <h3 class="dashboard-header" data-en="AUDIO" data-fr="AUDIO"></h3>
+                <div class="audio-layout-grid">
+                    <div class="audio-main-controls">
+                        <div class="control-group">
+                            <label for="carrierFrequencySlider" data-en="Carrier Freq (Hz)" data-fr="Fréq Porteuse (Hz)"></label>
+                            <div class="slider-container">
+                                <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="110"> 
+                                <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="110" step="any" class="frequency-input"> 
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <fieldset class="audio-mode">
+                                <legend data-en="Audio Mode" data-fr="Mode Audio"></legend>
+                                <div class="radio-switch">
+                                    <input type="radio" id="mode-binaural" name="audioMode" value="binaural" checked>
+                                    <label for="mode-binaural" data-en="Binaural" data-fr="Binaural"></label>
+                                    <input type="radio" id="mode-isochronen" name="audioMode" value="isochronen">
+                                    <label for="mode-isochronen" data-en="Isochronic" data-fr="Isochrone"></label>
+                                    <input type="radio" id="mode-both" name="audioMode" value="both">
+                                    <label for="mode-both" data-en="Both" data-fr="Les Deux"></label>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="audio-volume-controls">
+                         <div class="control-group">
+                            <label for="binauralVolumeSlider" data-en="BB Volume" data-fr="Volume BB"></label>
+                            <div class="slider-container">
+                                <input type="range" id="binauralVolumeSlider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="isochronenVolumeSlider" data-en="Isochronic Vol" data-fr="Volume Isochrone"></label>
+                            <div class="slider-container">
+                                <input type="range" id="isochronenVolumeSlider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-column binaural-controls">
+                <h3 class="dashboard-header" data-en="BINAURAL BEAT" data-fr="BATTEMENT BINAURAL"></h3>
+                <div class="control-group">
+                    <fieldset class="binaural-sync-multiplier">
+                        <legend data-en="BB x Blink Freq" data-fr="BB x Fréq Cligno"></legend>
+                        <div class="radio-switch">
+                             <input type="radio" id="multiplier-0-5" name="bbMultiplier" value="0.5">
+                             <label for="multiplier-0-5">x0.5</label>
+                             <input type="radio" id="multiplier-1" name="bbMultiplier" value="1" checked>
+                             <label for="multiplier-1">x1</label>
+                             <input type="radio" id="multiplier-2" name="bbMultiplier" value="2">
+                             <label for="multiplier-2">x2</label>
+                             <input type="radio" id="multiplier-3" name="bbMultiplier" value="3">
+                             <label for="multiplier-3">x3</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="control-group info-display">
+                    <span id="binauralBeatFrequencyDisplay">BB: 8 Hz</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="warningModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 data-en="⚠️ Important Warning ⚠️" data-fr="⚠️ Avertissement Important ⚠️"></h2>
+            <p data-en="This visual and auditory stimulation application is designed to be used **with EYES CLOSED**." data-fr="Cette application de stimulation visuelle et auditive est conçue pour être utilisée **les YEUX FERMÉS**."></p>
+            <p data-en="Rapid light stimulation is very intense and can have adverse effects." data-fr="La stimulation lumineuse rapide est très intense et peut avoir des effets indésirables."></p>
+            <ul>
+                <li data-en="It is **STRONGLY DISCOURAGED** for individuals prone to **photosensitive epilepsy**, even with eyes closed." data-fr="Il est **FORTEMENT DÉCONSEILLÉ** aux personnes sujettes à l'**épilepsie photosensible**, même les yeux fermés."></li>
+                <li data-en="**Not recommended for pregnant women.**" data-fr="**Déconseillé aux femmes enceintes.**"></li>
+                <li data-en="**Not recommended for individuals with a history of neurological disorders, severe migraines, or heart problems.**" data-fr="**Déconseillé aux personnes ayant des antécédents de troubles neurologiques, de migraines sévères ou de problèmes cardiaques.**"></li>
+                <li data-en="Always start with low settings (frequency, volume) and gradually increase if desired." data-fr="Commencez toujours avec des réglages bas (fréquence, volume) et augmentez progressivement si désiré."></li>
+                <li data-en="Use it in a safe and relaxed environment." data-fr="Utilisez-le dans un environnement sûr et détendu."></li>
+                <li data-en="**Stop immediately** if you experience any discomfort, nausea, headaches, dizziness, disorientation, or any other unusual symptoms." data-fr="**Arrêtez immédiatement** si vous ressentez un inconfort, des nausées, des maux de tête, des vertiges, une désorientation ou tout autre symptôme inhabituel."></li>
+                <li data-en="Do not use while driving, operating heavy machinery, or in any situation requiring sustained attention." data-fr="Ne pas utiliser en conduisant, en utilisant des machines lourdes, ou dans toute situation nécessitant une attention soutenue."></li>
+                <li data-en="For binaural beats, the use of **headphones** is essential for the effect to be perceptible." data-fr="Pour les battements binauraux, l'utilisation d'un **casque audio** est indispensable pour que l'effet soit perceptible."></li>
+            </ul>
+            <p data-en="By using this application, you acknowledge having read and understood these warnings and assume full responsibility for your use." data-fr="En utilisant cette application, vous reconnaissez avoir lu et compris ces avertissements et assumez l'entière responsabilité de votre utilisation."></p>
+            <button id="understoodButton" data-en="I Understand" data-fr="J'ai compris"></button>
         </div>
+    </div>
     
     <div id="helpModal" class="modal">
+        <div class="modal-content help-modal-content">
+            <span class="close-button">&times;</span>
+            <h2 data-en="User Guide" data-fr="Mode d'emploi"></h2>
+            
+            <h3 data-en="Recommended Use" data-fr="Utilisation Recommandée"></h3>
+            <p data-en="For an optimal experience, place your smartphone in a **VR headset**. Use **headphones** (e.g., Bluetooth) and **close your eyes** during the session." data-fr="Pour une expérience optimale, placez votre smartphone dans un **boîtier de réalité virtuelle**. Utilisez un **casque audio** (ex: Bluetooth) et **fermez les yeux** pendant la session."></p>
+            
+            <h3 data-en="Features" data-fr="Fonctionnalités"></h3>
+            <ul>
+                <li><strong data-en="Visuals:" data-fr="Visuels :"></strong>
+                    <ul data-en="Adjust the frequency of the light flashes and their color." data-fr="Ajustez la fréquence des clignotements lumineux ainsi que leur couleur."></ul>
+                </li>
+                <li><strong data-en="Ambiance:" data-fr="Ambiance :"></strong>
+                    <ul data-en="Activate and mix two distinct ambiance sounds: soothing ocean waves and/or random ASMR-style crackles. Each has its own volume control." data-fr="Activez et mélangez deux ambiances sonores distinctes : des vagues d'océan apaisantes et/ou des craquements aléatoires de type ASMR. Chacune possède son propre contrôle de volume."></ul>
+                </li>
+                <li><strong data-en="Audio:" data-fr="Audio :"></strong>
+                    <ul data-en="Choose your audio stimulation mode. 'Binaural' requires headphones to be effective. 'Isochronic' works with or without headphones. 'Both' combines the two." data-fr="Choisissez votre mode de stimulation audio. Le mode 'Binaural' nécessite un casque pour être efficace. Le mode 'Isochrone' fonctionne avec ou sans casque. 'Les Deux' combine les deux."></ul>
+                </li>
+                 <li><strong data-en="Binaural Beat:" data-fr="Battement Binaural :"></strong>
+                    <ul data-en="This panel allows you to synchronize the frequency of the binaural beats with the blink frequency, using a multiplier." data-fr="Ce panneau permet de synchroniser la fréquence des battements binauraux sur celle des clignotements, via un multiplicateur."></ul>
+                </li>
+                 <li><strong data-en="Immersive Mode:" data-fr="Mode Immersif :"></strong>
+                    <ul data-en="Click on the visual stimulation area to expand it and hide the controls for total immersion. Click the 'Back' button to return to normal view." data-fr="Cliquez sur la zone de stimulation visuelle pour l'agrandir et masquer les contrôles pour une immersion totale. Cliquez sur le bouton 'Retour' pour revenir à la vue normale."></ul>
+                </li>
+            </ul>
         </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
