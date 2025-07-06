@@ -208,6 +208,7 @@ body, html {
     color: #fff;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     transition: all 0.4s ease-in-out;
+ /*    flex-wrap: wrap; */
     flex-wrap: wrap; 
 
  /* AJOUTÉ : Permet le défilement horizontal si les colonnes dépassent */
