@@ -706,8 +706,20 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-@media (orientation: landscape) and (max-height: 1800px) {
+@media (orientation: landscape) and (max-height: 600px) {
     #app-title {
         display: none;
+    }
+    #controls {
+        padding: 5px;
+        gap: 5px;
+        flex-wrap: wrap; 
+    }
+    .dashboard-column {
+        padding: 5px;
+        gap: 8px;
+    }
+    .control-group label {
+        font-size: 0.7em;
     }
 }
