@@ -2,7 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    /* overflow: hidden; <-- LIGNE SUPPRIMÉE POUR PERMETTRE LE DÉFILEMENT */
     height: 100%;
     width: 100%;
     display: flex;
@@ -23,6 +23,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
+    overflow-y: auto; /* Permet le défilement à l'intérieur de l'application si nécessaire */
 }
 
 #main-content-wrapper {
@@ -30,7 +31,6 @@ body, html {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    overflow: auto; 
 }
 
 #app-title {
