@@ -2,7 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    /* overflow: hidden; <-- LIGNE SUPPRIMÉE POUR PERMETTRE LE DÉFILEMENT */
+    /* overflow: hidden; a été retiré pour permettre le défilement global */
     height: 100%;
     width: 100%;
     display: flex;
@@ -23,7 +23,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; /* Permet le défilement à l'intérieur de l'application si nécessaire */
+    overflow-y: auto; /* Permet le défilement vertical si le contenu dépasse */
 }
 
 #main-content-wrapper {
