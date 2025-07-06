@@ -2,7 +2,6 @@
 body, html {
     margin: 0;
     padding: 0;
-    /* overflow: hidden; a été retiré pour permettre le défilement global */
     height: 100%;
     width: 100%;
     display: flex;
@@ -23,7 +22,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; /* Permet le défilement vertical si le contenu dépasse */
+    overflow: hidden; /* Empêche le défilement au niveau du conteneur principal */
 }
 
 #main-content-wrapper {
@@ -31,6 +30,7 @@ body, html {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow-y: auto; /* Permet le défilement de la partie principale */
 }
 
 #app-title {
