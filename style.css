@@ -711,13 +711,13 @@ input[type="color"]::-webkit-color-swatch {
         display: none;
     }
     #controls {
-        padding: 5px;
-        gap: 5px;
+        padding: 2px;
+        gap: 2px;
         flex-wrap: wrap; 
     }
     .dashboard-column {
-        padding: 5px;
-        gap: 8px;
+        padding: 2px;
+        gap: 2px;
     }
     .control-group label {
         font-size: 0.7em;
