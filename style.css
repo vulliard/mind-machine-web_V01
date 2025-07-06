@@ -2,6 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
+    overflow: hidden; /* Empêche le défilement de la page entière */
     height: 100%;
     width: 100%;
     display: flex;
@@ -22,7 +23,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; /* Permet le défilement global à l'intérieur de l'app */
+    overflow-y: auto; /* MODIFIÉ : Permet à CET ÉLÉMENT de défiler si son contenu dépasse */
 }
 
 #main-content-wrapper {
@@ -59,7 +60,7 @@ body, html {
     padding: 0 15px;
     border-radius: 20px;
     border: 2px solid white;
-    background-color: rgba(0, 0, 0, 0.6); 
+    background-color: rgba(0, 0, 0, 0.6);
     color: white;
     font-size: 1.2em;
     font-weight: bold;
@@ -706,5 +707,4 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-/* MODIFIÉ : suppression de la règle pour le mode paysage */
-/* La section @media (orientation: landscape) a été enlevée */
+/* La section @media pour le mode paysage a été supprimée */
