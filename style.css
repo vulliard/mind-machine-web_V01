@@ -713,7 +713,7 @@ input[type="color"]::-webkit-color-swatch {
         flex-direction: row; /* Cette ligne faisait passer les contrôles à droite */
     }
     #controls {
-        flex-direction: column; /* Cette ligne organisait les colonnes de contrôle verticalement */
+        flex-direction: row; /* Cette ligne organisait les colonnes de contrôle verticalement */
         width: 320px;
         overflow-y: auto;
     }
