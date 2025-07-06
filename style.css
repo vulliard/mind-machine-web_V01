@@ -2,7 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    /* overflow: hidden;  <-- LIGNE SUPPRIMÉE POUR PERMETTRE LE DÉFILEMENT */
     height: 100%;
     width: 100%;
     display: flex;
@@ -59,7 +59,7 @@ body, html {
     padding: 0 15px;
     border-radius: 20px;
     border: 2px solid white;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.6); 
     color: white;
     font-size: 1.2em;
     font-weight: bold;
@@ -704,36 +704,4 @@ input[type="color"]::-webkit-color-swatch {
 }
 #understoodButton:hover {
     background-color: #0056b3;
-}
-
-/* Styles spécifiques pour le mode paysage */
-@media (orientation: landscape) and (max-height: 700px) {
-    #app-container {
-        flex-direction: row;
-        max-width: 100vw;
-        max-height: 100vh;
-    }
-
-    #controls {
-        flex-direction: column;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        align-items: center;
-        flex-shrink: 0;
-        width: 320px;
-        height: 100%;
-        overflow-y: auto;
-        border-top: none;
-        border-left: 2px solid #c5a15a;
-    }
-
-    #app-title h1 {
-        font-size: 2.5em;
-    }
-    #app-title p {
-        font-size: 1.2em;
-    }
-    #app-logo-left, #app-logo-right {
-        height: 120px;
-    }
 }
