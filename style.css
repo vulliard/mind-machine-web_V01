@@ -4,10 +4,10 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
-    background-color: #222;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #222;
 }
 
 #app-container {
@@ -22,7 +22,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; /* Permet le défilement vertical si le contenu dépasse */
+    overflow-y: auto; 
 }
 
 #main-content-wrapper {
@@ -701,8 +701,14 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 @media (orientation: landscape) and (max-height: 600px) {
-    #app-title {
-        display: none;
+    #app-title h1 {
+        font-size: 2em;
+    }
+    #app-title p {
+        font-size: 1em;
+    }
+    #app-logo-left, #app-logo-right {
+        height: 80px;
     }
     #controls {
         padding: 5px;
