@@ -22,7 +22,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow: hidden; 
+    overflow-y: auto; 
 }
 
 #main-content-wrapper {
@@ -211,7 +211,6 @@ body, html {
     color: #fff;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     transition: all 0.4s ease-in-out;
-    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne */
 }
 
 .dashboard-column {
@@ -307,33 +306,40 @@ body, html {
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.8), 0 0 25px rgba(220, 53, 69, 0.5);
 }
 
-#wave-toggle-button, #crackle-toggle-button {
+#wave-toggle-button {
     width: 60px;
     height: 60px;
     border-radius: 50%;
     padding: 0;
     border: 1px solid #ffc107;
     background-color: transparent;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M3 12h2l2-4 4 4 2-4h2'/%3e%3cpath d='M11 18h2l2-4 4 4 2-4h2'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: center;
+    background-size: 60%;
     cursor: pointer;
     transition: all 0.3s ease;
-}
-
-#wave-toggle-button {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M3 12h2l2-4 4 4 2-4h2'/%3e%3cpath d='M11 18h2l2-4 4 4 2-4h2'/%3e%3c/svg%3e");
-    background-size: 60%;
-}
-
-#crackle-toggle-button {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.25l-2.05 5.05a2 2 0 0 0 2.37 2.82l5.05-2.05 6.87-6.83z'%3e%3c/path%3e%3c/svg%3e");
-    background-size: 50%;
 }
 
 #wave-toggle-button.active {
     background-color: #007bff;
     border-color: #007bff;
     box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);
+}
+
+#crackle-toggle-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    padding: 0;
+    border: 1px solid #ffc107;
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.25l-2.05 5.05a2 2 0 0 0 2.37 2.82l5.05-2.05 6.87-6.83z'%3e%3c/path%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 #crackle-toggle-button.active {
@@ -703,20 +709,5 @@ input[type="color"]::-webkit-color-swatch {
 @media (orientation: landscape) and (max-height: 600px) {
     #app-title {
         display: none;
-    }
-    #app-logo-left, #app-logo-right {
-        height: 80px;
-    }
-    #controls {
-        padding: 5px;
-        gap: 5px;
-        flex-wrap: wrap; 
-    }
-    .dashboard-column {
-        padding: 5px;
-        gap: 8px;
-    }
-    .control-group label {
-        font-size: 0.7em;
     }
 }
