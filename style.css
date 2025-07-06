@@ -712,10 +712,6 @@ input[type="color"]::-webkit-color-swatch {
     #app-title {
         display: none;
     }
-
-    #app-logo-left, #app-logo-right {
-        height: 80px;
-    }
     #controls {
         padding: 5px;
         gap: 5px;
