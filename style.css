@@ -2,7 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    /* overflow: hidden;  <-- LIGNE SUPPRIMÉE POUR PERMETTRE LE DÉFILEMENT */
+    overflow: hidden;
     height: 100%;
     width: 100%;
     display: flex;
@@ -30,6 +30,7 @@ body, html {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow: auto; 
 }
 
 #app-title {
