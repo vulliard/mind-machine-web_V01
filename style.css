@@ -711,7 +711,6 @@ input[type="color"]::-webkit-color-swatch {
 @media (orientation: landscape) and (max-height: 600px) {
     #controls {
         width: 320px;
-        overflow-y: auto;
     }
     #app-title {
         display: none;
