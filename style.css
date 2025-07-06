@@ -22,7 +22,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow: hidden; /* Empêche le défilement au niveau du conteneur principal */
+    overflow-y: auto; /* Permet le défilement global à l'intérieur de l'app */
 }
 
 #main-content-wrapper {
@@ -30,7 +30,6 @@ body, html {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    overflow-y: auto; /* Permet le défilement de la partie principale */
 }
 
 #app-title {
@@ -706,3 +705,6 @@ input[type="color"]::-webkit-color-swatch {
 #understoodButton:hover {
     background-color: #0056b3;
 }
+
+/* MODIFIÉ : suppression de la règle pour le mode paysage */
+/* La section @media (orientation: landscape) a été enlevée */
