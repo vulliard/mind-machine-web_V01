@@ -706,7 +706,7 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-@media (orientation: landscape)  {
+@media (orientation: landscape) and (max-height: 300px) {
     #app-title {
         display: none;
     }
