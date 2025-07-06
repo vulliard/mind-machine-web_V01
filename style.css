@@ -196,21 +196,7 @@ body, html {
     background-color: white;
 }
 
-#controls {
-    font-family: 'Orbitron', sans-serif;
-    background-image: url('ronce-de-noyer.jpg');
-    background-size: cover;
-    background-position: center;
-    border-top: 2px solid #c5a15a;
-    box-shadow: 0 -5px 25px rgba(255, 193, 7, 0.3);
-    padding: 15px;
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-    gap: 10px;
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-    transition: all 0.4s ease-in-out;
+
 #controls {
     font-family: 'Orbitron', sans-serif;
     background-image: url('ronce-de-noyer.jpg');
