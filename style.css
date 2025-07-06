@@ -5,7 +5,6 @@ body, html {
     height: 100%;
     width: 100%;
     background-color: #222;
-    /* La disposition est gérée par le conteneur de l'application */
 }
 
 #app-container {
@@ -20,14 +19,14 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; /* Permet à l'application entière de défiler si nécessaire */
+    overflow-y: auto;
 }
 
 #main-content-wrapper {
-    flex: 1; /* Prend tout l'espace vertical disponible */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 50; /* Correction essentielle pour les conteneurs flex */
+    min-height: 0;
 }
 
 #app-title {
@@ -147,7 +146,7 @@ body, html {
     width: 100%;
     position: relative;
     cursor: pointer;
-    min-height: 200px; /* Assure une hauteur minimale pour la zone visuelle */
+    min-height: 200px; 
 }
 
 #frequency-display-overlay {
