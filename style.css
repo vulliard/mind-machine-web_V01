@@ -2,7 +2,6 @@
 body, html {
     margin: 0;
     padding: 0;
-    overflow: hidden;
     height: 100%;
     width: 100%;
     display: flex;
@@ -23,7 +22,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow-y: auto; 
 }
 
 #main-content-wrapper {
@@ -705,23 +704,4 @@ input[type="color"]::-webkit-color-swatch {
 }
 #understoodButton:hover {
     background-color: #0056b3;
-}
-
-/* Styles spécifiques pour le mode paysage sur les petits écrans */
-@media (orientation: landscape) and (max-height: 600px) {
-    #app-title {
-        display: none;
-    }
-    #controls {
-        padding: 5px;
-        gap: 5px;
-        flex-wrap: wrap; 
-    }
-    .dashboard-column {
-        padding: 5px;
-        gap: 8px;
-    }
-    .control-group label {
-        font-size: 0.7em;
-    }
 }
