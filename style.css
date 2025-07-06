@@ -22,7 +22,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; 
+    overflow-y: auto;
 }
 
 #main-content-wrapper {
@@ -700,21 +700,7 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-
-/* Styles spécifiques pour le mode portrait sur les petits écrans */
-@media (orientation: portrait) and (max-width: 600px) {
-    #controls {
-        flex-wrap: wrap;
-    }
-    .dashboard-column {
-        flex: 1;
-        min-width: 120px;
-        padding: 5px;
-        gap: 8px;
-    }
-}
-
-/* Styles spécifiques pour le mode paysage sur les petits écrans */
+/* MODIFIÉ : Styles spécifiques pour le mode paysage sur les petits écrans */
 @media (orientation: landscape) and (max-height: 600px) {
     #app-title h1 {
         font-size: 2em;
@@ -733,8 +719,8 @@ input[type="color"]::-webkit-color-swatch {
     .dashboard-column {
         padding: 5px;
         gap: 8px;
-        flex: 1; 
-        min-width: 150px;
+        flex: 1; /* Permet aux colonnes de partager l'espace */
+        min-width: 150px; /* Empêche les colonnes de devenir trop étroites */
     }
     .control-group label {
         font-size: 0.7em;
