@@ -30,7 +30,6 @@ body, html {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    overflow: auto;
 }
 
 #app-title {
@@ -705,4 +704,36 @@ input[type="color"]::-webkit-color-swatch {
 }
 #understoodButton:hover {
     background-color: #0056b3;
+}
+
+/* Styles spécifiques pour le mode paysage */
+@media (orientation: landscape) and (max-height: 700px) {
+    #app-container {
+        flex-direction: row;
+        max-width: 100vw;
+        max-height: 100vh;
+    }
+
+    #controls {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        flex-shrink: 0;
+        width: 320px;
+        height: 100%;
+        overflow-y: auto;
+        border-top: none;
+        border-left: 2px solid #c5a15a;
+    }
+
+    #app-title h1 {
+        font-size: 2.5em;
+    }
+    #app-title p {
+        font-size: 1.2em;
+    }
+    #app-logo-left, #app-logo-right {
+        height: 120px;
+    }
 }
