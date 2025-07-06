@@ -481,20 +481,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
             if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
             
-            function blinkLoop() {
-                updateVisuals();
-                intervalId = setTimeout(blinkLoop, 1000 / BLINK_FREQUENCY_HZ);
-            }
+            updateVisuals();
+            intervalId = setInterval(updateVisuals, 1000 / BLINK_FREQUENCY_HZ);
             
-            if (currentSession === 'manual') {
-                validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
-            } else {
+            if (currentSession !== 'manual') {
                 sessionSelect.disabled = true;
                 blinkRateSlider.disabled = true;
                 blinkFrequencyInput.disabled = true;
                 runSession(currentSession);
             }
-            blinkLoop();
         }
         setLanguage(currentLanguage);
     });
@@ -502,6 +497,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleFrequencyValidation = (isBlink) => {
         if (isBlink) {
             validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = setInterval(updateVisuals, BLINK_INTERVAL_MS);
+            }
         } else {
             validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
         }
