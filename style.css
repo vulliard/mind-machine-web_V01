@@ -256,7 +256,7 @@ body, html {
 .master-controls {
     justify-content: center;
     gap: 20px;
-    /* height: 100%; */ /* MODIFIÉ : Ligne supprimée */
+    height: 100%;
     background: transparent;
     border: none;
     backdrop-filter: none;
@@ -700,6 +700,21 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
+
+/* Styles spécifiques pour le mode portrait sur les petits écrans */
+@media (orientation: portrait) and (max-width: 600px) {
+    #controls {
+        flex-wrap: wrap;
+    }
+    .dashboard-column {
+        flex: 1;
+        min-width: 120px;
+        padding: 5px;
+        gap: 8px;
+    }
+}
+
+/* Styles spécifiques pour le mode paysage sur les petits écrans */
 @media (orientation: landscape) and (max-height: 600px) {
     #app-title h1 {
         font-size: 2em;
