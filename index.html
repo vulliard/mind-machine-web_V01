@@ -27,6 +27,7 @@
                 <div id="left-panel" class="panel"></div>
                 <div id="center-panel" class="panel"></div>
                 <div id="right-panel" class="panel"></div>
+                <div id="frequency-display-overlay"></div>
             </div>
         </div>
 
@@ -39,6 +40,20 @@
             </div>
             
             <button id="immersive-exit-button">&times; <span data-en="Back" data-fr="Retour"></span></button>
+            
+            <div class="dashboard-column session-controls">
+                <h3 class="dashboard-header" data-en="SESSIONS" data-fr="SESSIONS"></h3>
+                <div class="control-group">
+                    <label for="session-select" data-en="Select a session" data-fr="Choisir une session"></label>
+                    <select id="session-select" class="session-select">
+                        <option value="manual" data-en="Manual Mode" data-fr="Mode Manuel"></option>
+                        <option value="deepRelaxation" data-en="Deep Relaxation" data-fr="Relaxation Profonde"></option>
+                        <option value="concentration" data-en="Concentration" data-fr="Concentration"></option>
+                        <option value="sleep" data-en="Sleep" data-fr="Sommeil"></option>
+                        <option value="meditation" data-en="Meditation" data-fr="Méditation"></option>
+                    </select>
+                </div>
+            </div>
 
             <div class="dashboard-column visual-controls">
                 <h3 class="dashboard-header" data-en="VISUALS" data-fr="VISUELS"></h3>
@@ -100,11 +115,11 @@
                             <fieldset class="audio-mode">
                                 <legend data-en="Audio Mode" data-fr="Mode Audio"></legend>
                                 <div class="radio-switch">
-                                    <input type="radio" id="mode-binaural" name="audioMode" value="binaural" checked>
+                                    <input type="radio" id="mode-binaural" name="audioMode" value="binaural">
                                     <label for="mode-binaural" data-en="Binaural" data-fr="Binaural"></label>
                                     <input type="radio" id="mode-isochronen" name="audioMode" value="isochronen">
                                     <label for="mode-isochronen" data-en="Isochronic" data-fr="Isochrone"></label>
-                                    <input type="radio" id="mode-both" name="audioMode" value="both">
+                                    <input type="radio" id="mode-both" name="audioMode" value="both" checked>
                                     <label for="mode-both" data-en="Both" data-fr="Les Deux"></label>
                                 </div>
                             </fieldset>
