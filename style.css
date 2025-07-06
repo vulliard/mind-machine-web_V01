@@ -4,9 +4,6 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background-color: #222;
 }
 
@@ -22,7 +19,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; 
+    overflow-y: auto;
 }
 
 #main-content-wrapper {
@@ -149,7 +146,7 @@ body, html {
     width: 100%;
     position: relative;
     cursor: pointer;
-    min-height: 0;
+    min-height: 200px; 
 }
 
 #frequency-display-overlay {
@@ -700,7 +697,6 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-/* Styles spécifiques pour le mode paysage sur les petits écrans */
 @media (orientation: landscape) and (max-height: 600px) {
     #app-title h1 {
         font-size: 2em;
@@ -719,7 +715,6 @@ input[type="color"]::-webkit-color-swatch {
     .dashboard-column {
         padding: 5px;
         gap: 8px;
-        flex: 1; /* Permet aux colonnes de partager l'espace */
     }
     .control-group label {
         font-size: 0.7em;
