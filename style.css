@@ -701,11 +701,8 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 @media (orientation: landscape) and (max-height: 600px) {
-    #app-title h1 {
-        font-size: 2em;
-    }
-    #app-title p {
-        font-size: 1em;
+    #app-title {
+        display: none;
     }
     #app-logo-left, #app-logo-right {
         height: 80px;
