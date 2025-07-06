@@ -706,7 +706,6 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-/* AJOUTÉ : Styles spécifiques pour le mode paysage sur les petits écrans (smartphones) */
 @media (orientation: landscape) and (max-height: 600px) {
     #app-title {
         display: none;
