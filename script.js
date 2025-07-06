@@ -11,9 +11,6 @@ let currentAudioMode;
 let currentBinauralVolume;
 let currentIsochronenVolume;
 let currentLanguage = 'en';
-let currentSession = 'manual';
-let sessionTimeoutId = null;
-let rampIntervalId = null; 
 
 // Audio nodes
 let binauralOscillatorLeft = null;
@@ -36,32 +33,6 @@ let crackleVolumeNode = null;
 
 const SOUND_DURATION_S = 0.02;
 
-const sessions = {
-    deepRelaxation: [ 
-        { startFreq: 10, endFreq: 8, duration: 60 },
-        { startFreq: 8,  endFreq: 6, duration: 60 },
-        { startFreq: 6,  endFreq: 4, duration: 60 },
-        { startFreq: 4,  endFreq: 4, duration: 120 }
-    ],
-    concentration: [ 
-        { startFreq: 8,  endFreq: 10, duration: 60 },
-        { startFreq: 10, endFreq: 12, duration: 60 },
-        { startFreq: 12, endFreq: 15, duration: 120 },
-        { startFreq: 15, endFreq: 15, duration: 60 }
-    ],
-    sleep: [
-        { startFreq: 8, endFreq: 5, duration: 120 },
-        { startFreq: 5, endFreq: 3, duration: 120 },
-        { startFreq: 3, endFreq: 1, duration: 180 },
-        { startFreq: 1, endFreq: 1, duration: 180 }
-    ],
-    meditation: [
-        { startFreq: 10, endFreq: 7, duration: 120 },
-        { startFreq: 7,  endFreq: 5, duration: 180 },
-        { startFreq: 5,  endFreq: 5, duration: 300 }
-    ]
-};
-
 // --- Global DOM References ---
 let leftPanel, centerPanel, rightPanel, startButton, colorPicker;
 let carrierFrequencySlider, carrierFrequencyInput;
@@ -73,10 +44,9 @@ let binauralBeatFrequencyDisplay;
 let warningButton, warningModal, closeButton, understoodButton;
 let helpButton, helpModal, helpCloseButton;
 let flagFr, flagEn;
-let appContainer, visualPanelsWrapper, immersiveExitButton, frequencyDisplayOverlay;
+let appContainer, visualPanelsWrapper, immersiveExitButton;
 let waveToggleButton, waveVolumeSlider;
 let crackleToggleButton, crackleVolumeSlider;
-let sessionSelect;
 
 
 // --- Global Functions ---
@@ -88,7 +58,7 @@ function setLanguage(lang) {
         if (!text) return;
         if (element.id === 'startButton') {
             element.textContent = intervalId ? (lang === 'en' ? 'Stop' : 'Arrêter') : text;
-        } else if (element.tagName === 'LI' || element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'SPAN' || element.tagName === 'OPTION') {
+        } else if (element.tagName === 'LI' || element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'SPAN') {
             element.innerHTML = text;
         } else {
             element.textContent = text;
@@ -122,16 +92,14 @@ function startBinauralBeats() {
     const binauralBeatFreq = getSynchronizedBinauralBeatFrequency();
     const freqLeftEar = currentCarrierFrequency - (binauralBeatFreq / 2);
     const freqRightEar = currentCarrierFrequency + (binauralBeatFreq / 2);
-    if (freqLeftEar <= 0 || freqRightEar <= 0 || !audioContext) return; 
+    if (freqLeftEar <= 0 || freqRightEar <= 0 || !audioContext) return;
 
     binauralOscillatorLeft = audioContext.createOscillator();
     binauralOscillatorLeft.type = 'sine';
-    binauralOscillatorLeft.frequency.value = freqLeftEar;
-    
+    binauralOscillatorLeft.frequency.setValueAtTime(freqLeftEar, audioContext.currentTime);
     binauralOscillatorRight = audioContext.createOscillator();
     binauralOscillatorRight.type = 'sine';
-    binauralOscillatorRight.frequency.value = freqRightEar;
-
+    binauralOscillatorRight.frequency.setValueAtTime(freqRightEar, audioContext.currentTime);
     const gainLeft = audioContext.createGain();
     const gainRight = audioContext.createGain();
     const merger = audioContext.createChannelMerger(2);
@@ -155,7 +123,7 @@ function stopBinauralBeats() {
         binauralOscillatorRight.stop();
         binauralOscillatorRight.disconnect();
     }
-    if(binauralBeatFrequencyDisplay) binauralBeatFrequencyDisplay.textContent = `BB: -- Hz`;
+    binauralBeatFrequencyDisplay.textContent = `BB: -- Hz`;
 }
 
 function startIsochronicTones() {
@@ -218,11 +186,13 @@ function startWaves() {
     if (waveIsPlaying) return;
     initAudioContext();
     if (!audioContext) return;
+
     waveRumbleNode = audioContext.createBufferSource();
     waveRumbleNode.buffer = createNoiseBuffer(audioContext, 'brown');
     waveRumbleNode.loop = true;
     const rumbleModulationGain = audioContext.createGain();
     rumbleModulationGain.gain.value = 0.6; 
+
     waveHissNode = audioContext.createBufferSource();
     waveHissNode.buffer = createNoiseBuffer(audioContext, 'white');
     waveHissNode.loop = true;
@@ -232,23 +202,30 @@ function startWaves() {
     hissFilter.Q.value = 1;
     const hissModulationGain = audioContext.createGain();
     hissModulationGain.gain.value = 0.4;
+
     waveLfoNode = audioContext.createOscillator();
     waveLfoNode.frequency.value = 0.15;
     const lfoGain = audioContext.createGain();
     lfoGain.gain.value = 1;
+
     waveMetaLfoNode = audioContext.createOscillator();
     waveMetaLfoNode.frequency.value = 0.03;
     const metaLfoGain = audioContext.createGain();
     metaLfoGain.gain.value = 0.05;
+
     waveMasterVolume = audioContext.createGain();
     waveMasterVolume.gain.value = parseFloat(waveVolumeSlider.value) / 100;
+    
     waveRumbleNode.connect(rumbleModulationGain).connect(waveMasterVolume);
     waveHissNode.connect(hissFilter).connect(hissModulationGain).connect(waveMasterVolume);
     waveMasterVolume.connect(masterGainNode);
+
     waveLfoNode.connect(lfoGain);
     lfoGain.connect(rumbleModulationGain.gain);
     lfoGain.connect(hissModulationGain.gain);
+    
     waveMetaLfoNode.connect(metaLfoGain).connect(waveLfoNode.frequency);
+
     waveRumbleNode.start();
     waveHissNode.start();
     waveLfoNode.start();
@@ -263,6 +240,7 @@ function stopWaves() {
     if (waveHissNode) waveHissNode.stop();
     if (waveLfoNode) waveLfoNode.stop();
     if (waveMetaLfoNode) waveMetaLfoNode.stop();
+    
     waveIsPlaying = false;
     waveToggleButton.classList.remove('active');
 }
@@ -271,31 +249,45 @@ function startCrackles() {
     if (crackleIsPlaying) return;
     initAudioContext();
     if (!audioContext) return;
-    if (!crackleNoiseBuffer) crackleNoiseBuffer = createNoiseBuffer(audioContext, 'white');
+
+    if (!crackleNoiseBuffer) {
+        crackleNoiseBuffer = createNoiseBuffer(audioContext, 'white');
+    }
+    
     crackleVolumeNode = audioContext.createGain();
     crackleVolumeNode.connect(masterGainNode);
     updateCrackleVolume();
+
     function scheduleCrackle() {
         const source = audioContext.createBufferSource();
         source.buffer = crackleNoiseBuffer;
+        
         source.playbackRate.value = 0.5 + Math.random() * 1.0; 
+
         const envelope = audioContext.createGain();
         envelope.connect(crackleVolumeNode);
+
         const filter = audioContext.createBiquadFilter();
         filter.type = 'highpass';
         filter.frequency.value = 7000 + (Math.random() * 3000);
+
         source.connect(filter).connect(envelope);
         source.start();
+
         const now = audioContext.currentTime;
         const attackTime = 0.005;
         const decayTime = 0.4 + Math.random() * 0.6; 
+
         envelope.gain.setValueAtTime(0, now);
         envelope.gain.linearRampToValueAtTime(1, now + attackTime);
         envelope.gain.exponentialRampToValueAtTime(0.0001, now + attackTime + decayTime);
+
         source.stop(now + attackTime + decayTime + 0.1);
+
         const randomDelay = 150 + Math.random() * 500;
         crackleTimeoutId = setTimeout(scheduleCrackle, randomDelay);
     }
+    
     scheduleCrackle();
     crackleIsPlaying = true;
     crackleToggleButton.classList.add('active');
@@ -337,11 +329,8 @@ function updateVisuals() {
 }
 
 function updateFrequencyDisplays() {
-    if (frequencyDisplayOverlay) {
-        frequencyDisplayOverlay.textContent = `${BLINK_FREQUENCY_HZ.toFixed(1)} Hz`;
-    }
     blinkFrequencyInput.value = BLINK_FREQUENCY_HZ.toFixed(1);
-    blinkRateSlider.value = BLINK_FREQUENCY_HZ;
+    carrierFrequencyInput.value = currentCarrierFrequency;
     binauralBeatFrequencyDisplay.textContent = `BB: ${getSynchronizedBinauralBeatFrequency().toFixed(1)} Hz`;
 }
 
@@ -363,41 +352,6 @@ function validateAndSetFrequency(inputElement, sliderElement, isBlinkFreq) {
     sliderElement.value = newValue;
     updateFrequencyDisplays();
 }
-
-function runSession(sessionKey, step = 0) {
-    clearTimeout(sessionTimeoutId);
-    clearInterval(rampIntervalId);
-
-    const sessionSteps = sessions[sessionKey];
-    if (!sessionSteps || step >= sessionSteps.length) {
-        if(intervalId) startButton.click();
-        return;
-    }
-
-    const currentStep = sessionSteps[step];
-    const { startFreq, endFreq, duration } = currentStep;
-    
-    let stepStartTime = Date.now();
-    
-    rampIntervalId = setInterval(() => {
-        const elapsedTime = (Date.now() - stepStartTime) / 1000;
-        const progress = Math.min(elapsedTime / duration, 1);
-        BLINK_FREQUENCY_HZ = startFreq + (endFreq - startFreq) * progress;
-        updateFrequencyDisplays();
-    }, 100);
-
-    if ((currentAudioMode === 'binaural' || currentAudioMode === 'both') && binauralOscillatorLeft && binauralOscillatorRight) {
-        const now = audioContext.currentTime;
-        const endBeat = endFreq * currentBBMultiplier;
-        binauralOscillatorLeft.frequency.linearRampToValueAtTime(currentCarrierFrequency - (endBeat / 2), now + duration);
-        binauralOscillatorRight.frequency.linearRampToValueAtTime(currentCarrierFrequency + (endBeat / 2), now + duration);
-    }
-
-    sessionTimeoutId = setTimeout(() => {
-        runSession(sessionKey, step + 1);
-    }, duration * 1000);
-}
-
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Assignments
@@ -430,8 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
     waveVolumeSlider = document.getElementById('wave-volume-slider');
     crackleToggleButton = document.getElementById('crackle-toggle-button');
     crackleVolumeSlider = document.getElementById('crackle-volume-slider');
-    sessionSelect = document.getElementById('session-select');
-    frequencyDisplayOverlay = document.getElementById('frequency-display-overlay');
 
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkFrequencyInput.value);
@@ -451,50 +403,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     startButton.addEventListener('click', () => {
         initAudioContext();
-        
+        validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
+        validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
         if (intervalId) {
             clearInterval(intervalId);
-            clearTimeout(sessionTimeoutId);
-            clearInterval(rampIntervalId);
             intervalId = null;
-            sessionTimeoutId = null;
-            rampIntervalId = null;
-            isLeftLight = false;
-
             leftPanel.innerHTML = '';
             rightPanel.innerHTML = '';
             stopBinauralBeats();
             stopIsochronicTones();
             stopWaves();
             stopCrackles();
-            
-            appContainer.classList.remove('stimulation-active');
-
-            blinkRateSlider.disabled = false;
-            blinkFrequencyInput.disabled = false;
-            sessionSelect.disabled = false;
-
         } else {
-            appContainer.classList.add('stimulation-active');
-            currentSession = sessionSelect.value;
-            
             if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
             if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
-            
-            function blinkLoop() {
-                updateVisuals();
-                intervalId = setTimeout(blinkLoop, 1000 / BLINK_FREQUENCY_HZ);
-            }
-            
-            if (currentSession === 'manual') {
-                validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
-            } else {
-                sessionSelect.disabled = true;
-                blinkRateSlider.disabled = true;
-                blinkFrequencyInput.disabled = true;
-                runSession(currentSession);
-            }
-            blinkLoop();
+            updateVisuals();
+            intervalId = setInterval(updateVisuals, BLINK_INTERVAL_MS);
         }
         setLanguage(currentLanguage);
     });
@@ -502,6 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleFrequencyValidation = (isBlink) => {
         if (isBlink) {
             validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = setInterval(updateVisuals, BLINK_INTERVAL_MS);
+            }
         } else {
             validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
         }
