@@ -709,9 +709,6 @@ input[type="color"]::-webkit-color-swatch {
 
 /* Styles spécifiques pour le mode paysage sur les petits écrans */
 @media (orientation: landscape) and (max-height: 600px) {
-    #controls {
-         overflow-y: auto;
-    }
     #app-title {
         display: none;
     }
