@@ -724,4 +724,11 @@ input[type="color"]::-webkit-color-swatch {
     .control-group label {
         font-size: 0.7em;
     }
+    #wave-toggle-button, #crackle-toggle-button {
+        width: 40px;
+        height: 40px;
+    }
+    input[type="range"] {
+        width: 100px;
+    }
 }
