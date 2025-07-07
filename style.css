@@ -717,9 +717,11 @@ input[type="color"]::-webkit-color-swatch {
         gap: 5px;
         flex-wrap: wrap; 
     }
-    .dashboard-column {
+   .dashboard-column {
         padding: 5px;
         gap: 8px;
+        flex: 1; 
+        min-width: 150px;
     }
     .control-group label {
         font-size: 0.7em;
