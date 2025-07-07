@@ -4,6 +4,9 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #222;
 }
 
@@ -208,12 +211,7 @@ body, html {
     color: #fff;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     transition: all 0.4s ease-in-out;
- /*    flex-wrap: wrap; */
     flex-wrap: wrap; 
-
- /* AJOUTÉ : Permet le défilement horizontal si les colonnes dépassent */
-  /*  overflow-x: auto; */
-
 }
 
 .dashboard-column {
@@ -258,7 +256,6 @@ body, html {
 .master-controls {
     justify-content: center;
     gap: 20px;
-    height: 100%;
     background: transparent;
     border: none;
     backdrop-filter: none;
@@ -702,7 +699,20 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-@media (orientation: landscape) and (max-height: 600px) {
+/* Styles spécifiques pour les petits écrans */
+@media (max-width: 600px) and (orientation: portrait) {
+    #controls {
+        flex-wrap: wrap;
+    }
+    .dashboard-column {
+        flex: 1;
+        min-width: 120px;
+        padding: 5px;
+        gap: 8px;
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
     #app-title h1 {
         font-size: 2em;
     }
@@ -717,7 +727,7 @@ input[type="color"]::-webkit-color-swatch {
         gap: 5px;
         flex-wrap: wrap; 
     }
-   .dashboard-column {
+    .dashboard-column {
         padding: 5px;
         gap: 8px;
         flex: 1; 
