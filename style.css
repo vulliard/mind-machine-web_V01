@@ -18,15 +18,18 @@ body, html {
     max-width: 1600px;
     max-height: 900px;
     display: flex;
-    flex-direction: column;
+    /* Changed to row for desktop layout, will be column on mobile */
+    flex-direction: row; 
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; 
+    /* Let children handle their own overflow */
+    overflow: hidden; 
 }
 
 #main-content-wrapper {
-    flex: 1;
+    /* Let this part grow and shrink */
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -196,15 +199,20 @@ body, html {
 }
 
 #controls {
+    /* Desktop: fixed width, vertical scroll */
+    flex: 0 0 480px;
+    overflow-y: auto;
     font-family: 'Orbitron', sans-serif;
     background-image: url('ronce-de-noyer.jpg');
     background-size: cover;
     background-position: center;
-    border-top: 2px solid #c5a15a;
-    box-shadow: 0 -5px 25px rgba(255, 193, 7, 0.3);
+    border-top: 0; /* No top border in desktop mode */
+    border-left: 2px solid #c5a15a; /* Add left border */
+    box-shadow: -5px 0 25px rgba(255, 193, 7, 0.3);
     padding: 10px;
     display: flex;
-    justify-content: space-around;
+    /* We change justify-content for a better column layout */
+    justify-content: flex-start;
     align-items: flex-start;
     gap: 8px;
     color: #fff;
@@ -223,6 +231,8 @@ body, html {
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
+    /* Make columns take full width inside controls panel */
+    width: calc(50% - 12px); 
 }
 
 .dashboard-header {
@@ -714,17 +724,35 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-@media (max-width: 600px) and (orientation: portrait) {
-    #controls {
-        flex-wrap: wrap;
+/* --- MEDIA QUERIES FOR RESPONSIVE LAYOUT --- */
+
+/* Mobile layout: Controls below main content */
+@media (max-width: 850px) {
+    #app-container {
+        flex-direction: column;
+        overflow-y: auto;
     }
-    .dashboard-column {
+
+    #main-content-wrapper {
         flex: 1;
-        min-width: 120px;
-        padding: 5px;
-        gap: 8px;
+    }
+
+    #controls {
+        flex: 0 0 auto; /* Height based on content */
+        width: 100%;
+        overflow-y: visible;
+        border-left: 0; /* Remove side border */
+        border-top: 2px solid #c5a15a; /* Restore top border */
+        justify-content: space-around; /* Re-center columns */
+    }
+
+    .dashboard-column {
+        width: auto; /* Let columns size themselves */
+        min-width: 150px;
+        flex: 1; /* Allow columns to grow */
     }
 }
+
 
 @media (max-height: 600px) and (orientation: landscape) {
     #app-title h1 {
@@ -737,15 +765,13 @@ input[type="color"]::-webkit-color-swatch {
         height: 80px;
     }
     #controls {
-        padding: 5px;
-        gap: 5px;
+        /* In landscape mobile, we let the controls scroll horizontally */
         flex-wrap: nowrap; 
         overflow-x: auto;
+        justify-content: flex-start;
     }
     .dashboard-column {
-        padding: 5px;
-        gap: 8px;
-        flex: 0 0 auto; 
+        flex: 0 0 auto; /* Prevent growing in landscape scroll */
     }
     .control-group label {
         font-size: 0.7em;
