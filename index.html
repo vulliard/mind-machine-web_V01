@@ -35,12 +35,12 @@
             <div id="immersive-message" data-en="Caution: Close your eyes" data-fr="Attention : Fermez les yeux"></div>
 
             <div class="dashboard-column master-controls">
-                <button id="startButton" data-en="Start / Stop" data-fr="Démarrer / Arrêter"></button>
+                <button id="startButton" data-en="Start" data-fr="Démarrer"></button>
                 <button id="warningButton" class="attention-button" data-en="WARNING !" data-fr="ATTENTION !"></button>
             </div>
             
             <button id="immersive-exit-button">&times; <span data-en="Back" data-fr="Retour"></span></button>
-
+            
             <div class="dashboard-column session-controls">
                 <h3 class="dashboard-header" data-en="SESSIONS" data-fr="SESSIONS"></h3>
                 <div class="control-group">
@@ -60,13 +60,26 @@
                 <div class="control-group">
                     <label for="blinkRateSlider" data-en="Blink Freq (Hz)" data-fr="Fréq Clign (Hz)"></label>
                     <div class="slider-container">
-                        <input type="range" id="blinkRateSlider" min="1" max="20" value="8" step="0.1">
-                        <input type="number" id="blinkFrequencyInputDisplay" min="1" max="20" value="8" step="0.1" class="frequency-input">
+                        <input type="range" id="blinkRateSlider" min="0.2" max="20" value="8" step="0.1">
+                        <input type="number" id="blinkFrequencyInputDisplay" min="0.2" max="20" value="8" step="0.1" class="frequency-input">
                     </div>
                 </div>
                 <div class="control-group">
                     <label for="colorPicker" data-en="Circle Color" data-fr="Couleur Cercle"></label>
                     <input type="color" id="colorPicker" value="#FFFFFF">
+                </div>
+                <div class="control-group">
+                    <fieldset class="blink-mode">
+                        <legend data-en="Blink Mode" data-fr="Mode Clign."></legend>
+                        <div class="radio-switch">
+                            <input type="radio" id="mode-alternating" name="blinkMode" value="alternating" checked>
+                            <label for="mode-alternating" data-en="Alternating" data-fr="Alterné"></label>
+                            <input type="radio" id="mode-synchro" name="blinkMode" value="synchro">
+                            <label for="mode-synchro" data-en="Synchro" data-fr="Synchro"></label>
+                            <input type="radio" id="mode-crossed" name="blinkMode" value="crossed">
+                            <label for="mode-crossed" data-en="Crossed" data-fr="Croisé"></label>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
 
@@ -107,8 +120,8 @@
                         <div class="control-group">
                             <label for="carrierFrequencySlider" data-en="Carrier Freq (Hz)" data-fr="Fréq Porteuse (Hz)"></label>
                             <div class="slider-container">
-                                <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="110"> 
-                                <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="110" step="any" class="frequency-input"> 
+                                <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="110">
+                                <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="110" step="any" class="frequency-input">
                             </div>
                         </div>
                         <div class="control-group">
@@ -124,6 +137,10 @@
                                 </div>
                             </fieldset>
                         </div>
+                         <div class="control-group">
+                            <label for="alternophony-toggle-button" data-en="Alternophony" data-fr="Alternophonie"></label>
+                            <button id="alternophony-toggle-button"></button>
+                        </div>
                     </div>
                     <div class="audio-volume-controls">
                          <div class="control-group">
@@ -136,6 +153,12 @@
                             <label for="isochronenVolumeSlider" data-en="Isochronic Vol" data-fr="Volume Isochrone"></label>
                             <div class="slider-container">
                                 <input type="range" id="isochronenVolumeSlider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="alternophony-volume-slider" data-en="Alterno Volume" data-fr="Volume Alterno"></label>
+                            <div class="slider-container">
+                                <input type="range" id="alternophony-volume-slider" min="0" max="100" value="50">
                             </div>
                         </div>
                     </div>
@@ -213,7 +236,7 @@
                     <ul data-en="This panel allows you to synchronize the frequency of the binaural beats with the blink frequency, using a multiplier." data-fr="Ce panneau permet de synchroniser la fréquence des battements binauraux sur celle des clignotements, via un multiplicateur."></ul>
                 </li>
                  <li><strong data-en="Immersive Mode:" data-fr="Mode Immersif :"></strong>
- 		   <ul data-en="Click on the visual stimulation area (the black zone) to expand it and hide the controls for total immersion. Click the 'Back' button to return to normal view." data-fr="Cliquez sur la zone de stimulation visuelle (la zone noire) pour l'agrandir et masquer les contrôles pour une immersion totale. Cliquez sur le bouton 'Retour' pour revenir à la vue normale."></ul>
+                    <ul data-en="Click on the visual stimulation area (the black zone) to expand it and hide the controls for total immersion. Click the 'Back' button to return to normal view." data-fr="Cliquez sur la zone de stimulation visuelle (la zone noire) pour l'agrandir et masquer les contrôles pour une immersion totale. Cliquez sur le bouton 'Retour' pour revenir à la vue normale."></ul>
                 </li>
             </ul>
         </div>

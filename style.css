@@ -4,6 +4,9 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #222;
 }
 
@@ -19,7 +22,7 @@ body, html {
     background-color: black;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow-y: auto; 
 }
 
 #main-content-wrapper {
@@ -185,10 +188,9 @@ body, html {
 }
 
 .circle {
-    width: 200px;
+    height: 80%;
+    max-width: 80%;
     aspect-ratio: 1 / 1;
-    max-width: calc(100% - 40px);
-    max-height: calc(100% - 40px);
     border-radius: 50%;
     background-color: white;
 }
@@ -200,28 +202,23 @@ body, html {
     background-position: center;
     border-top: 2px solid #c5a15a;
     box-shadow: 0 -5px 25px rgba(255, 193, 7, 0.3);
-    padding: 15px;
+    padding: 10px;
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
     color: #fff;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     transition: all 0.4s ease-in-out;
- /*    flex-wrap: wrap; */
     flex-wrap: wrap; 
-
- /* AJOUTÉ : Permet le défilement horizontal si les colonnes dépassent */
-  /*  overflow-x: auto; */
-
 }
 
 .dashboard-column {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     align-items: center;
-    padding: 10px;
+    padding: 8px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -229,9 +226,9 @@ body, html {
 }
 
 .dashboard-header {
-    font-size: 1em;
+    font-size: 0.9em;
     color: #ffc107;
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0;
     text-transform: uppercase;
     letter-spacing: 2px;
     border-bottom: 1px solid #ffc107;
@@ -249,27 +246,30 @@ body, html {
 }
 
 .control-group label {
-    font-size: 0.8em;
-    margin-bottom: 8px;
+    font-size: 0.7em;
+    margin-bottom: 5px;
     text-transform: uppercase;
     text-align: center;
 }
 
+.blink-mode {
+    margin-top: 10px;
+}
+
 .master-controls {
     justify-content: center;
-    gap: 20px;
-    height: 100%;
+    gap: 15px;
     background: transparent;
     border: none;
     backdrop-filter: none;
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton) {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button) {
     background: linear-gradient(145deg, #4a3f2a, #2a2316);
     border: 1px solid #ffc107;
     color: #fff;
-    padding: 10px 20px;
-    font-size: 1em;
+    padding: 8px 15px;
+    font-size: 0.9em;
     font-family: inherit;
     border-radius: 5px;
     cursor: pointer;
@@ -278,7 +278,7 @@ body, html {
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):hover {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):hover {
     background: #ffc107;
     color: #000;
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 25px rgba(255, 193, 7, 0.5);
@@ -288,8 +288,8 @@ body, html {
     border-color: #dc3545 !important;
     background: #dc3545 !important;
     color: #fff !important;
-    padding: 10px 20px;
-    font-size: 1em;
+    padding: 8px 15px;
+    font-size: 0.9em;
     font-family: inherit;
     border-radius: 5px;
     cursor: pointer;
@@ -309,9 +309,9 @@ body, html {
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.8), 0 0 25px rgba(220, 53, 69, 0.5);
 }
 
-#wave-toggle-button, #crackle-toggle-button {
-    width: 60px;
-    height: 60px;
+#wave-toggle-button, #crackle-toggle-button, #alternophony-toggle-button {
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     padding: 0;
     border: 1px solid #ffc107;
@@ -332,6 +332,11 @@ body, html {
     background-size: 50%;
 }
 
+#alternophony-toggle-button {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M18 8L6 16M6 8l12 8'/%3e%3c/svg%3e");
+    background-size: 50%;
+}
+
 #wave-toggle-button.active {
     background-color: #007bff;
     border-color: #007bff;
@@ -344,6 +349,12 @@ body, html {
     box-shadow: 0 0 15px rgba(40, 167, 69, 0.8);
 }
 
+#alternophony-toggle-button.active {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.8);
+}
+
 .ambiance-grid {
     display: flex;
     justify-content: space-around;
@@ -354,13 +365,13 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
 .session-select {
     width: 90%;
-    padding: 8px;
-    font-size: 1em;
+    padding: 6px;
+    font-size: 0.9em;
     border-radius: 5px;
     border: 1px solid #ffc107;
     background-color: #333;
@@ -387,7 +398,7 @@ body, html {
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    width: 130px;
+    width: 110px;
     height: 5px;
     background: rgba(0,0,0,0.5);
     border-radius: 5px;
@@ -418,20 +429,20 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .frequency-input {
-    width: 55px;
+    width: 50px;
     background-color: rgba(0,0,0,0.7);
     border: 1px solid #c5a15a;
     color: #eee;
     border-radius: 4px;
     text-align: center;
     font-family: inherit;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 input[type="color"] {
     -webkit-appearance: none;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border: none;
     padding: 0;
     cursor: pointer;
@@ -460,10 +471,10 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .radio-switch label {
-    padding: 5px 10px;
+    padding: 4px 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 0.8em;
+    font-size: 0.75em;
     margin: 0;
     color: #fff;
 }
@@ -504,7 +515,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .audio-layout-grid {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     width: 100%;
 }
 
@@ -515,8 +526,9 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .audio-volume-controls {
-    padding-left: 20px;
+    padding-left: 15px;
     border-left: 1px solid rgba(255, 193, 7, 0.3);
+    flex: 1;
 }
 
 /* --- STYLES POUR LE MODE IMMERSIF --- */
@@ -702,7 +714,19 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-@media (orientation: landscape) and (max-height: 600px) {
+@media (max-width: 600px) and (orientation: portrait) {
+    #controls {
+        flex-wrap: wrap;
+    }
+    .dashboard-column {
+        flex: 1;
+        min-width: 120px;
+        padding: 5px;
+        gap: 8px;
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
     #app-title h1 {
         font-size: 2em;
     }
@@ -715,18 +739,18 @@ input[type="color"]::-webkit-color-swatch {
     #controls {
         padding: 5px;
         gap: 5px;
-        flex-wrap: wrap; 
+        flex-wrap: nowrap; 
+        overflow-x: auto;
     }
     .dashboard-column {
         padding: 5px;
         gap: 8px;
-        flex: 1; 
-        min-width: 150px;
+        flex: 0 0 auto; 
     }
     .control-group label {
         font-size: 0.7em;
     }
-    #wave-toggle-button, #crackle-toggle-button {
+    #wave-toggle-button, #crackle-toggle-button, #alternophony-toggle-button {
         width: 40px;
         height: 40px;
     }

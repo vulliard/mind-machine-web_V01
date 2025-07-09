@@ -1,8 +1,7 @@
 // Global variable declarations
 let isLeftLight = false;
-let intervalId = null;
+let visualTimeoutId = null; 
 let BLINK_FREQUENCY_HZ;
-let BLINK_INTERVAL_MS;
 let audioContext = null;
 let masterGainNode = null;
 let currentCarrierFrequency;
@@ -10,10 +9,12 @@ let currentBBMultiplier;
 let currentAudioMode;
 let currentBinauralVolume;
 let currentIsochronenVolume;
+let currentAlternophonyVolume;
 let currentLanguage = 'en';
 let currentSession = 'manual';
 let sessionTimeoutId = null;
 let rampIntervalId = null; 
+let currentBlinkMode = 'alternating';
 
 // Audio nodes
 let binauralOscillatorLeft = null;
@@ -33,6 +34,12 @@ let crackleIsPlaying = false;
 let crackleTimeoutId = null;
 let crackleNoiseBuffer = null;
 let crackleVolumeNode = null;
+let alternophonyIsPlaying = false;
+let alternophonyNoiseNode = null;
+let alternophonyEnvelopeGain = null;
+let alternophonyPannerNode = null;
+let alternophonyMasterGain = null;
+
 
 const SOUND_DURATION_S = 0.02;
 
@@ -68,15 +75,17 @@ let carrierFrequencySlider, carrierFrequencyInput;
 let blinkRateSlider, blinkFrequencyInput;
 let audioModeRadios;
 let bbMultiplierRadios;
-let binauralVolumeSlider, isochronenVolumeSlider;
+let binauralVolumeSlider, isochronenVolumeSlider, alternophonyVolumeSlider;
 let binauralBeatFrequencyDisplay;
-let warningButton, warningModal, closeButton, understoodButton;
-let helpButton, helpModal, helpCloseButton;
+let warningButton, warningModal, understoodButton;
+let helpButton, helpModal;
 let flagFr, flagEn;
 let appContainer, visualPanelsWrapper, immersiveExitButton, frequencyDisplayOverlay;
 let waveToggleButton, waveVolumeSlider;
 let crackleToggleButton, crackleVolumeSlider;
+let alternophonyToggleButton;
 let sessionSelect;
+let blinkModeRadios;
 
 
 // --- Global Functions ---
@@ -87,7 +96,7 @@ function setLanguage(lang) {
         const text = element.getAttribute(lang === 'en' ? 'data-en' : 'data-fr');
         if (!text) return;
         if (element.id === 'startButton') {
-            element.textContent = intervalId ? (lang === 'en' ? 'Stop' : 'Arrêter') : text;
+            element.textContent = visualTimeoutId ? (lang === 'en' ? 'Stop' : 'Arrêter') : text;
         } else if (element.tagName === 'LI' || element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'SPAN' || element.tagName === 'OPTION') {
             element.innerHTML = text;
         } else {
@@ -184,14 +193,82 @@ function stopIsochronicTones() {
     }
 }
 
+function startAlternophony() {
+    initAudioContext();
+    if (alternophonyIsPlaying) return; // Already playing
+    if (!audioContext) return;
+
+    alternophonyNoiseNode = audioContext.createBufferSource();
+    alternophonyNoiseNode.buffer = createNoiseBuffer(audioContext, 'white');
+    alternophonyNoiseNode.loop = true;
+
+    alternophonyEnvelopeGain = audioContext.createGain();
+    alternophonyEnvelopeGain.gain.setValueAtTime(0, audioContext.currentTime);
+
+    alternophonyPannerNode = audioContext.createStereoPanner();
+    
+    alternophonyMasterGain = audioContext.createGain();
+    alternophonyMasterGain.gain.value = currentAlternophonyVolume;
+
+    alternophonyNoiseNode.connect(alternophonyEnvelopeGain);
+    alternophonyEnvelopeGain.connect(alternophonyPannerNode);
+    alternophonyPannerNode.connect(alternophonyMasterGain);
+    alternophonyMasterGain.connect(masterGainNode);
+    
+    alternophonyNoiseNode.start();
+    alternophonyIsPlaying = true;
+    if (alternophonyToggleButton) alternophonyToggleButton.classList.add('active');
+}
+
+function stopAlternophony() {
+    if(alternophonyNoiseNode) {
+        alternophonyNoiseNode.stop();
+        alternophonyNoiseNode.disconnect();
+        alternophonyNoiseNode = null;
+    }
+    alternophonyIsPlaying = false;
+    if (alternophonyToggleButton) alternophonyToggleButton.classList.remove('active');
+}
+
 function playSound(panDirection) {
-    if (!isochronicOscillator || (currentAudioMode !== 'isochronen' && currentAudioMode !== 'both')) return;
-    isochronicPanner.pan.setValueAtTime(panDirection === 'left' ? -1 : 1, audioContext.currentTime);
-    isochronicMasterGain.gain.setValueAtTime(currentIsochronenVolume, audioContext.currentTime);
-    isochronicEnvelopeGain.gain.cancelScheduledValues(audioContext.currentTime);
-    isochronicEnvelopeGain.gain.setValueAtTime(0, audioContext.currentTime);
-    isochronicEnvelopeGain.gain.linearRampToValueAtTime(1.0, audioContext.currentTime + 0.01);
-    isochronicEnvelopeGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + SOUND_DURATION_S);
+    const now = audioContext.currentTime;
+    const soundDuration = 1 / BLINK_FREQUENCY_HZ;
+
+    if (isochronicOscillator && (currentAudioMode === 'isochronen' || currentAudioMode === 'both')) {
+        let panValue = 0;
+        if (panDirection === 'left') {
+            panValue = -1;
+        } else if (panDirection === 'right') {
+            panValue = 1;
+        }
+        
+        isochronicPanner.pan.setValueAtTime(panValue, now);
+        isochronicMasterGain.gain.setValueAtTime(currentIsochronenVolume, now);
+        isochronicEnvelopeGain.gain.cancelScheduledValues(now);
+        isochronicEnvelopeGain.gain.setValueAtTime(0, now);
+        isochronicEnvelopeGain.gain.linearRampToValueAtTime(1.0, now + 0.01);
+        isochronicEnvelopeGain.gain.linearRampToValueAtTime(0, now + soundDuration);
+    }
+    
+    if (alternophonyIsPlaying) {
+        // Handle the panning sweep
+        if (panDirection === 'center') {
+            alternophonyPannerNode.pan.setValueAtTime(0, now);
+        } else {
+            // Invert the sweep direction
+            const startPan = panDirection === 'left' ? -1 : 1; // Start on the SAME side as the flash
+            const endPan = panDirection === 'left' ? 1 : -1;   // End on the OPPOSITE side of the flash
+            
+            alternophonyPannerNode.pan.cancelScheduledValues(now);
+            alternophonyPannerNode.pan.setValueAtTime(startPan, now);
+            alternophonyPannerNode.pan.linearRampToValueAtTime(endPan, now + soundDuration);
+        }
+
+        // Create an envelope with increasing intensity throughout the sweep.
+        alternophonyEnvelopeGain.gain.cancelScheduledValues(now);
+        alternophonyEnvelopeGain.gain.setValueAtTime(0, now);
+        alternophonyEnvelopeGain.gain.linearRampToValueAtTime(1.0, now + soundDuration);
+    }
 }
 
 function createNoiseBuffer(audioCtx, type) {
@@ -327,13 +404,33 @@ function updateVisuals() {
     circle.style.backgroundColor = colorPicker.value;
     leftPanel.innerHTML = '';
     rightPanel.innerHTML = '';
-    if (isLeftLight) {
+
+    if (currentBlinkMode === 'alternating') {
+        if (isLeftLight) {
+            leftPanel.appendChild(circle);
+        } else {
+            rightPanel.appendChild(circle.cloneNode(true));
+        }
+        playSound(isLeftLight ? 'left' : 'right');
+        isLeftLight = !isLeftLight;
+    } else if (currentBlinkMode === 'synchro') {
         leftPanel.appendChild(circle);
-    } else {
-        rightPanel.appendChild(circle);
+        rightPanel.appendChild(circle.cloneNode(true));
+        playSound('center');
+        setTimeout(() => {
+            leftPanel.innerHTML = '';
+            rightPanel.innerHTML = '';
+        }, 50);
+    } else if (currentBlinkMode === 'crossed') {
+        if (isLeftLight) {
+            leftPanel.appendChild(circle);
+            playSound('right');
+        } else {
+            rightPanel.appendChild(circle.cloneNode(true));
+            playSound('left');
+        }
+        isLeftLight = !isLeftLight;
     }
-    playSound(isLeftLight ? 'left' : 'right');
-    isLeftLight = !isLeftLight;
 }
 
 function updateFrequencyDisplays() {
@@ -356,7 +453,6 @@ function validateAndSetFrequency(inputElement, sliderElement, isBlinkFreq) {
     }
     if (isBlinkFreq) {
         BLINK_FREQUENCY_HZ = newValue;
-        BLINK_INTERVAL_MS = 1000 / BLINK_FREQUENCY_HZ;
     } else {
         currentCarrierFrequency = newValue;
     }
@@ -370,7 +466,7 @@ function runSession(sessionKey, step = 0) {
 
     const sessionSteps = sessions[sessionKey];
     if (!sessionSteps || step >= sessionSteps.length) {
-        if(intervalId) startButton.click();
+        if(visualTimeoutId) startButton.click();
         return;
     }
 
@@ -414,14 +510,13 @@ document.addEventListener('DOMContentLoaded', () => {
     bbMultiplierRadios = document.querySelectorAll('input[name="bbMultiplier"]');
     binauralVolumeSlider = document.getElementById('binauralVolumeSlider');
     isochronenVolumeSlider = document.getElementById('isochronenVolumeSlider');
+    alternophonyVolumeSlider = document.getElementById('alternophony-volume-slider');
     binauralBeatFrequencyDisplay = document.getElementById('binauralBeatFrequencyDisplay');
     warningButton = document.getElementById('warningButton');
     warningModal = document.getElementById('warningModal');
-    closeButton = warningModal.querySelector('.close-button');
     understoodButton = document.getElementById('understoodButton');
     helpButton = document.getElementById('helpButton');
     helpModal = document.getElementById('helpModal');
-    helpCloseButton = helpModal.querySelector('.close-button');
     flagFr = document.getElementById('flag-fr');
     flagEn = document.getElementById('flag-en');
     visualPanelsWrapper = document.getElementById('visual-panels-wrapper');
@@ -430,21 +525,28 @@ document.addEventListener('DOMContentLoaded', () => {
     waveVolumeSlider = document.getElementById('wave-volume-slider');
     crackleToggleButton = document.getElementById('crackle-toggle-button');
     crackleVolumeSlider = document.getElementById('crackle-volume-slider');
+    alternophonyToggleButton = document.getElementById('alternophony-toggle-button');
     sessionSelect = document.getElementById('session-select');
     frequencyDisplayOverlay = document.getElementById('frequency-display-overlay');
+    blinkModeRadios = document.querySelectorAll('input[name="blinkMode"]');
+
+    
+    const warningCloseButton = warningModal.querySelector('.close-button');
+    const helpCloseButton = helpModal.querySelector('.close-button');
 
     // Variable Initialization
-    BLINK_FREQUENCY_HZ = parseFloat(blinkFrequencyInput.value);
-    BLINK_INTERVAL_MS = 1000 / BLINK_FREQUENCY_HZ;
+    BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
     currentCarrierFrequency = parseFloat(carrierFrequencyInput.value);
     currentBBMultiplier = parseFloat(document.querySelector('input[name="bbMultiplier"]:checked').value);
     currentAudioMode = document.querySelector('input[name="audioMode"]:checked').value;
     currentBinauralVolume = parseFloat(binauralVolumeSlider.value) / 100;
     currentIsochronenVolume = parseFloat(isochronenVolumeSlider.value) / 100;
+    currentAlternophonyVolume = parseFloat(alternophonyVolumeSlider.value) / 100;
+    currentBlinkMode = document.querySelector('input[name="blinkMode"]:checked').value;
 
     // Initial Setup
-    validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
-    validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
+    validateAndSetFrequency(carrierFrequencySlider, carrierFrequencyInput, false);
+    validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
     setLanguage(currentLanguage);
     if (warningModal) warningModal.style.display = 'flex';
 
@@ -452,11 +554,11 @@ document.addEventListener('DOMContentLoaded', () => {
     startButton.addEventListener('click', () => {
         initAudioContext();
         
-        if (intervalId) {
-            clearInterval(intervalId);
+        if (visualTimeoutId) {
+            clearTimeout(visualTimeoutId);
             clearTimeout(sessionTimeoutId);
             clearInterval(rampIntervalId);
-            intervalId = null;
+            visualTimeoutId = null;
             sessionTimeoutId = null;
             rampIntervalId = null;
             isLeftLight = false;
@@ -465,6 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rightPanel.innerHTML = '';
             stopBinauralBeats();
             stopIsochronicTones();
+            stopAlternophony();
             stopWaves();
             stopCrackles();
             
@@ -480,55 +583,60 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
             if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
+            if (currentAudioMode === 'alternophony') startAlternophony();
             
-            updateVisuals();
-            intervalId = setInterval(updateVisuals, 1000 / BLINK_FREQUENCY_HZ);
+            function blinkLoop() {
+                updateVisuals();
+                visualTimeoutId = setTimeout(blinkLoop, 1000 / BLINK_FREQUENCY_HZ);
+            }
             
-            if (currentSession !== 'manual') {
+            if (currentSession === 'manual') {
+                validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
+            } else {
                 sessionSelect.disabled = true;
                 blinkRateSlider.disabled = true;
                 blinkFrequencyInput.disabled = true;
                 runSession(currentSession);
             }
+            blinkLoop();
         }
         setLanguage(currentLanguage);
     });
 
     const handleFrequencyValidation = (isBlink) => {
         if (isBlink) {
-            validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = setInterval(updateVisuals, BLINK_INTERVAL_MS);
-            }
+            validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
         } else {
-            validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
+            validateAndSetFrequency(carrierFrequencySlider, carrierFrequencyInput, false);
         }
-        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) startBinauralBeats();
+        if (visualTimeoutId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) startBinauralBeats();
     };
 
     carrierFrequencySlider.addEventListener('input', () => { carrierFrequencyInput.value = carrierFrequencySlider.value; handleFrequencyValidation(false); });
     carrierFrequencyInput.addEventListener('change', () => handleFrequencyValidation(false));
     carrierFrequencyInput.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(false); e.target.blur(); } });
 
-    blinkRateSlider.addEventListener('input', () => { blinkFrequencyInput.value = blinkRateSlider.value; handleFrequencyValidation(true); });
+    blinkRateSlider.addEventListener('input', () => { blinkRateSlider.value = blinkRateSlider.value; handleFrequencyValidation(true); });
     blinkFrequencyInput.addEventListener('change', () => handleFrequencyValidation(true));
     blinkRateSlider.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(true); e.target.blur(); } });
 
     audioModeRadios.forEach(radio => radio.addEventListener('change', e => {
         currentAudioMode = e.target.value;
-        if (intervalId) {
+        if (visualTimeoutId) {
             stopBinauralBeats();
             stopIsochronicTones();
+            stopAlternophony();
+
             if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
             if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
+            if (currentAudioMode === 'alternophony') startAlternophony();
         }
     }));
 
     bbMultiplierRadios.forEach(radio => radio.addEventListener('change', e => {
         currentBBMultiplier = parseFloat(e.target.value);
         updateFrequencyDisplays();
-        if (intervalId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) startBinauralBeats();
+        if (visualTimeoutId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) startBinauralBeats();
     }));
 
     binauralVolumeSlider.addEventListener('input', e => {
@@ -538,6 +646,13 @@ document.addEventListener('DOMContentLoaded', () => {
     isochronenVolumeSlider.addEventListener('input', e => {
         currentIsochronenVolume = parseFloat(e.target.value) / 100;
     });
+    alternophonyVolumeSlider.addEventListener('input', (e) => {
+        currentAlternophonyVolume = parseFloat(e.target.value) / 100;
+        if (alternophonyMasterGain && audioContext) {
+            alternophonyMasterGain.gain.setTargetAtTime(currentAlternophonyVolume, audioContext.currentTime, 0.01);
+        }
+    });
+
 
     waveToggleButton.addEventListener('click', () => {
         if (waveIsPlaying) {
@@ -564,11 +679,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     crackleVolumeSlider.addEventListener('input', updateCrackleVolume);
 
+    alternophonyToggleButton.addEventListener('click', () => {
+        if (alternophonyIsPlaying) {
+            stopAlternophony();
+        } else {
+            startAlternophony();
+        }
+    });
+
     warningButton.addEventListener('click', () => {
         warningModal.style.display = 'flex';
-        if (intervalId) startButton.click();
+        if (visualTimeoutId) startButton.click();
     });
-    closeButton.addEventListener('click', () => warningModal.style.display = 'none');
+    warningCloseButton.addEventListener('click', () => warningModal.style.display = 'none');
     understoodButton.addEventListener('click', () => warningModal.style.display = 'none');
     
     helpButton.addEventListener('click', () => {
@@ -585,6 +708,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     flagFr.addEventListener('click', () => setLanguage('fr'));
     flagEn.addEventListener('click', () => setLanguage('en'));
+    
+    blinkModeRadios.forEach(radio => radio.addEventListener('change', e => {
+        currentBlinkMode = e.target.value;
+    }));
 
     // --- IMMERSIVE MODE LOGIC ---
     visualPanelsWrapper.addEventListener('click', (e) => {
