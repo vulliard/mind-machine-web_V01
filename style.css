@@ -188,20 +188,17 @@ body, html {
 }
 
 .circle {
-    /* Define height relative to the parent panel */
     height: 85%;
-    /* Use aspect-ratio to force width to equal height */
     aspect-ratio: 1 / 1;
-    /* Constrain the width for very narrow/tall panels */
     max-width: 85%;
     border-radius: 50%;
     background-color: white;
 }
 
 #controls {
-    flex-shrink: 0; 
-    max-height: 45%; 
-    overflow-y: auto; 
+    flex-shrink: 0;
+    max-height: 45%;
+    overflow-y: auto;
     font-family: 'Orbitron', sans-serif;
     background-image: url('ronce-de-noyer.jpg');
     background-size: cover;
@@ -745,8 +742,7 @@ input[type="color"]::-webkit-color-swatch {
     #controls {
         padding: 5px;
         gap: 5px;
-        flex-wrap: nowrap; 
-        overflow-x: auto;
+        /* Removed nowrap and overflow-x to fix landscape button visibility */
     }
     .dashboard-column {
         padding: 5px;
