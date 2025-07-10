@@ -188,11 +188,9 @@ body, html {
 }
 
 .circle {
-    height: 85%;
-    aspect-ratio: 1 / 1;
-    max-width: 85%;
     border-radius: 50%;
     background-color: white;
+    flex-shrink: 0;
 }
 
 #controls {
@@ -210,11 +208,11 @@ body, html {
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
+    flex-wrap: wrap;
     gap: 8px;
     color: #fff;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     transition: all 0.4s ease-in-out;
-    flex-wrap: wrap; 
 }
 
 .dashboard-column {
@@ -371,11 +369,16 @@ body, html {
 }
 
 .ambiance-grid {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
-    gap: 10px;
+    gap: 15px;
 }
+
+.ambiance-grid .ambiance-group:last-child {
+    grid-column: 1 / -1;
+}
+
 .ambiance-group {
     display: flex;
     flex-direction: column;
@@ -408,6 +411,24 @@ body, html {
     gap: 10px;
     width: 100%;
     justify-content: center;
+}
+
+.quick-set-button {
+    padding: 1px 4px;
+    font-size: 0.6em;
+    line-height: 1;
+    margin-left: 5px;
+    background: #4a3f2a;
+    border: 1px solid #c5a15a;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-set-button:hover {
+    background: #c5a15a;
+    color: #000;
 }
 
 input[type="range"] {
@@ -729,10 +750,7 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-
-/* --- Media Queries for Mobile --- */
 @media (max-width: 900px) {
-    /* Switch to robust grid layout for all smaller screens */
     #controls {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));

@@ -40,6 +40,10 @@ let alternophonyEnvelopeGain = null;
 let alternophonyPannerNode = null;
 let alternophonyMasterGain = null;
 
+// New audio element for music loops
+const musicLoopAudio = new Audio();
+musicLoopAudio.loop = true;
+
 
 const SOUND_DURATION_S = 0.02;
 
@@ -86,6 +90,8 @@ let crackleToggleButton, crackleVolumeSlider;
 let alternophonyToggleButton;
 let sessionSelect;
 let blinkModeRadios;
+let set432hzButton;
+let musicLoopSelect, musicLoopVolumeSlider;
 
 
 // --- Global Functions ---
@@ -115,9 +121,16 @@ function initAudioContext() {
             masterGainNode = audioContext.createGain();
             masterGainNode.connect(audioContext.destination);
             masterGainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            // The music loop is now independent and does NOT connect to the main context
         } catch (e) {
             alert('Your browser does not support the Web Audio API.');
         }
+    }
+}
+
+function synchronizeMusicLoop() {
+    if (musicLoopAudio && !musicLoopAudio.paused) {
+        musicLoopAudio.playbackRate = BLINK_FREQUENCY_HZ / 8.0;
     }
 }
 
@@ -195,7 +208,7 @@ function stopIsochronicTones() {
 
 function startAlternophony() {
     initAudioContext();
-    if (alternophonyIsPlaying) return; // Already playing
+    if (alternophonyIsPlaying) return;
     if (!audioContext) return;
 
     alternophonyNoiseNode = audioContext.createBufferSource();
@@ -251,20 +264,17 @@ function playSound(panDirection) {
     }
     
     if (alternophonyIsPlaying) {
-        // Handle the panning sweep
         if (panDirection === 'center') {
             alternophonyPannerNode.pan.setValueAtTime(0, now);
         } else {
-            // Invert the sweep direction
-            const startPan = panDirection === 'left' ? -1 : 1; // Start on the SAME side as the flash
-            const endPan = panDirection === 'left' ? 1 : -1;   // End on the OPPOSITE side of the flash
+            const startPan = panDirection === 'left' ? -1 : 1;
+            const endPan = panDirection === 'left' ? 1 : -1;
             
             alternophonyPannerNode.pan.cancelScheduledValues(now);
             alternophonyPannerNode.pan.setValueAtTime(startPan, now);
             alternophonyPannerNode.pan.linearRampToValueAtTime(endPan, now + soundDuration);
         }
 
-        // Create an envelope with increasing intensity throughout the sweep.
         alternophonyEnvelopeGain.gain.cancelScheduledValues(now);
         alternophonyEnvelopeGain.gain.setValueAtTime(0, now);
         alternophonyEnvelopeGain.gain.linearRampToValueAtTime(1.0, now + soundDuration);
@@ -397,25 +407,28 @@ function updateCrackleVolume() {
     }
 }
 
-
 function updateVisuals() {
-    const circle = document.createElement('div');
-    circle.className = 'circle';
-    circle.style.backgroundColor = colorPicker.value;
     leftPanel.innerHTML = '';
     rightPanel.innerHTML = '';
 
+    const createSizedCircle = (panel) => {
+        const circle = document.createElement('div');
+        circle.className = 'circle';
+        circle.style.backgroundColor = colorPicker.value;
+        const diameter = Math.min(panel.clientWidth, panel.clientHeight) * 0.85;
+        circle.style.width = `${diameter}px`;
+        circle.style.height = `${diameter}px`;
+        return circle;
+    };
+
     if (currentBlinkMode === 'alternating') {
-        if (isLeftLight) {
-            leftPanel.appendChild(circle);
-        } else {
-            rightPanel.appendChild(circle.cloneNode(true));
-        }
+        const targetPanel = isLeftLight ? leftPanel : rightPanel;
+        targetPanel.appendChild(createSizedCircle(targetPanel));
         playSound(isLeftLight ? 'left' : 'right');
         isLeftLight = !isLeftLight;
     } else if (currentBlinkMode === 'synchro') {
-        leftPanel.appendChild(circle);
-        rightPanel.appendChild(circle.cloneNode(true));
+        leftPanel.appendChild(createSizedCircle(leftPanel));
+        rightPanel.appendChild(createSizedCircle(rightPanel));
         playSound('center');
         setTimeout(() => {
             leftPanel.innerHTML = '';
@@ -423,10 +436,10 @@ function updateVisuals() {
         }, 50);
     } else if (currentBlinkMode === 'crossed') {
         if (isLeftLight) {
-            leftPanel.appendChild(circle);
+            leftPanel.appendChild(createSizedCircle(leftPanel));
             playSound('right');
         } else {
-            rightPanel.appendChild(circle.cloneNode(true));
+            rightPanel.appendChild(createSizedCircle(rightPanel));
             playSound('left');
         }
         isLeftLight = !isLeftLight;
@@ -440,6 +453,7 @@ function updateFrequencyDisplays() {
     blinkFrequencyInput.value = BLINK_FREQUENCY_HZ.toFixed(1);
     blinkRateSlider.value = BLINK_FREQUENCY_HZ;
     binauralBeatFrequencyDisplay.textContent = `BB: ${getSynchronizedBinauralBeatFrequency().toFixed(1)} Hz`;
+    synchronizeMusicLoop();
 }
 
 function validateAndSetFrequency(inputElement, sliderElement, isBlinkFreq) {
@@ -529,7 +543,9 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionSelect = document.getElementById('session-select');
     frequencyDisplayOverlay = document.getElementById('frequency-display-overlay');
     blinkModeRadios = document.querySelectorAll('input[name="blinkMode"]');
-
+    set432hzButton = document.getElementById('set432hzButton');
+    musicLoopSelect = document.getElementById('music-loop-select');
+    musicLoopVolumeSlider = document.getElementById('music-loop-volume-slider');
     
     const warningCloseButton = warningModal.querySelector('.close-button');
     const helpCloseButton = helpModal.querySelector('.close-button');
@@ -543,6 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIsochronenVolume = parseFloat(isochronenVolumeSlider.value) / 100;
     currentAlternophonyVolume = parseFloat(alternophonyVolumeSlider.value) / 100;
     currentBlinkMode = document.querySelector('input[name="blinkMode"]:checked').value;
+    musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
 
     // Initial Setup
     validateAndSetFrequency(carrierFrequencySlider, carrierFrequencyInput, false);
@@ -570,6 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stopAlternophony();
             stopWaves();
             stopCrackles();
+            if(musicLoopAudio) musicLoopAudio.pause();
             
             appContainer.classList.remove('stimulation-active');
 
@@ -584,6 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
             if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
             if (currentAudioMode === 'alternophony') startAlternophony();
+            if(musicLoopAudio.src) musicLoopAudio.play();
             
             function blinkLoop() {
                 updateVisuals();
@@ -615,6 +634,13 @@ document.addEventListener('DOMContentLoaded', () => {
     carrierFrequencySlider.addEventListener('input', () => { carrierFrequencyInput.value = carrierFrequencySlider.value; handleFrequencyValidation(false); });
     carrierFrequencyInput.addEventListener('change', () => handleFrequencyValidation(false));
     carrierFrequencyInput.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(false); e.target.blur(); } });
+
+    if (set432hzButton) {
+        set432hzButton.addEventListener('click', () => {
+            carrierFrequencyInput.value = 432;
+            carrierFrequencyInput.dispatchEvent(new Event('change'));
+        });
+    }
 
     blinkRateSlider.addEventListener('input', () => { blinkRateSlider.value = blinkRateSlider.value; handleFrequencyValidation(true); });
     blinkFrequencyInput.addEventListener('change', () => handleFrequencyValidation(true));
@@ -685,6 +711,22 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             startAlternophony();
         }
+    });
+    
+    musicLoopSelect.addEventListener('change', (e) => {
+        const track = e.target.value;
+        if (track === 'none') {
+            musicLoopAudio.pause();
+            musicLoopAudio.src = '';
+        } else {
+            musicLoopAudio.src = track;
+            synchronizeMusicLoop();
+            musicLoopAudio.play();
+        }
+    });
+
+    musicLoopVolumeSlider.addEventListener('input', (e) => {
+        musicLoopAudio.volume = parseFloat(e.target.value) / 100;
     });
 
     warningButton.addEventListener('click', () => {

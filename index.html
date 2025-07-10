@@ -37,7 +37,7 @@
             <div class="dashboard-column master-controls">
                 <button id="startButton" data-en="Start" data-fr="Démarrer"></button>
                 <button id="warningButton" class="attention-button" data-en="WARNING !" data-fr="ATTENTION !"></button>
-           </div>
+            </div>
             
             <button id="immersive-exit-button">&times; <span data-en="Back" data-fr="Retour"></span></button>
             
@@ -110,6 +110,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="ambiance-group">
+                        <div class="control-group">
+                            <label for="music-loop-select" data-en="Music Loop" data-fr="Boucle Musicale"></label>
+                            <select id="music-loop-select" class="session-select">
+                                <option value="none" data-en="None" data-fr="Aucune"></option>
+                                <option value="loop1.mp3" data-en="Loop 1" data-fr="Boucle 1"></option>
+                                <option value="loop2.mp3" data-en="Loop 2" data-fr="Boucle 2"></option>
+                                </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="music-loop-volume-slider" data-en="Music Volume" data-fr="Volume Musique"></label>
+                            <div class="slider-container">
+                                <input type="range" id="music-loop-volume-slider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -122,6 +138,7 @@
                             <div class="slider-container">
                                 <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="110">
                                 <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="110" step="any" class="frequency-input">
+                                <button id="set432hzButton" class="quick-set-button">432 Hz</button>
                             </div>
                         </div>
                         <div class="control-group">
