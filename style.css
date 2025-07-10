@@ -18,7 +18,6 @@ body, html {
     max-width: 1600px;
     max-height: 900px;
     display: flex;
-    /* Set layout to vertical column for all screen sizes */
     flex-direction: column; 
     background-color: black;
     position: relative;
@@ -189,17 +188,17 @@ body, html {
 }
 
 .circle {
-    height: 80%;
-    max-width: 80%;
+    height: 85%;
     aspect-ratio: 1 / 1;
+    max-width: 85%;
     border-radius: 50%;
     background-color: white;
 }
 
 #controls {
-    flex-shrink: 0; /* Prevent controls from being squished */
-    max-height: 45%; /* Limit height to 45% of the viewport */
-    overflow-y: auto; /* Allow controls to scroll internally */
+    flex-shrink: 0;
+    max-height: 45%;
+    overflow-y: auto;
     font-family: 'Orbitron', sans-serif;
     background-image: url('ronce-de-noyer.jpg');
     background-size: cover;
@@ -280,6 +279,8 @@ body, html {
     transition: all 0.3s ease;
     box-shadow: 0 0 5px rgba(255, 193, 7, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.2);
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+    /* This creates a new stacking context, fixing the visibility bug */
+    isolation: isolate;
 }
 
 #controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):hover {
@@ -743,13 +744,12 @@ input[type="color"]::-webkit-color-swatch {
     #controls {
         padding: 5px;
         gap: 5px;
-        flex-wrap: nowrap; 
-        overflow-x: auto;
     }
     .dashboard-column {
         padding: 5px;
         gap: 8px;
-        flex: 0 0 auto; 
+        flex: 1 1 auto;
+        min-width: 150px;
     }
     .control-group label {
         font-size: 0.7em;
