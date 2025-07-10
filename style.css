@@ -206,6 +206,7 @@ body, html {
     border-top: 2px solid #c5a15a;
     box-shadow: 0 -5px 25px rgba(255, 193, 7, 0.3);
     padding: 10px;
+    /* Base layout for Desktop: Flexbox */
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
@@ -307,14 +308,12 @@ body, html {
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
 }
 
-/* Animation for the Start button */
 @keyframes pulse-start {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
     70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
 }
 
-/* Apply animation to startButton only when stimulation is NOT active */
 #app-container:not(.stimulation-active) #startButton {
     animation: pulse-start 1.5s infinite;
 }
@@ -730,19 +729,15 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #0056b3;
 }
 
-@media (max-width: 600px) and (orientation: portrait) {
-    #controls {
-        flex-wrap: wrap;
-    }
-    .dashboard-column {
-        flex: 1;
-        min-width: 120px;
-        padding: 5px;
-        gap: 8px;
-    }
-}
 
-@media (max-height: 600px) and (orientation: landscape) {
+/* --- Media Queries for Mobile --- */
+@media (max-width: 900px) {
+    /* Switch to robust grid layout for all smaller screens */
+    #controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
     #app-title h1 {
         font-size: 2em;
     }
@@ -752,15 +747,10 @@ input[type="color"]::-webkit-color-swatch {
     #app-logo-left, #app-logo-right {
         height: 80px;
     }
-    #controls {
-        padding: 5px;
-        gap: 5px;
-    }
+
     .dashboard-column {
         padding: 5px;
         gap: 8px;
-        flex: 1 1 auto;
-        min-width: 150px;
     }
     .control-group label {
         font-size: 0.7em;
