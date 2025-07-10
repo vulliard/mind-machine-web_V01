@@ -226,6 +226,10 @@ body, html {
     backdrop-filter: blur(2px);
 }
 
+.ambiance-controls {
+    grid-column: 1 / -1;
+}
+
 .dashboard-header {
     font-size: 0.9em;
     color: #ffc107;
@@ -618,27 +622,24 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #app-container.immersive-mode #app-title {
-    flex: 0 0 60px;
-    padding: 0;
-}
-#app-container.immersive-mode #app-title > * {
     display: none;
-}
-#app-container.immersive-mode #app-title #title-text-container {
-    display: flex;
-}
-#app-container.immersive-mode #app-title h1 {
-    font-size: 2em;
-}
-#app-container.immersive-mode #app-title p {
-    font-size: 1em;
 }
 
 #app-container.immersive-mode #controls {
-    flex: 0 0 80px;
-    padding: 0 25px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    z-index: 100;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 50%, transparent);
+    border-top: none;
+    box-shadow: none;
+    display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 25px;
+    box-sizing: border-box;
 }
 
 #app-container.immersive-mode #controls > .dashboard-column:not(.master-controls) {
