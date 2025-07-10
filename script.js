@@ -40,7 +40,6 @@ let alternophonyEnvelopeGain = null;
 let alternophonyPannerNode = null;
 let alternophonyMasterGain = null;
 
-// New audio element for music loops
 const musicLoopAudio = new Audio();
 musicLoopAudio.loop = true;
 
@@ -49,27 +48,27 @@ const SOUND_DURATION_S = 0.02;
 
 const sessions = {
     deepRelaxation: [ 
-        { startFreq: 10, endFreq: 8, duration: 60 },
-        { startFreq: 8,  endFreq: 6, duration: 60 },
-        { startFreq: 6,  endFreq: 4, duration: 60 },
-        { startFreq: 4,  endFreq: 4, duration: 120 }
+        { startFreq: 10, endFreq: 8, duration: 60, blinkMode: 'alternating' },
+        { startFreq: 8,  endFreq: 6, duration: 60, blinkMode: 'synchro' },
+        { startFreq: 6,  endFreq: 4, duration: 60, blinkMode: 'alternating' },
+        { startFreq: 4,  endFreq: 4, duration: 120, blinkMode: 'crossed' }
     ],
     concentration: [ 
-        { startFreq: 8,  endFreq: 10, duration: 60 },
-        { startFreq: 10, endFreq: 12, duration: 60 },
-        { startFreq: 12, endFreq: 15, duration: 120 },
-        { startFreq: 15, endFreq: 15, duration: 60 }
+        { startFreq: 8,  endFreq: 10, duration: 60, blinkMode: 'synchro' },
+        { startFreq: 10, endFreq: 12, duration: 60, blinkMode: 'synchro' },
+        { startFreq: 12, endFreq: 15, duration: 120, blinkMode: 'alternating' },
+        { startFreq: 15, endFreq: 15, duration: 60, blinkMode: 'synchro' }
     ],
     sleep: [
-        { startFreq: 8, endFreq: 5, duration: 120 },
-        { startFreq: 5, endFreq: 3, duration: 120 },
-        { startFreq: 3, endFreq: 1, duration: 180 },
-        { startFreq: 1, endFreq: 1, duration: 180 }
+        { startFreq: 8, endFreq: 5, duration: 120, blinkMode: 'alternating' },
+        { startFreq: 5, endFreq: 3, duration: 120, blinkMode: 'crossed' },
+        { startFreq: 3, endFreq: 1, duration: 180, blinkMode: 'alternating' },
+        { startFreq: 1, endFreq: 1, duration: 180, blinkMode: 'synchro' }
     ],
     meditation: [
-        { startFreq: 10, endFreq: 7, duration: 120 },
-        { startFreq: 7,  endFreq: 5, duration: 180 },
-        { startFreq: 5,  endFreq: 5, duration: 300 }
+        { startFreq: 10, endFreq: 7, duration: 120, blinkMode: 'alternating' },
+        { startFreq: 7,  endFreq: 5, duration: 180, blinkMode: 'crossed' },
+        { startFreq: 5,  endFreq: 5, duration: 300, blinkMode: 'synchro' }
     ]
 };
 
@@ -92,6 +91,7 @@ let sessionSelect;
 let blinkModeRadios;
 let set432hzButton;
 let musicLoopSelect, musicLoopVolumeSlider;
+let sessionHelpButton, sessionGraphModal;
 
 
 // --- Global Functions ---
@@ -103,7 +103,7 @@ function setLanguage(lang) {
         if (!text) return;
         if (element.id === 'startButton') {
             element.textContent = visualTimeoutId ? (lang === 'en' ? 'Stop' : 'Arrêter') : text;
-        } else if (element.tagName === 'LI' || element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'SPAN' || element.tagName === 'OPTION') {
+        } else if (element.tagName === 'LI' || element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'H4' || element.tagName === 'SPAN' || element.tagName === 'OPTION') {
             element.innerHTML = text;
         } else {
             element.textContent = text;
@@ -121,7 +121,6 @@ function initAudioContext() {
             masterGainNode = audioContext.createGain();
             masterGainNode.connect(audioContext.destination);
             masterGainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-            // The music loop is now independent and does NOT connect to the main context
         } catch (e) {
             alert('Your browser does not support the Web Audio API.');
         }
@@ -485,7 +484,15 @@ function runSession(sessionKey, step = 0) {
     }
 
     const currentStep = sessionSteps[step];
-    const { startFreq, endFreq, duration } = currentStep;
+    const { startFreq, endFreq, duration, blinkMode } = currentStep;
+
+    if (blinkMode && blinkMode !== currentBlinkMode) {
+        currentBlinkMode = blinkMode;
+        const radioToSelect = document.querySelector(`input[name="blinkMode"][value="${blinkMode}"]`);
+        if (radioToSelect) {
+            radioToSelect.checked = true;
+        }
+    }
     
     let stepStartTime = Date.now();
     
@@ -506,6 +513,110 @@ function runSession(sessionKey, step = 0) {
     sessionTimeoutId = setTimeout(() => {
         runSession(sessionKey, step + 1);
     }, duration * 1000);
+}
+
+function createSessionGraph(sessionData, sessionName) {
+    const margin = { top: 20, right: 20, bottom: 60, left: 40 };
+    const width = 400 - margin.left - margin.right;
+    const height = 220 - margin.top - margin.bottom;
+
+    let totalDuration = 0;
+    let maxFreq = 0;
+    sessionData.forEach(d => {
+        totalDuration += d.duration;
+        maxFreq = Math.max(maxFreq, d.startFreq, d.endFreq);
+    });
+    maxFreq = Math.ceil(maxFreq / 5) * 5;
+
+    const xScale = (t) => (t / totalDuration) * width;
+    const yScale = (f) => height - (f / maxFreq) * height;
+
+    const getSymbol = (mode, x, y) => {
+        switch (mode) {
+            case 'synchro':
+                return `<rect class="graph-symbol" x="${x - 3}" y="${y - 3}" width="6" height="6"></rect>`;
+            case 'crossed':
+                return `<path class="graph-symbol cross" d="M ${x - 3} ${y - 3} L ${x + 3} ${y + 3} M ${x - 3} ${y + 3} L ${x + 3} ${y - 3}"></path>`;
+            case 'alternating':
+            default:
+                return `<circle class="graph-symbol" cx="${x}" cy="${y}" r="3.5"></circle>`;
+        }
+    };
+    
+    let pathPoints = [];
+    let symbolsHtml = '';
+    let currentTime = 0;
+
+    pathPoints.push({ x: xScale(0), y: yScale(sessionData[0].startFreq) });
+    
+    sessionData.forEach(segment => {
+        // Corrected logic: Draw symbol at the START of the segment
+        symbolsHtml += getSymbol(segment.blinkMode, xScale(currentTime), yScale(segment.startFreq));
+        
+        currentTime += segment.duration;
+        pathPoints.push({ x: xScale(currentTime), y: yScale(segment.endFreq) });
+    });
+
+    const pathData = "M " + pathPoints.map(p => `${p.x} ${p.y}`).join(" L ");
+
+    let yAxisHtml = '';
+    for(let i = 0; i <= maxFreq; i += 5) {
+        if (i > 0) yAxisHtml += `<line class="graph-gridline" x1="0" x2="${width}" y1="${yScale(i)}" y2="${yScale(i)}"></line>`;
+        yAxisHtml += `<text class="graph-text" x="-5" y="${yScale(i)}" dy="3" text-anchor="end">${i} Hz</text>`;
+    }
+
+    let xAxisHtml = '';
+    for(let i = 0; i <= totalDuration; i += 60) {
+        xAxisHtml += `<text class="graph-text" x="${xScale(i)}" y="${height + 15}" text-anchor="middle">${i}s</text>`;
+    }
+
+    const legendY = height + 45;
+    const legendHtml = `
+        <g class="graph-legend" transform="translate(0, ${legendY})">
+            ${getSymbol('alternating', 15, 0)} <text class="graph-text" x="25" y="0" dy="4">Alterné</text>
+            ${getSymbol('synchro', 110, 0)} <text class="graph-text" x="120" y="0" dy="4">Synchro</text>
+            ${getSymbol('crossed', 205, 0)} <text class="graph-text" x="215" y="0" dy="4">Croisé</text>
+        </g>
+    `;
+
+    const svg = `
+        <svg viewBox="0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}">
+            <g transform="translate(${margin.left},${margin.top})">
+                <line class="graph-axis" x1="0" y1="0" x2="0" y2="${height}"></line>
+                <line class="graph-axis" x1="0" y1="${height}" x2="${width}" y2="${height}"></line>
+                <text class="graph-axis-label" transform="rotate(-90)" y="-30" x="${-height/2}" text-anchor="middle">Fréquence (Hz)</text>
+                <text class="graph-axis-label" y="${height + 30}" x="${width/2}" text-anchor="middle">Temps (s)</text>
+                ${yAxisHtml}
+                ${xAxisHtml}
+                <path class="graph-path" d="${pathData}"></path>
+                ${symbolsHtml}
+                ${legendHtml}
+            </g>
+        </svg>
+    `;
+    
+    const wrapper = document.createElement('div');
+    wrapper.className = 'session-graph-wrapper';
+    const title = document.createElement('h4');
+    const optionName = document.querySelector(`#session-select option[value=${sessionName}]`);
+    title.setAttribute('data-en', optionName ? optionName.dataset.en : sessionName);
+    title.setAttribute('data-fr', optionName ? optionName.dataset.fr : sessionName);
+    wrapper.appendChild(title);
+    wrapper.innerHTML += svg;
+    return wrapper;
+}
+
+function generateAllSessionGraphs() {
+    const container = document.getElementById('session-graphs-container');
+    container.innerHTML = '';
+    
+    for (const key in sessions) {
+        if (Object.hasOwnProperty.call(sessions, key)) {
+            const graphElement = createSessionGraph(sessions[key], key);
+            container.appendChild(graphElement);
+        }
+    }
+    setLanguage(currentLanguage);
 }
 
 
@@ -546,9 +657,12 @@ document.addEventListener('DOMContentLoaded', () => {
     set432hzButton = document.getElementById('set432hzButton');
     musicLoopSelect = document.getElementById('music-loop-select');
     musicLoopVolumeSlider = document.getElementById('music-loop-volume-slider');
+    sessionHelpButton = document.getElementById('sessionHelpButton');
+    sessionGraphModal = document.getElementById('sessionGraphModal');
     
     const warningCloseButton = warningModal.querySelector('.close-button');
     const helpCloseButton = helpModal.querySelector('.close-button');
+    const sessionGraphModalCloseButton = sessionGraphModal.querySelector('.close-button');
 
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
@@ -594,6 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
             blinkRateSlider.disabled = false;
             blinkFrequencyInput.disabled = false;
             sessionSelect.disabled = false;
+            blinkModeRadios.forEach(radio => radio.disabled = false);
 
         } else {
             appContainer.classList.add('stimulation-active');
@@ -615,6 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionSelect.disabled = true;
                 blinkRateSlider.disabled = true;
                 blinkFrequencyInput.disabled = true;
+                blinkModeRadios.forEach(radio => radio.disabled = true);
                 runSession(currentSession);
             }
             blinkLoop();
@@ -719,6 +835,7 @@ document.addEventListener('DOMContentLoaded', () => {
             musicLoopAudio.pause();
             musicLoopAudio.src = '';
         } else {
+            initAudioContext();
             musicLoopAudio.src = track;
             synchronizeMusicLoop();
             musicLoopAudio.play();
@@ -743,9 +860,18 @@ document.addEventListener('DOMContentLoaded', () => {
         helpModal.style.display = 'none';
     });
     
+    sessionHelpButton.addEventListener('click', () => {
+        generateAllSessionGraphs();
+        sessionGraphModal.style.display = 'flex';
+    });
+    sessionGraphModalCloseButton.addEventListener('click', () => {
+        sessionGraphModal.style.display = 'none';
+    });
+
     window.addEventListener('click', e => { 
         if (e.target == warningModal) warningModal.style.display = 'none';
         if (e.target == helpModal) helpModal.style.display = 'none';
+        if (e.target == sessionGraphModal) sessionGraphModal.style.display = 'none';
     });
 
     flagFr.addEventListener('click', () => setLanguage('fr'));

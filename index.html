@@ -53,6 +53,9 @@
                         <option value="meditation" data-en="Meditation" data-fr="Méditation"></option>
                     </select>
                 </div>
+                <div class="control-group">
+                    <button id="sessionHelpButton" class="info-button" title="Voir les graphiques des sessions">?</button>
+                </div>
             </div>
 
             <div class="dashboard-column visual-controls">
@@ -259,6 +262,15 @@
                     <ul data-en="Click on the visual stimulation area (the black zone) to expand it and hide the controls for total immersion. Click the 'Back' button to return to normal view." data-fr="Cliquez sur la zone de stimulation visuelle (la zone noire) pour l'agrandir et masquer les contrôles pour une immersion totale. Cliquez sur le bouton 'Retour' pour revenir à la vue normale."></ul>
                 </li>
             </ul>
+        </div>
+    </div>
+
+    <div id="sessionGraphModal" class="modal">
+        <div class="modal-content graph-modal-content">
+            <span class="close-button">&times;</span>
+            <h2 data-en="Session Graphs" data-fr="Graphiques des Sessions"></h2>
+            <div id="session-graphs-container">
+                </div>
         </div>
     </div>
 

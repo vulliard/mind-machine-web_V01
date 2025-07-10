@@ -204,7 +204,6 @@ body, html {
     border-top: 2px solid #c5a15a;
     box-shadow: 0 -5px 25px rgba(255, 193, 7, 0.3);
     padding: 10px;
-    /* Base layout for Desktop: Flexbox */
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
@@ -254,6 +253,29 @@ body, html {
     text-align: center;
 }
 
+.info-button {
+    background: transparent;
+    border: 1px solid #c5a15a;
+    color: #c5a15a;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.info-button:hover {
+    background: #c5a15a;
+    color: #333;
+}
+
+
 .blink-mode {
     margin-top: 10px;
 }
@@ -266,7 +288,7 @@ body, html {
     backdrop-filter: none;
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button) {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button) {
     background: linear-gradient(145deg, #4a3f2a, #2a2316);
     border: 1px solid #ffc107;
     color: #fff;
@@ -281,7 +303,7 @@ body, html {
     isolation: isolate;
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):hover {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):hover {
     background: #ffc107;
     color: #000;
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 25px rgba(255, 193, 7, 0.5);
@@ -655,7 +677,6 @@ input[type="color"]::-webkit-color-swatch {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
     justify-content: center;
     align-items: center;
     backdrop-filter: blur(5px);
@@ -674,6 +695,11 @@ input[type="color"]::-webkit-color-swatch {
     font-family: sans-serif;
     text-align: left;
 }
+
+.graph-modal-content {
+    max-width: 90vw;
+}
+
 .modal-content h2 {
     color: #dc3545;
     text-align: center;
@@ -682,6 +708,10 @@ input[type="color"]::-webkit-color-swatch {
     border-bottom: 1px solid #dc3545;
     padding-bottom: 10px;
     margin-bottom: 20px;
+}
+#sessionGraphModal h2 {
+    color: #ffc107;
+    border-bottom-color: #ffc107;
 }
 .modal-content p {
     font-size: 1.1em;
@@ -749,6 +779,72 @@ input[type="color"]::-webkit-color-swatch {
 #understoodButton:hover {
     background-color: #0056b3;
 }
+
+/* --- Styles for Session Graphs --- */
+#session-graphs-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+.session-graph-wrapper {
+    border: 1px solid #555;
+    padding: 10px;
+    border-radius: 5px;
+    background: rgba(0,0,0,0.2);
+}
+.session-graph-wrapper h4 {
+    text-align: center;
+    margin: 0 0 10px 0;
+    color: #ffc107;
+    font-size: 1.2em;
+    font-family: 'Orbitron', sans-serif;
+}
+.session-graph-wrapper svg {
+    width: 100%;
+    height: auto;
+}
+.graph-axis, .graph-gridline {
+    stroke: #666;
+    stroke-width: 1;
+}
+.graph-gridline {
+    stroke-dasharray: 2,3;
+}
+.graph-path {
+    stroke: #ffc107;
+    stroke-width: 2.5;
+    fill: none;
+}
+.graph-symbol {
+    stroke: #ffc107;
+    stroke-width: 1.5;
+    fill: #333;
+}
+.graph-symbol.cross {
+    fill: none;
+}
+.graph-text {
+    fill: #ccc;
+    font-family: sans-serif;
+    font-size: 12px;
+}
+.graph-axis-label {
+    font-size: 14px;
+    fill: #fff;
+    font-style: italic;
+}
+.graph-legend {
+    font-size: 12px;
+}
+
+
+@media (min-width: 1000px) {
+    #session-graphs-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 
 @media (max-width: 900px) {
     #controls {
