@@ -742,12 +742,13 @@ input[type="color"]::-webkit-color-swatch {
     #controls {
         padding: 5px;
         gap: 5px;
-        /* Removed nowrap and overflow-x to fix landscape button visibility */
     }
     .dashboard-column {
         padding: 5px;
         gap: 8px;
-        flex: 0 0 auto; 
+        /* Unifying behavior for small screens to be flexible and wrap */
+        flex: 1 1 auto;
+        min-width: 150px;
     }
     .control-group label {
         font-size: 0.7em;
