@@ -18,7 +18,7 @@ body, html {
     max-width: 1600px;
     max-height: 900px;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     background-color: black;
     position: relative;
     box-sizing: border-box;
@@ -188,31 +188,26 @@ body, html {
 }
 
 .circle {
-    /* Define height relative to the parent panel */
-    height: 85%;
-    /* Use aspect-ratio to force width to equal height */
+    width: 200px;
     aspect-ratio: 1 / 1;
-    /* Constrain the width for very narrow/tall panels */
-    max-width: 85%;
+    max-width: calc(100% - 40px);
+    max-height: calc(100% - 40px);
     border-radius: 50%;
     background-color: white;
 }
 
 #controls {
-    flex-shrink: 0; 
-    max-height: 45%; 
-    overflow-y: auto; 
     font-family: 'Orbitron', sans-serif;
     background-image: url('ronce-de-noyer.jpg');
     background-size: cover;
     background-position: center;
     border-top: 2px solid #c5a15a;
     box-shadow: 0 -5px 25px rgba(255, 193, 7, 0.3);
-    padding: 10px;
+    padding: 15px;
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
-    gap: 8px;
+    gap: 10px;
     color: #fff;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     transition: all 0.4s ease-in-out;
@@ -222,9 +217,9 @@ body, html {
 .dashboard-column {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
-    padding: 8px;
+    padding: 10px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -232,9 +227,9 @@ body, html {
 }
 
 .dashboard-header {
-    font-size: 0.9em;
+    font-size: 1em;
     color: #ffc107;
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     text-transform: uppercase;
     letter-spacing: 2px;
     border-bottom: 1px solid #ffc107;
@@ -252,19 +247,19 @@ body, html {
 }
 
 .control-group label {
-    font-size: 0.7em;
-    margin-bottom: 5px;
+    font-size: 0.8em;
+    margin-bottom: 8px;
     text-transform: uppercase;
     text-align: center;
 }
 
 .blink-mode {
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .master-controls {
     justify-content: center;
-    gap: 15px;
+    gap: 20px;
     background: transparent;
     border: none;
     backdrop-filter: none;
@@ -274,8 +269,8 @@ body, html {
     background: linear-gradient(145deg, #4a3f2a, #2a2316);
     border: 1px solid #ffc107;
     color: #fff;
-    padding: 8px 15px;
-    font-size: 0.9em;
+    padding: 10px 20px;
+    font-size: 1em;
     font-family: inherit;
     border-radius: 5px;
     cursor: pointer;
@@ -294,8 +289,8 @@ body, html {
     border-color: #dc3545 !important;
     background: #dc3545 !important;
     color: #fff !important;
-    padding: 8px 15px;
-    font-size: 0.9em;
+    padding: 10px 20px;
+    font-size: 1em;
     font-family: inherit;
     border-radius: 5px;
     cursor: pointer;
@@ -316,8 +311,8 @@ body, html {
 }
 
 #wave-toggle-button, #crackle-toggle-button, #alternophony-toggle-button {
-    width: 45px;
-    height: 45px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     padding: 0;
     border: 1px solid #ffc107;
@@ -371,13 +366,13 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .session-select {
     width: 90%;
-    padding: 6px;
-    font-size: 0.9em;
+    padding: 8px;
+    font-size: 1em;
     border-radius: 5px;
     border: 1px solid #ffc107;
     background-color: #333;
@@ -404,7 +399,7 @@ body, html {
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    width: 110px;
+    width: 130px;
     height: 5px;
     background: rgba(0,0,0,0.5);
     border-radius: 5px;
@@ -435,20 +430,20 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .frequency-input {
-    width: 50px;
+    width: 55px;
     background-color: rgba(0,0,0,0.7);
     border: 1px solid #c5a15a;
     color: #eee;
     border-radius: 4px;
     text-align: center;
     font-family: inherit;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 input[type="color"] {
     -webkit-appearance: none;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border: none;
     padding: 0;
     cursor: pointer;
@@ -477,10 +472,10 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .radio-switch label {
-    padding: 4px 8px;
+    padding: 5px 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 0.75em;
+    font-size: 0.8em;
     margin: 0;
     color: #fff;
 }
@@ -521,7 +516,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .audio-layout-grid {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     width: 100%;
 }
 
@@ -532,7 +527,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .audio-volume-controls {
-    padding-left: 15px;
+    padding-left: 20px;
     border-left: 1px solid rgba(255, 193, 7, 0.3);
     flex: 1;
 }
