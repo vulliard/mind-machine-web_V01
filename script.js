@@ -92,6 +92,7 @@ let blinkModeRadios;
 let set432hzButton;
 let musicLoopSelect, musicLoopVolumeSlider;
 let sessionHelpButton, sessionGraphModal;
+let aboutButton, aboutModal;
 
 
 // --- Global Functions ---
@@ -103,7 +104,7 @@ function setLanguage(lang) {
         if (!text) return;
         if (element.id === 'startButton') {
             element.textContent = visualTimeoutId ? (lang === 'en' ? 'Stop' : 'Arrêter') : text;
-        } else if (element.tagName === 'LI' || element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'H4' || element.tagName === 'SPAN' || element.tagName === 'OPTION') {
+        } else if (element.tagName === 'LI' || element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'H3' || element.tagName === 'H4' || element.tagName === 'SPAN' || element.tagName === 'OPTION') {
             element.innerHTML = text;
         } else {
             element.textContent = text;
@@ -550,7 +551,6 @@ function createSessionGraph(sessionData, sessionName) {
     pathPoints.push({ x: xScale(0), y: yScale(sessionData[0].startFreq) });
     
     sessionData.forEach(segment => {
-        // Corrected logic: Draw symbol at the START of the segment
         symbolsHtml += getSymbol(segment.blinkMode, xScale(currentTime), yScale(segment.startFreq));
         
         currentTime += segment.duration;
@@ -659,10 +659,13 @@ document.addEventListener('DOMContentLoaded', () => {
     musicLoopVolumeSlider = document.getElementById('music-loop-volume-slider');
     sessionHelpButton = document.getElementById('sessionHelpButton');
     sessionGraphModal = document.getElementById('sessionGraphModal');
+    aboutButton = document.getElementById('aboutButton');
+    aboutModal = document.getElementById('aboutModal');
     
     const warningCloseButton = warningModal.querySelector('.close-button');
     const helpCloseButton = helpModal.querySelector('.close-button');
     const sessionGraphModalCloseButton = sessionGraphModal.querySelector('.close-button');
+    const aboutModalCloseButton = aboutModal.querySelector('.close-button');
 
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
@@ -868,10 +871,18 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionGraphModal.style.display = 'none';
     });
 
+    aboutButton.addEventListener('click', () => {
+        aboutModal.style.display = 'flex';
+    });
+    aboutModalCloseButton.addEventListener('click', () => {
+        aboutModal.style.display = 'none';
+    });
+
     window.addEventListener('click', e => { 
         if (e.target == warningModal) warningModal.style.display = 'none';
         if (e.target == helpModal) helpModal.style.display = 'none';
         if (e.target == sessionGraphModal) sessionGraphModal.style.display = 'none';
+        if (e.target == aboutModal) aboutModal.style.display = 'none';
     });
 
     flagFr.addEventListener('click', () => setLanguage('fr'));
