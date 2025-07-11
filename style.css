@@ -290,7 +290,7 @@ body, html {
     align-items: center;
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button) {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):not(#startButton) {
     background: linear-gradient(145deg, #4a3f2a, #2a2316);
     border: 1px solid #ffc107;
     color: #fff;
@@ -305,10 +305,35 @@ body, html {
     isolation: isolate;
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):hover {
+#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):not(#startButton):hover {
     background: #ffc107;
     color: #000;
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 25px rgba(255, 193, 7, 0.5);
+}
+
+#startButton {
+    background: linear-gradient(145deg, #28a745, #1e7e34);
+    border: 1px solid #155724;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    font-weight: bold;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+                inset 0 -1px 1px rgba(0, 0, 0, 0.2),
+                0 2px 5px rgba(0,0,0,0.5);
+    padding: 8px 15px;
+    font-size: 0.9em;
+    font-family: inherit;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#startButton:hover {
+    background: linear-gradient(145deg, #2dbd4e, #218838);
+}
+#startButton:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4);
 }
 
 .attention-button {
@@ -331,9 +356,9 @@ body, html {
 }
 
 @keyframes pulse-start {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+    0% { transform: scale(1); box-shadow: 0 0 5px rgba(40, 167, 69, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 15px 10px rgba(40, 167, 69, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 5px rgba(40, 167, 69, 0.7); }
 }
 
 #app-container:not(.stimulation-active) #startButton {
