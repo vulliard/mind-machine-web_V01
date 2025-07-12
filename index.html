@@ -48,11 +48,14 @@
                     <label for="session-select" data-en="Select a session" data-fr="Choisir une session"></label>
                     <select id="session-select" class="session-select">
                         <option value="manual" data-en="Manual Mode" data-fr="Mode Manuel"></option>
+                        <option value="eeg" data-en="EEG Feedback" data-fr="Retour EEG"></option>
                         <option value="deepRelaxation" data-en="Deep Relaxation" data-fr="Relaxation Profonde"></option>
                         <option value="concentration" data-en="Concentration" data-fr="Concentration"></option>
                         <option value="sleep" data-en="Sleep" data-fr="Sommeil"></option>
                         <option value="meditation" data-en="Meditation" data-fr="Méditation"></option>
-                    </select>
+                        <option value="fastRelaxation" data-en="Fast Relaxation" data-fr="Relaxation Rapide"></option>
+                        <option value="fastMeditation" data-en="Fast Meditation" data-fr="Méditation Rapide"></option>
+                  </select>
                 </div>
                 <div class="control-group">
                     <button id="sessionHelpButton" class="info-button" title="Voir les graphiques des sessions">?</button>
@@ -121,7 +124,13 @@
                                 <option value="none" data-en="None" data-fr="Aucune"></option>
                                 <option value="loop1.mp3" data-en="Loop 1" data-fr="Boucle 1"></option>
                                 <option value="loop2.mp3" data-en="Loop 2" data-fr="Boucle 2"></option>
-                                </select>
+                                <option value="new-age1.mp3" data-en="New-Age 1" data-fr="New-Age 1"></option>
+                                <option value="new-age2.mp3" data-en="New-Age 2" data-fr="New-Age 2"></option>
+                                <option value="new-age3.mp3" data-en="New-Age 3" data-fr="New-Age 3"></option>
+                                <option value="new-age4.mp3" data-en="New-Age 4." data-fr="New-Age 4."></option>
+                                <option value="ambiant1.mp3" data-en="Ambiant 1" data-fr="Ambiant 1"></option>
+                                <option value="ambiant2.mp3" data-en="Ambiant 2" data-fr="Ambiant 2"></option>
+                              </select>
                         </div>
                         <div class="control-group music-volume-control">
                             <label for="music-loop-volume-slider" data-en="Music Volume" data-fr="Volume Musique"></label>
@@ -243,6 +252,9 @@
             <ul>
                 <li><strong data-en="Sessions:" data-fr="Sessions :"></strong>
                     <ul data-en="Choose a pre-programmed session (Relaxation, Concentration, etc.). The blink frequency will evolve automatically. Manual controls are disabled during a session." data-fr="Choisissez une session pré-programmée (Relaxation, Concentration, etc.). La fréquence des clignotements évoluera automatiquement. Les contrôles manuels sont désactivés pendant une session."></ul>
+                </li>
+                <li><strong data-en="EEG Feedback:" data-fr="Retour EEG :"></strong>
+                    <ul data-en="This mode works with an 'Emotiv' EEG headset and requires a specific technical setup. Contact us for more information at phvulliard@gmail.com" data-fr="Ce mode fonctionne avec un casque EEG 'Emotiv' et nécessite une installation technique spécifique. Contactez-nous pour plus d'informations à phvulliard@gmail.com"></ul>
                 </li>
                 <li><strong data-en="Visuals:" data-fr="Visuels :"></strong>
                     <ul data-en="In Manual Mode, adjust the frequency of the light flashes and their color." data-fr="En Mode Manuel, ajustez la fréquence des clignotements lumineux ainsi que leur couleur."></ul>

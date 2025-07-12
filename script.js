@@ -16,6 +16,8 @@ let sessionTimeoutId = null;
 let rampIntervalId = null; 
 let currentBlinkMode = 'alternating';
 
+let eegSocket = null;
+
 // Audio nodes
 let binauralOscillatorLeft = null;
 let binauralOscillatorRight = null;
@@ -48,10 +50,10 @@ const SOUND_DURATION_S = 0.02;
 
 const sessions = {
     deepRelaxation: [ 
-        { startFreq: 10, endFreq: 8, duration: 60, blinkMode: 'alternating' },
-        { startFreq: 8,  endFreq: 6, duration: 60, blinkMode: 'synchro' },
-        { startFreq: 6,  endFreq: 4, duration: 60, blinkMode: 'alternating' },
-        { startFreq: 4,  endFreq: 4, duration: 120, blinkMode: 'crossed' }
+        { startFreq: 10, endFreq: 8, duration: 120, blinkMode: 'alternating' },
+        { startFreq: 8,  endFreq: 6, duration: 120, blinkMode: 'synchro' },
+        { startFreq: 6,  endFreq: 4, duration: 120, blinkMode: 'alternating' },
+        { startFreq: 4,  endFreq: 4, duration: 240, blinkMode: 'crossed' }
     ],
     concentration: [ 
         { startFreq: 8,  endFreq: 10, duration: 60, blinkMode: 'synchro' },
@@ -66,10 +68,22 @@ const sessions = {
         { startFreq: 1, endFreq: 1, duration: 180, blinkMode: 'synchro' }
     ],
     meditation: [
+        { startFreq: 10, endFreq: 7, duration: 240, blinkMode: 'alternating' },
+        { startFreq: 7,  endFreq: 5, duration: 360, blinkMode: 'crossed' },
+        { startFreq: 5,  endFreq: 5, duration: 600, blinkMode: 'synchro' }
+    ],
+    fastRelaxation: [ 
+        { startFreq: 10, endFreq: 8, duration: 60, blinkMode: 'alternating' },
+        { startFreq: 8,  endFreq: 6, duration: 60, blinkMode: 'synchro' },
+        { startFreq: 6,  endFreq: 4, duration: 60, blinkMode: 'alternating' },
+        { startFreq: 4,  endFreq: 4, duration: 120, blinkMode: 'crossed' }
+    ],
+    fastMeditation: [
         { startFreq: 10, endFreq: 7, duration: 120, blinkMode: 'alternating' },
         { startFreq: 7,  endFreq: 5, duration: 180, blinkMode: 'crossed' },
         { startFreq: 5,  endFreq: 5, duration: 300, blinkMode: 'synchro' }
-    ]
+    ],
+    eeg: []
 };
 
 // --- Global DOM References ---
@@ -133,6 +147,111 @@ function synchronizeMusicLoop() {
         musicLoopAudio.playbackRate = BLINK_FREQUENCY_HZ / 8.0;
     }
 }
+
+// --- Functions for EEG Feedback ---
+
+function handleEEGData(jsonString) {
+    try {
+        const data = JSON.parse(jsonString);
+        const minVol = 0.25;
+        const volRange = 0.50; // (0.75 - 0.25)
+
+        // -- 1. Blink Frequency (Attention) --
+        const attValue = parseFloat(data.att);
+        if (!isNaN(attValue) && attValue >= 0 && attValue <= 1) {
+            const minFreq = 1;
+            const maxFreq = 16;
+            BLINK_FREQUENCY_HZ = minFreq + (attValue * (maxFreq - minFreq));
+        }
+
+        // -- 2. Carrier Frequency (Engagement) --
+        const engValue = parseFloat(data.eng);
+        if (!isNaN(engValue) && engValue >= 0 && engValue <= 1) {
+            const minCarrier = 40;
+            const maxCarrier = 440;
+            currentCarrierFrequency = minCarrier + (engValue * (maxCarrier - minCarrier));
+            carrierFrequencyInput.value = currentCarrierFrequency.toFixed(0);
+            carrierFrequencySlider.value = currentCarrierFrequency;
+            if (visualTimeoutId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
+                startBinauralBeats();
+            }
+        }
+
+        // -- 3. Binaural Volume (Interest) --
+        const intValue = parseFloat(data.int);
+        if (!isNaN(intValue) && intValue >= 0 && intValue <= 1) {
+            currentBinauralVolume = minVol + (intValue * volRange); // Map to 0.25-0.75
+            binauralVolumeSlider.value = currentBinauralVolume * 100;
+             if (binauralMasterGain && audioContext) {
+                binauralMasterGain.gain.setTargetAtTime(currentBinauralVolume, audioContext.currentTime, 0.01);
+            }
+        }
+
+        // -- 4. Blink Mode (Excitement) --
+        const excValue = parseFloat(data.exc);
+        if (!isNaN(excValue) && excValue >= 0 && excValue <= 1) {
+            let newMode;
+            if (excValue < 0.33) newMode = 'alternating';
+            else if (excValue < 0.66) newMode = 'synchro';
+            else newMode = 'crossed';
+            if (newMode !== currentBlinkMode) {
+                currentBlinkMode = newMode;
+                document.querySelector(`input[name="blinkMode"][value="${newMode}"]`).checked = true;
+            }
+        }
+        
+        // -- 5. Isochronic Volume (Relaxation) --
+        const relValue = parseFloat(data.rel);
+        if (!isNaN(relValue) && relValue >= 0 && relValue <= 1) {
+            currentIsochronenVolume = minVol + (relValue * volRange); // Map to 0.25-0.75
+            isochronenVolumeSlider.value = currentIsochronenVolume * 100;
+        }
+
+        // -- 6. Alternophony Volume (Stress) --
+        const strValue = parseFloat(data.str);
+        if (!isNaN(strValue) && strValue >= 0 && strValue <= 1) {
+            currentAlternophonyVolume = minVol + (strValue * volRange); // Map to 0.25-0.75
+            alternophonyVolumeSlider.value = currentAlternophonyVolume * 100;
+            if (alternophonyMasterGain && audioContext) {
+                alternophonyMasterGain.gain.setTargetAtTime(currentAlternophonyVolume, audioContext.currentTime, 0.01);
+            }
+        }
+
+        updateFrequencyDisplays();
+
+    } catch (e) {
+        console.error("Erreur lors du traitement des données EEG JSON:", e);
+    }
+}
+
+function connectEEG() {
+    if (eegSocket) return; 
+    eegSocket = new WebSocket('ws://localhost:8081');
+    eegSocket.onopen = () => {
+        console.log("Connecté au pont EEG !");
+        frequencyDisplayOverlay.textContent = "EEG";
+    };
+    eegSocket.onmessage = (event) => handleEEGData(event.data);
+    eegSocket.onerror = (error) => {
+        console.error("Erreur WebSocket EEG:", error);
+        alert("Impossible de se connecter au serveur pont EEG. Assurez-vous qu'il est bien lancé.");
+        if (visualTimeoutId) startButton.click();
+    };
+    eegSocket.onclose = () => {
+        console.log("Déconnecté du pont EEG.");
+        eegSocket = null;
+        if (currentSession === 'eeg' && visualTimeoutId) startButton.click();
+    };
+}
+
+function disconnectEEG() {
+    if (eegSocket) {
+        eegSocket.close();
+    }
+}
+
+// --- End of EEG Functions ---
+
 
 function getSynchronizedBinauralBeatFrequency() {
     return BLINK_FREQUENCY_HZ * currentBBMultiplier;
@@ -448,7 +567,11 @@ function updateVisuals() {
 
 function updateFrequencyDisplays() {
     if (frequencyDisplayOverlay) {
-        frequencyDisplayOverlay.textContent = `${BLINK_FREQUENCY_HZ.toFixed(1)} Hz`;
+        if (currentSession !== 'eeg') {
+            frequencyDisplayOverlay.textContent = `${BLINK_FREQUENCY_HZ.toFixed(1)} Hz`;
+        } else {
+            frequencyDisplayOverlay.textContent = "EEG";
+        }
     }
     blinkFrequencyInput.value = BLINK_FREQUENCY_HZ.toFixed(1);
     blinkRateSlider.value = BLINK_FREQUENCY_HZ;
@@ -611,7 +734,7 @@ function generateAllSessionGraphs() {
     container.innerHTML = '';
     
     for (const key in sessions) {
-        if (Object.hasOwnProperty.call(sessions, key)) {
+        if (Object.hasOwnProperty.call(sessions, key) && key !== 'eeg') {
             const graphElement = createSessionGraph(sessions[key], key);
             container.appendChild(graphElement);
         }
@@ -705,13 +828,21 @@ document.addEventListener('DOMContentLoaded', () => {
             stopWaves();
             stopCrackles();
             if(musicLoopAudio) musicLoopAudio.pause();
+            disconnectEEG();
             
             appContainer.classList.remove('stimulation-active');
 
+            // Re-enable all controls
             blinkRateSlider.disabled = false;
             blinkFrequencyInput.disabled = false;
             sessionSelect.disabled = false;
             blinkModeRadios.forEach(radio => radio.disabled = false);
+            carrierFrequencySlider.disabled = false;
+            carrierFrequencyInput.disabled = false;
+            binauralVolumeSlider.disabled = false;
+            isochronenVolumeSlider.disabled = false;
+            alternophonyVolumeSlider.disabled = false;
+
 
         } else {
             appContainer.classList.add('stimulation-active');
@@ -729,6 +860,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (currentSession === 'manual') {
                 validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
+            } else if (currentSession === 'eeg') {
+                connectEEG();
+                // Disable all controls that are driven by EEG
+                blinkRateSlider.disabled = true;
+                blinkFrequencyInput.disabled = true;
+                blinkModeRadios.forEach(radio => radio.disabled = true);
+                carrierFrequencySlider.disabled = true;
+                carrierFrequencyInput.disabled = true;
+                binauralVolumeSlider.disabled = true;
+                isochronenVolumeSlider.disabled = true;
+                alternophonyVolumeSlider.disabled = true;
             } else {
                 sessionSelect.disabled = true;
                 blinkRateSlider.disabled = true;
@@ -739,6 +881,12 @@ document.addEventListener('DOMContentLoaded', () => {
             blinkLoop();
         }
         setLanguage(currentLanguage);
+    });
+
+    sessionSelect.addEventListener('change', (e) => {
+        if (e.target.value !== 'eeg' && eegSocket) {
+            disconnectEEG();
+        }
     });
 
     const handleFrequencyValidation = (isBlink) => {
