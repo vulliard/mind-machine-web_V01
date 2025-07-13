@@ -253,6 +253,12 @@ body, html {
     text-align: center;
 }
 
+.session-selector-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .info-button {
     background: transparent;
     border: 1px solid #c5a15a;
@@ -269,6 +275,11 @@ body, html {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+}
+.info-button.edit-button {
+    font-size: 1.2em;
+    line-height: 1;
+    margin: 0;
 }
 .info-button:hover {
     background: #c5a15a;
@@ -874,6 +885,45 @@ input[type="color"]::-webkit-color-swatch {
     font-size: 12px;
 }
 
+/* --- Styles for Custom Session Modal --- */
+.custom-session-modal-content {
+    max-width: 90vw;
+    width: auto;
+}
+#customSessionTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    font-size: 0.9em;
+}
+#customSessionTable th, #customSessionTable td {
+    border: 1px solid #555;
+    padding: 8px;
+    text-align: center;
+}
+#customSessionTable th {
+    background-color: #444;
+    color: #ffc107;
+}
+#customSessionTable td {
+    background-color: #2a2a2a;
+}
+#customSessionTable input, #customSessionTable select {
+    width: 90%;
+    padding: 4px;
+    background-color: #333;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.custom-session-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
 
 @media (min-width: 1000px) {
     #session-graphs-container {
@@ -919,43 +969,4 @@ input[type="color"]::-webkit-color-swatch {
     .music-volume-control {
         display: none;
     }
-}
-
-/* --- Styles for Custom Session Modal --- */
-.custom-session-modal-content {
-    max-width: 90vw;
-    width: auto;
-}
-#customSessionTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    font-family: sans-serif;
-    font-size: 0.9em;
-}
-#customSessionTable th, #customSessionTable td {
-    border: 1px solid #555;
-    padding: 8px;
-    text-align: center;
-}
-#customSessionTable th {
-    background-color: #444;
-    color: #ffc107;
-}
-#customSessionTable td {
-    background-color: #2a2a2a;
-}
-#customSessionTable input, #customSessionTable select {
-    width: 90%;
-    padding: 4px;
-    background-color: #333;
-    color: white;
-    border: 1px solid #666;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-.custom-session-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
 }

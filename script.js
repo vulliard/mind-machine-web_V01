@@ -109,8 +109,7 @@ let set432hzButton;
 let musicLoopSelect, musicLoopVolumeSlider;
 let sessionHelpButton, sessionGraphModal;
 let aboutButton, aboutModal;
-let customSessionModal, customSessionForm, customSessionTableBody, saveCustomSessionButton, cancelCustomSessionButton;
-let currentlyEditingSession = null;
+let customSessionModal, customSessionForm, customSessionTableBody, saveCustomSessionButton, cancelCustomSessionButton, editSessionButton;
 
 
 // --- Global Functions ---
@@ -158,9 +157,8 @@ function handleEEGData(jsonString) {
     try {
         const data = JSON.parse(jsonString);
         const minVol = 0.25;
-        const volRange = 0.50; // (0.75 - 0.25)
+        const volRange = 0.50;
 
-        // -- 1. Blink Frequency (Attention) --
         const attValue = parseFloat(data.att);
         if (!isNaN(attValue) && attValue >= 0 && attValue <= 1) {
             const minFreq = 1;
@@ -168,7 +166,6 @@ function handleEEGData(jsonString) {
             BLINK_FREQUENCY_HZ = minFreq + (attValue * (maxFreq - minFreq));
         }
 
-        // -- 2. Carrier Frequency (Engagement) --
         const engValue = parseFloat(data.eng);
         if (!isNaN(engValue) && engValue >= 0 && engValue <= 1) {
             const minCarrier = 40;
@@ -181,17 +178,15 @@ function handleEEGData(jsonString) {
             }
         }
 
-        // -- 3. Binaural Volume (Interest) --
         const intValue = parseFloat(data.int);
         if (!isNaN(intValue) && intValue >= 0 && intValue <= 1) {
-            currentBinauralVolume = minVol + (intValue * volRange); // Map to 0.25-0.75
+            currentBinauralVolume = minVol + (intValue * volRange);
             binauralVolumeSlider.value = currentBinauralVolume * 100;
              if (binauralMasterGain && audioContext) {
                 binauralMasterGain.gain.setTargetAtTime(currentBinauralVolume, audioContext.currentTime, 0.01);
             }
         }
 
-        // -- 4. Blink Mode (Excitement) --
         const excValue = parseFloat(data.exc);
         if (!isNaN(excValue) && excValue >= 0 && excValue <= 1) {
             let newMode;
@@ -204,17 +199,15 @@ function handleEEGData(jsonString) {
             }
         }
         
-        // -- 5. Isochronic Volume (Relaxation) --
         const relValue = parseFloat(data.rel);
         if (!isNaN(relValue) && relValue >= 0 && relValue <= 1) {
-            currentIsochronenVolume = minVol + (relValue * volRange); // Map to 0.25-0.75
+            currentIsochronenVolume = minVol + (relValue * volRange);
             isochronenVolumeSlider.value = currentIsochronenVolume * 100;
         }
 
-        // -- 6. Alternophony Volume (Stress) --
         const strValue = parseFloat(data.str);
         if (!isNaN(strValue) && strValue >= 0 && strValue <= 1) {
-            currentAlternophonyVolume = minVol + (strValue * volRange); // Map to 0.25-0.75
+            currentAlternophonyVolume = minVol + (strValue * volRange);
             alternophonyVolumeSlider.value = currentAlternophonyVolume * 100;
             if (alternophonyMasterGain && audioContext) {
                 alternophonyMasterGain.gain.setTargetAtTime(currentAlternophonyVolume, audioContext.currentTime, 0.01);
@@ -863,6 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
     customSessionTableBody = document.querySelector('#customSessionTable tbody');
     saveCustomSessionButton = document.getElementById('saveCustomSessionButton');
     cancelCustomSessionButton = document.getElementById('cancelCustomSessionButton');
+    editSessionButton = document.getElementById('editSessionButton');
     
     const warningCloseButton = warningModal.querySelector('.close-button');
     const helpCloseButton = helpModal.querySelector('.close-button');
@@ -965,10 +959,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sessionSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'user1' || e.target.value === 'user2') {
-            openCustomSessionModal(e.target.value);
-        } else if (e.target.value !== 'eeg' && eegSocket) {
+        const selectedValue = e.target.value;
+        editSessionButton.style.display = (selectedValue === 'user1' || selectedValue === 'user2') ? 'block' : 'none';
+        
+        if (selectedValue !== 'eeg' && eegSocket) {
             disconnectEEG();
+        }
+    });
+
+    editSessionButton.addEventListener('click', () => {
+        const selectedValue = sessionSelect.value;
+        if (selectedValue === 'user1' || selectedValue === 'user2') {
+            openCustomSessionModal(selectedValue);
         }
     });
 
@@ -979,12 +981,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cancelCustomSessionButton.addEventListener('click', () => {
         customSessionModal.style.display = 'none';
-        sessionSelect.value = 'manual';
     });
 
     customSessionModalCloseButton.addEventListener('click', () => {
         customSessionModal.style.display = 'none';
-        sessionSelect.value = 'manual';
     });
 
     const handleFrequencyValidation = (isBlink) => {
@@ -1129,10 +1129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target == helpModal) helpModal.style.display = 'none';
         if (e.target == sessionGraphModal) sessionGraphModal.style.display = 'none';
         if (e.target == aboutModal) aboutModal.style.display = 'none';
-        if (e.target == customSessionModal) {
-            customSessionModal.style.display = 'none';
-            sessionSelect.value = 'manual';
-        }
+        if (e.target == customSessionModal) customSessionModal.style.display = 'none';
     });
 
     flagFr.addEventListener('click', () => setLanguage('fr'));
