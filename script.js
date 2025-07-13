@@ -83,7 +83,9 @@ const sessions = {
         { startFreq: 7,  endFreq: 5, duration: 180, blinkMode: 'crossed' },
         { startFreq: 5,  endFreq: 5, duration: 300, blinkMode: 'synchro' }
     ],
-    eeg: []
+    eeg: [],
+    user1: [],
+    user2: []
 };
 
 // --- Global DOM References ---
@@ -107,6 +109,8 @@ let set432hzButton;
 let musicLoopSelect, musicLoopVolumeSlider;
 let sessionHelpButton, sessionGraphModal;
 let aboutButton, aboutModal;
+let customSessionModal, customSessionForm, customSessionTableBody, saveCustomSessionButton, cancelCustomSessionButton;
+let currentlyEditingSession = null;
 
 
 // --- Global Functions ---
@@ -602,7 +606,7 @@ function runSession(sessionKey, step = 0) {
     clearInterval(rampIntervalId);
 
     const sessionSteps = sessions[sessionKey];
-    if (!sessionSteps || step >= sessionSteps.length) {
+    if (!sessionSteps || sessionSteps.length === 0 || step >= sessionSteps.length) {
         if(visualTimeoutId) startButton.click();
         return;
     }
@@ -644,6 +648,8 @@ function createSessionGraph(sessionData, sessionName) {
     const width = 400 - margin.left - margin.right;
     const height = 220 - margin.top - margin.bottom;
 
+    if (!sessionData || sessionData.length === 0) return document.createElement('div');
+
     let totalDuration = 0;
     let maxFreq = 0;
     sessionData.forEach(d => {
@@ -683,13 +689,20 @@ function createSessionGraph(sessionData, sessionName) {
     const pathData = "M " + pathPoints.map(p => `${p.x} ${p.y}`).join(" L ");
 
     let yAxisHtml = '';
+    let xAxisInterval = 60;
+    if (totalDuration > 1200) { 
+        xAxisInterval = 180;
+    } else if (totalDuration > 600) { 
+        xAxisInterval = 120;
+    }
+    
     for(let i = 0; i <= maxFreq; i += 5) {
         if (i > 0) yAxisHtml += `<line class="graph-gridline" x1="0" x2="${width}" y1="${yScale(i)}" y2="${yScale(i)}"></line>`;
         yAxisHtml += `<text class="graph-text" x="-5" y="${yScale(i)}" dy="3" text-anchor="end">${i} Hz</text>`;
     }
 
     let xAxisHtml = '';
-    for(let i = 0; i <= totalDuration; i += 60) {
+    for(let i = 0; i <= totalDuration; i += xAxisInterval) {
         xAxisHtml += `<text class="graph-text" x="${xScale(i)}" y="${height + 15}" text-anchor="middle">${i}s</text>`;
     }
 
@@ -734,12 +747,73 @@ function generateAllSessionGraphs() {
     container.innerHTML = '';
     
     for (const key in sessions) {
-        if (Object.hasOwnProperty.call(sessions, key) && key !== 'eeg') {
+        if (Object.hasOwnProperty.call(sessions, key) && key !== 'eeg' && sessions[key].length > 0) {
             const graphElement = createSessionGraph(sessions[key], key);
             container.appendChild(graphElement);
         }
     }
     setLanguage(currentLanguage);
+}
+
+
+function openCustomSessionModal(sessionKey) {
+    currentlyEditingSession = sessionKey;
+    const sessionData = sessions[sessionKey];
+    customSessionTableBody.innerHTML = ''; 
+
+    for (let i = 0; i < 6; i++) {
+        const segment = sessionData[i] || { startFreq: 0, endFreq: 0, duration: 0, blinkMode: 'alternating' };
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${i + 1}</td>
+            <td><input type="number" step="0.1" min="0" max="40" value="${segment.startFreq}" required></td>
+            <td><input type="number" step="0.1" min="0" max="40" value="${segment.endFreq}" required></td>
+            <td><input type="number" step="1" min="0" value="${segment.duration}" required></td>
+            <td>
+                <select>
+                    <option value="alternating" ${segment.blinkMode === 'alternating' ? 'selected' : ''}>Alterné</option>
+                    <option value="synchro" ${segment.blinkMode === 'synchro' ? 'selected' : ''}>Synchro</option>
+                    <option value="crossed" ${segment.blinkMode === 'crossed' ? 'selected' : ''}>Croisé</option>
+                </select>
+            </td>
+        `;
+        customSessionTableBody.appendChild(row);
+    }
+    customSessionModal.style.display = 'flex';
+}
+
+function saveCustomSession() {
+    const newSessionData = [];
+    const rows = customSessionTableBody.querySelectorAll('tr');
+    
+    rows.forEach(row => {
+        const inputs = row.querySelectorAll('input, select');
+        const startFreq = parseFloat(inputs[0].value);
+        const endFreq = parseFloat(inputs[1].value);
+        const duration = parseInt(inputs[2].value, 10);
+        const blinkMode = inputs[3].value;
+
+        if (duration > 0) {
+            newSessionData.push({ startFreq, endFreq, duration, blinkMode });
+        }
+    });
+
+    sessions[currentlyEditingSession] = newSessionData;
+    localStorage.setItem(currentlyEditingSession, JSON.stringify(newSessionData));
+    
+    customSessionModal.style.display = 'none';
+}
+
+function loadCustomSessions() {
+    const user1Data = localStorage.getItem('user1');
+    const user2Data = localStorage.getItem('user2');
+
+    if (user1Data) {
+        sessions.user1 = JSON.parse(user1Data);
+    }
+    if (user2Data) {
+        sessions.user2 = JSON.parse(user2Data);
+    }
 }
 
 
@@ -784,11 +858,17 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionGraphModal = document.getElementById('sessionGraphModal');
     aboutButton = document.getElementById('aboutButton');
     aboutModal = document.getElementById('aboutModal');
+    customSessionModal = document.getElementById('customSessionModal');
+    customSessionForm = document.getElementById('customSessionForm');
+    customSessionTableBody = document.querySelector('#customSessionTable tbody');
+    saveCustomSessionButton = document.getElementById('saveCustomSessionButton');
+    cancelCustomSessionButton = document.getElementById('cancelCustomSessionButton');
     
     const warningCloseButton = warningModal.querySelector('.close-button');
     const helpCloseButton = helpModal.querySelector('.close-button');
     const sessionGraphModalCloseButton = sessionGraphModal.querySelector('.close-button');
     const aboutModalCloseButton = aboutModal.querySelector('.close-button');
+    const customSessionModalCloseButton = customSessionModal.querySelector('.close-button');
 
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
@@ -802,6 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
     musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
 
     // Initial Setup
+    loadCustomSessions();
     validateAndSetFrequency(carrierFrequencySlider, carrierFrequencyInput, false);
     validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
     setLanguage(currentLanguage);
@@ -884,9 +965,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sessionSelect.addEventListener('change', (e) => {
-        if (e.target.value !== 'eeg' && eegSocket) {
+        if (e.target.value === 'user1' || e.target.value === 'user2') {
+            openCustomSessionModal(e.target.value);
+        } else if (e.target.value !== 'eeg' && eegSocket) {
             disconnectEEG();
         }
+    });
+
+    customSessionForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveCustomSession();
+    });
+
+    cancelCustomSessionButton.addEventListener('click', () => {
+        customSessionModal.style.display = 'none';
+        sessionSelect.value = 'manual';
+    });
+
+    customSessionModalCloseButton.addEventListener('click', () => {
+        customSessionModal.style.display = 'none';
+        sessionSelect.value = 'manual';
     });
 
     const handleFrequencyValidation = (isBlink) => {
@@ -1031,6 +1129,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target == helpModal) helpModal.style.display = 'none';
         if (e.target == sessionGraphModal) sessionGraphModal.style.display = 'none';
         if (e.target == aboutModal) aboutModal.style.display = 'none';
+        if (e.target == customSessionModal) {
+            customSessionModal.style.display = 'none';
+            sessionSelect.value = 'manual';
+        }
     });
 
     flagFr.addEventListener('click', () => setLanguage('fr'));

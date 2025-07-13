@@ -677,7 +677,8 @@ input[type="color"]::-webkit-color-swatch {
     padding: 0;
     order: 2;
 }
-#app-container.immersive-mode #controls #warningButton {
+#app-container.immersive-mode #controls #warningButton,
+#app-container.immersive-mode #controls #aboutButton {
     display: none;
 }
 
@@ -754,20 +755,22 @@ input[type="color"]::-webkit-color-swatch {
 .modal-content ul {
     margin-top: 0;
     padding-left: 25px;
+}
+#warningModal .modal-content ul {
     list-style-type: '🚨 ';
 }
 .modal-content ul li {
     margin-bottom: 10px;
     font-size: 1em;
 }
-.help-modal-content ul {
+.help-modal-content ul, .about-modal-content ul {
     list-style: none;
     padding-left: 0;
 }
-.help-modal-content li {
+.help-modal-content li, .about-modal-content li {
     margin-bottom: 15px;
 }
-.help-modal-content li ul {
+.help-modal-content li ul, .about-modal-content li ul {
     list-style-type: '› ';
     padding-left: 20px;
     margin-top: 5px;
@@ -916,4 +919,43 @@ input[type="color"]::-webkit-color-swatch {
     .music-volume-control {
         display: none;
     }
+}
+
+/* --- Styles for Custom Session Modal --- */
+.custom-session-modal-content {
+    max-width: 90vw;
+    width: auto;
+}
+#customSessionTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: sans-serif;
+    font-size: 0.9em;
+}
+#customSessionTable th, #customSessionTable td {
+    border: 1px solid #555;
+    padding: 8px;
+    text-align: center;
+}
+#customSessionTable th {
+    background-color: #444;
+    color: #ffc107;
+}
+#customSessionTable td {
+    background-color: #2a2a2a;
+}
+#customSessionTable input, #customSessionTable select {
+    width: 90%;
+    padding: 4px;
+    background-color: #333;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.custom-session-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
 }
