@@ -152,6 +152,14 @@ body, html {
     min-height: 200px; 
 }
 
+.visual-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 #frequency-display-overlay {
     position: absolute;
     top: 50%;
@@ -169,6 +177,24 @@ body, html {
     display: block;
 }
 
+/* NOUVEAU: Style pour le message du mode immersif */
+#click-to-immerse-message {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.4);
+    font-family: sans-serif;
+    font-size: 0.9em;
+    pointer-events: none; /* Pour ne pas bloquer le clic sur le wrapper */
+    transition: opacity 0.3s ease;
+}
+
+/* On cache le message quand on est en mode immersif */
+#app-container.immersive-mode #click-to-immerse-message {
+    opacity: 0;
+}
+
 
 .panel {
     background-color: black;
@@ -176,6 +202,7 @@ body, html {
     justify-content: center;
     align-items: center;
     height: 100%;
+    position: relative; 
 }
 
 #left-panel, #right-panel {
@@ -224,6 +251,10 @@ body, html {
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
+}
+
+.ambiance-controls {
+    grid-column: 1 / -1;
 }
 
 .dashboard-header {
@@ -301,7 +332,7 @@ body, html {
     align-items: center;
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):not(#startButton) {
+#controls button:not(.attention-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):not(#startButton):not(#ambiance-toggle-button):not(#music-toggle-button) {
     background: linear-gradient(145deg, #4a3f2a, #2a2316);
     border: 1px solid #ffc107;
     color: #fff;
@@ -316,7 +347,7 @@ body, html {
     isolation: isolate;
 }
 
-#controls button:not(.attention-button):not(#wave-toggle-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):not(#startButton):hover {
+#controls button:not(.attention-button):not(#crackle-toggle-button):not(#immersive-exit-button):not(#helpButton):not(#alternophony-toggle-button):not(.info-button):not(#startButton):not(#ambiance-toggle-button):not(#music-toggle-button):hover {
     background: #ffc107;
     color: #000;
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), 0 0 25px rgba(255, 193, 7, 0.5);
@@ -382,24 +413,6 @@ body, html {
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.8), 0 0 25px rgba(220, 53, 69, 0.5);
 }
 
-#wave-toggle-button, #crackle-toggle-button, #alternophony-toggle-button {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    padding: 0;
-    border: 1px solid #ffc107;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#wave-toggle-button {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M3 12h2l2-4 4 4 2-4h2'/%3e%3cpath d='M11 18h2l2-4 4 4 2-4h2'/%3e%3c/svg%3e");
-    background-size: 60%;
-}
-
 #crackle-toggle-button {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.25l-2.05 5.05a2 2 0 0 0 2.37 2.82l5.05-2.05 6.87-6.83z'%3e%3c/path%3e%3c/svg%3e");
     background-size: 50%;
@@ -408,12 +421,6 @@ body, html {
 #alternophony-toggle-button {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M18 8L6 16M6 8l12 8'/%3e%3c/svg%3e");
     background-size: 50%;
-}
-
-#wave-toggle-button.active {
-    background-color: #007bff;
-    border-color: #007bff;
-    box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);
 }
 
 #crackle-toggle-button.active {
@@ -430,13 +437,13 @@ body, html {
 
 .ambiance-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     width: 100%;
-    gap: 15px;
+    gap: 20px;
+    align-items: end;
 }
-
 .ambiance-grid .ambiance-group:last-child {
-    grid-column: 1 / -1;
+    grid-column: auto;
 }
 
 .ambiance-group {
@@ -446,8 +453,17 @@ body, html {
     gap: 10px;
 }
 
+.input-button-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+
 .session-select {
-    width: 90%;
+    flex-grow: 1;
+    min-width: 100px;
     padding: 6px;
     font-size: 0.9em;
     border-radius: 5px;
@@ -626,6 +642,38 @@ input[type="color"]::-webkit-color-swatch {
     border-left: 1px solid rgba(255, 193, 7, 0.3);
     flex: 1;
 }
+
+#crackle-toggle-button, #alternophony-toggle-button, #ambiance-toggle-button, #music-toggle-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    padding: 0;
+    border: 1px solid #ffc107;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+#ambiance-toggle-button, #music-toggle-button {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M11 5L6 9H2v6h4l5 4V5z'/%3e%3cpath d='M15.54 8.46a5 5 0 0 1 0 7.07'/%3e%3c/svg%3e");
+    background-size: 60%;
+}
+
+#ambiance-toggle-button.active {
+    background-color: #20c997;
+    border-color: #20c997;
+    box-shadow: 0 0 15px rgba(32, 201, 151, 0.8);
+}
+
+#music-toggle-button.active {
+    background-color: #fd7e14;
+    border-color: #fd7e14;
+    box-shadow: 0 0 15px rgba(253, 126, 20, 0.8);
+}
+
 
 /* --- STYLES POUR LE MODE IMMERSIF --- */
 #immersive-exit-button, #immersive-message {
@@ -955,7 +1003,7 @@ input[type="color"]::-webkit-color-swatch {
     .control-group label {
         font-size: 0.7em;
     }
-    #wave-toggle-button, #crackle-toggle-button, #alternophony-toggle-button {
+    #crackle-toggle-button, #alternophony-toggle-button, #ambiance-toggle-button, #music-toggle-button {
         width: 40px;
         height: 40px;
     }

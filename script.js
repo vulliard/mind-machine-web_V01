@@ -15,6 +15,8 @@ let currentSession = 'manual';
 let sessionTimeoutId = null;
 let rampIntervalId = null; 
 let currentBlinkMode = 'alternating';
+let currentVisualMode = 'circle';
+let lastBlinkTime = 0;
 
 let eegSocket = null;
 
@@ -26,12 +28,6 @@ let isochronicOscillator = null;
 let isochronicEnvelopeGain = null;
 let isochronicPanner = null;
 let isochronicMasterGain = null;
-let waveIsPlaying = false;
-let waveRumbleNode = null;
-let waveHissNode = null;
-let waveMasterVolume = null;
-let waveLfoNode = null;
-let waveMetaLfoNode = null;
 let crackleIsPlaying = false;
 let crackleTimeoutId = null;
 let crackleNoiseBuffer = null;
@@ -44,7 +40,19 @@ let alternophonyMasterGain = null;
 
 const musicLoopAudio = new Audio();
 musicLoopAudio.loop = true;
+let musicIsPlaying = false;
 
+// Variables for generated waves
+let waveIsPlaying = false;
+let waveRumbleNode = null;
+let waveHissNode = null;
+let waveMasterVolume = null;
+let waveLfoNode = null;
+let waveMetaLfoNode = null;
+
+// Ambiance system variables
+let currentAmbiance = null;
+let ambianceIsPlaying = false;
 
 const SOUND_DURATION_S = 0.02;
 
@@ -100,16 +108,20 @@ let warningButton, warningModal, understoodButton;
 let helpButton, helpModal;
 let flagFr, flagEn;
 let appContainer, visualPanelsWrapper, immersiveExitButton, frequencyDisplayOverlay;
-let waveToggleButton, waveVolumeSlider;
 let crackleToggleButton, crackleVolumeSlider;
 let alternophonyToggleButton;
 let sessionSelect;
 let blinkModeRadios;
 let set432hzButton;
-let musicLoopSelect, musicLoopVolumeSlider;
+let musicLoopSelect, musicLoopVolumeSlider, musicToggleButton;
 let sessionHelpButton, sessionGraphModal;
 let aboutButton, aboutModal;
 let customSessionModal, customSessionForm, customSessionTableBody, saveCustomSessionButton, cancelCustomSessionButton, editSessionButton;
+let visualModeSelect;
+let leftCanvas, rightCanvas, leftCtx, rightCtx;
+
+// DOM References for the ambiance system
+let ambianceSelect, ambianceToggleButton, ambianceVolumeSlider;
 
 
 // --- Global Functions ---
@@ -371,6 +383,10 @@ function playSound(panDirection) {
             panValue = 1;
         }
         
+        if (currentBlinkMode === 'crossed') {
+            panValue = -panValue;
+        }
+        
         isochronicPanner.pan.setValueAtTime(panValue, now);
         isochronicMasterGain.gain.setValueAtTime(currentIsochronenVolume, now);
         isochronicEnvelopeGain.gain.cancelScheduledValues(now);
@@ -444,7 +460,7 @@ function startWaves() {
     const metaLfoGain = audioContext.createGain();
     metaLfoGain.gain.value = 0.05;
     waveMasterVolume = audioContext.createGain();
-    waveMasterVolume.gain.value = parseFloat(waveVolumeSlider.value) / 100;
+    waveMasterVolume.gain.value = parseFloat(ambianceVolumeSlider.value) / 100;
     waveRumbleNode.connect(rumbleModulationGain).connect(waveMasterVolume);
     waveHissNode.connect(hissFilter).connect(hissModulationGain).connect(waveMasterVolume);
     waveMasterVolume.connect(masterGainNode);
@@ -457,7 +473,6 @@ function startWaves() {
     waveLfoNode.start();
     waveMetaLfoNode.start();
     waveIsPlaying = true;
-    waveToggleButton.classList.add('active');
 }
 
 function stopWaves() {
@@ -467,7 +482,6 @@ function stopWaves() {
     if (waveLfoNode) waveLfoNode.stop();
     if (waveMetaLfoNode) waveMetaLfoNode.stop();
     waveIsPlaying = false;
-    waveToggleButton.classList.remove('active');
 }
 
 function startCrackles() {
@@ -523,43 +537,184 @@ function updateCrackleVolume() {
     }
 }
 
-function updateVisuals() {
-    leftPanel.innerHTML = '';
-    rightPanel.innerHTML = '';
-
-    const createSizedCircle = (panel) => {
-        const circle = document.createElement('div');
-        circle.className = 'circle';
-        circle.style.backgroundColor = colorPicker.value;
-        const diameter = Math.min(panel.clientWidth, panel.clientHeight) * 0.85;
-        circle.style.width = `${diameter}px`;
-        circle.style.height = `${diameter}px`;
-        return circle;
-    };
-
-    if (currentBlinkMode === 'alternating') {
-        const targetPanel = isLeftLight ? leftPanel : rightPanel;
-        targetPanel.appendChild(createSizedCircle(targetPanel));
-        playSound(isLeftLight ? 'left' : 'right');
-        isLeftLight = !isLeftLight;
-    } else if (currentBlinkMode === 'synchro') {
-        leftPanel.appendChild(createSizedCircle(leftPanel));
-        rightPanel.appendChild(createSizedCircle(rightPanel));
-        playSound('center');
-        setTimeout(() => {
-            leftPanel.innerHTML = '';
-            rightPanel.innerHTML = '';
-        }, 50);
-    } else if (currentBlinkMode === 'crossed') {
-        if (isLeftLight) {
-            leftPanel.appendChild(createSizedCircle(leftPanel));
-            playSound('right');
-        } else {
-            rightPanel.appendChild(createSizedCircle(rightPanel));
-            playSound('left');
-        }
-        isLeftLight = !isLeftLight;
+// --- VISUALS ---
+function getProportionalFlashDuration(minDuty, maxDuty) {
+    const minFreq = 0.2;
+    const maxFreq = 20.0;
+    
+    // Assure-toi de ne pas diviser par zéro si minFreq === maxFreq
+    if (maxFreq === minFreq) {
+        return (1000 / BLINK_FREQUENCY_HZ) * minDuty;
     }
+    
+    const progress = Math.max(0, Math.min(1, (BLINK_FREQUENCY_HZ - minFreq) / (maxFreq - minFreq)));
+    const dutyCycle = minDuty - (progress * (minDuty - maxDuty));
+    
+    return (1000 / BLINK_FREQUENCY_HZ) * dutyCycle;
+}
+
+function updateVisuals(isBlinking) {
+    if (currentVisualMode === 'circle') {
+        leftCanvas.style.display = 'none';
+        rightCanvas.style.display = 'none';
+        drawCircleVisual(isBlinking);
+    } else {
+        clearCircleVisuals();
+        leftCanvas.style.display = 'block';
+        rightCanvas.style.display = 'block';
+        
+        let shouldAnimateNow = false;
+        if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
+            const flashDuration = getProportionalFlashDuration(0.9, 0.5); // 90% -> 50%
+            shouldAnimateNow = (performance.now() - lastBlinkTime < flashDuration);
+        } else { // synchro
+            const flashDuration = getProportionalFlashDuration(0.5, 0.2); // 50% -> 20%
+            shouldAnimateNow = (performance.now() - lastBlinkTime < flashDuration);
+        }
+        animateCanvasVisuals(shouldAnimateNow);
+    }
+}
+
+function clearCircleVisuals() {
+    document.querySelectorAll('.visual-circle').forEach(c => c.remove());
+}
+
+function drawCircleVisual(isBlinking) {
+    if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
+        const flashDuration = getProportionalFlashDuration(0.9, 0.5);
+        if (isBlinking) {
+            clearCircleVisuals();
+            const targetPanel = isLeftLight ? leftPanel : rightPanel;
+            targetPanel.appendChild(createSizedCircle(targetPanel));
+        } else if (performance.now() - lastBlinkTime > flashDuration) {
+             clearCircleVisuals();
+        }
+    } else { // synchro
+        const flashDuration = getProportionalFlashDuration(0.5, 0.2);
+        if (isBlinking) {
+            clearCircleVisuals();
+            leftPanel.appendChild(createSizedCircle(leftPanel));
+            rightPanel.appendChild(createSizedCircle(rightPanel));
+        } else if (performance.now() - lastBlinkTime > flashDuration) {
+            clearCircleVisuals();
+        }
+    }
+}
+
+function createSizedCircle(panel) {
+    const circle = document.createElement('div');
+    circle.className = 'circle visual-circle';
+    circle.style.backgroundColor = colorPicker.value;
+    const diameter = Math.min(panel.clientWidth, panel.clientHeight) * 0.85;
+    circle.style.width = `${diameter}px`;
+    circle.style.height = `${diameter}px`;
+    return circle;
+}
+
+function animateCanvasVisuals(shouldDraw) {
+    const time = performance.now() / 1000; 
+
+    if (!shouldDraw) {
+        leftCtx.clearRect(0, 0, leftCanvas.width, leftCanvas.height);
+        rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
+        return;
+    }
+    
+    const drawOnPanel = (ctx, panel) => {
+        const width = panel.clientWidth;
+        const height = panel.clientHeight;
+        if (ctx.canvas.width !== width || ctx.canvas.height !== height) {
+            ctx.canvas.width = width;
+            ctx.canvas.height = height;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        ctx.fillStyle = colorPicker.value;
+        ctx.strokeStyle = colorPicker.value;
+
+        switch (currentVisualMode) {
+            case 'circleOfCircles': drawCircleOfCircles(ctx, centerX, centerY, time); break;
+            case 'tunnel': drawTunnel(ctx, centerX, centerY, time); break;
+            case 'mandala': drawMandala(ctx, centerX, centerY, time); break;
+            case 'fractal': drawFractal(ctx, centerX, centerY, time); break;
+        }
+    };
+    
+    if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
+        if (isLeftLight) {
+            drawOnPanel(leftCtx, leftCanvas);
+            rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
+        } else {
+            drawOnPanel(rightCtx, rightCanvas);
+            leftCtx.clearRect(0, 0, leftCanvas.width, leftCanvas.height);
+        }
+    } else { // synchro
+        drawOnPanel(leftCtx, leftCanvas);
+        drawOnPanel(rightCtx, rightCanvas);
+    }
+}
+
+
+// Drawing functions for canvas visuals
+function drawCircleOfCircles(ctx, cx, cy, time) {
+    const numCircles = 12;
+    const mainRadius = Math.min(cx, cy) * 0.6;
+    const smallRadius = mainRadius / 5;
+    for (let i = 0; i < numCircles; i++) {
+        const angle = (i / numCircles) * 2 * Math.PI + time;
+        const x = cx + mainRadius * Math.cos(angle);
+        const y = cy + mainRadius * Math.sin(angle);
+        ctx.beginPath();
+        ctx.arc(x, y, smallRadius, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+}
+
+function drawTunnel(ctx, cx, cy, time) {
+    const numRects = 10;
+    const maxDim = Math.max(cx, cy);
+    ctx.lineWidth = 2;
+    for (let i = 0; i < numRects; i++) {
+        const size = (maxDim * 2) * ((i - (time * 2 % 1) + 1) / numRects);
+        ctx.strokeRect(cx - size / 2, cy - size / 2, size, size);
+    }
+}
+
+function drawMandala(ctx, cx, cy, time) {
+    const numLines = 18;
+    const radius = Math.min(cx, cy) * 0.8;
+    ctx.lineWidth = 2;
+    for (let i = 0; i < numLines; i++) {
+        const angle = (i / numLines) * 2 * Math.PI;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(radius, 0);
+        ctx.arc(radius / 2, 0, radius / 2 * Math.abs(Math.sin(time + angle)), 0, Math.PI);
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+function drawFractal(ctx, cx, cy, time) {
+    ctx.lineWidth = 1;
+    function drawBranch(x, y, len, angle, depth) {
+        if (depth === 0) return;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        const newX = x + len * Math.cos(angle);
+        const newY = y + len * Math.sin(angle);
+        ctx.lineTo(newX, newY);
+        ctx.stroke();
+        drawBranch(newX, newY, len * 0.8, angle - 0.5 + Math.sin(time/2)/2, depth - 1);
+        drawBranch(newX, newY, len * 0.8, angle + 0.5 + Math.cos(time/2)/2, depth - 1);
+    }
+    drawBranch(cx, cy * 1.4, Math.min(cx, cy) / 4, -Math.PI / 2, 7);
 }
 
 function updateFrequencyDisplays() {
@@ -836,8 +991,6 @@ document.addEventListener('DOMContentLoaded', () => {
     flagEn = document.getElementById('flag-en');
     visualPanelsWrapper = document.getElementById('visual-panels-wrapper');
     immersiveExitButton = document.getElementById('immersive-exit-button');
-    waveToggleButton = document.getElementById('wave-toggle-button');
-    waveVolumeSlider = document.getElementById('wave-volume-slider');
     crackleToggleButton = document.getElementById('crackle-toggle-button');
     crackleVolumeSlider = document.getElementById('crackle-volume-slider');
     alternophonyToggleButton = document.getElementById('alternophony-toggle-button');
@@ -847,6 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => {
     set432hzButton = document.getElementById('set432hzButton');
     musicLoopSelect = document.getElementById('music-loop-select');
     musicLoopVolumeSlider = document.getElementById('music-loop-volume-slider');
+    musicToggleButton = document.getElementById('music-toggle-button');
     sessionHelpButton = document.getElementById('sessionHelpButton');
     sessionGraphModal = document.getElementById('sessionGraphModal');
     aboutButton = document.getElementById('aboutButton');
@@ -857,12 +1011,29 @@ document.addEventListener('DOMContentLoaded', () => {
     saveCustomSessionButton = document.getElementById('saveCustomSessionButton');
     cancelCustomSessionButton = document.getElementById('cancelCustomSessionButton');
     editSessionButton = document.getElementById('editSessionButton');
+    visualModeSelect = document.getElementById('visualModeSelect');
+    leftCanvas = document.getElementById('left-canvas');
+    rightCanvas = document.getElementById('right-canvas');
+    leftCtx = leftCanvas.getContext('2d');
+    rightCtx = rightCanvas.getContext('2d');
     
+    // Assignations DOM pour le système d'ambiance
+    ambianceSelect = document.getElementById('ambiance-select');
+    ambianceToggleButton = document.getElementById('ambiance-toggle-button');
+    ambianceVolumeSlider = document.getElementById('ambiance-volume-slider');
+
     const warningCloseButton = warningModal.querySelector('.close-button');
     const helpCloseButton = helpModal.querySelector('.close-button');
     const sessionGraphModalCloseButton = sessionGraphModal.querySelector('.close-button');
     const aboutModalCloseButton = aboutModal.querySelector('.close-button');
     const customSessionModalCloseButton = customSessionModal.querySelector('.close-button');
+
+    const fileAmbianceSources = {
+        forest: new Audio('foret.mp3'),
+        fireplace: new Audio('feu.mp3'),
+        birds: new Audio('oiseaux.mp3')
+    };
+    Object.values(fileAmbianceSources).forEach(audio => audio.loop = true);
 
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
@@ -874,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentAlternophonyVolume = parseFloat(alternophonyVolumeSlider.value) / 100;
     currentBlinkMode = document.querySelector('input[name="blinkMode"]:checked').value;
     musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
-
+    
     // Initial Setup
     loadCustomSessions();
     validateAndSetFrequency(carrierFrequencySlider, carrierFrequencyInput, false);
@@ -882,27 +1053,47 @@ document.addEventListener('DOMContentLoaded', () => {
     setLanguage(currentLanguage);
     if (warningModal) warningModal.style.display = 'flex';
 
+    // --- Main Animation Loop ---
+    function animationLoop(timestamp) {
+        if (!visualTimeoutId) return; 
+
+        const interval = 1000 / BLINK_FREQUENCY_HZ;
+        const isBlinkingThisFrame = (timestamp - lastBlinkTime >= interval);
+
+        if (isBlinkingThisFrame) {
+            lastBlinkTime = performance.now();
+            playSound(isLeftLight ? 'left' : 'right');
+            isLeftLight = !isLeftLight;
+        }
+
+        updateVisuals(isBlinkingThisFrame);
+        
+        visualTimeoutId = requestAnimationFrame(animationLoop);
+    }
+    
     // Event Listeners
     startButton.addEventListener('click', () => {
         initAudioContext();
         
         if (visualTimeoutId) {
-            clearTimeout(visualTimeoutId);
+            cancelAnimationFrame(visualTimeoutId);
+            visualTimeoutId = null;
             clearTimeout(sessionTimeoutId);
             clearInterval(rampIntervalId);
-            visualTimeoutId = null;
             sessionTimeoutId = null;
             rampIntervalId = null;
             isLeftLight = false;
+            
+            clearCircleVisuals();
+            leftCtx.clearRect(0,0,leftCanvas.width, leftCanvas.height);
+            rightCtx.clearRect(0,0,rightCanvas.width, rightCanvas.height);
 
-            leftPanel.innerHTML = '';
-            rightPanel.innerHTML = '';
             stopBinauralBeats();
             stopIsochronicTones();
             stopAlternophony();
-            stopWaves();
             stopCrackles();
             if(musicLoopAudio) musicLoopAudio.pause();
+            if (currentAmbiance) currentAmbiance.pause();
             disconnectEEG();
             
             appContainer.classList.remove('stimulation-active');
@@ -926,18 +1117,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
             if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
             if (currentAudioMode === 'alternophony') startAlternophony();
-            if(musicLoopAudio.src) musicLoopAudio.play();
             
-            function blinkLoop() {
-                updateVisuals();
-                visualTimeoutId = setTimeout(blinkLoop, 1000 / BLINK_FREQUENCY_HZ);
-            }
+            lastBlinkTime = performance.now();
+            visualTimeoutId = requestAnimationFrame(animationLoop);
             
             if (currentSession === 'manual') {
                 validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
             } else if (currentSession === 'eeg') {
                 connectEEG();
-                // Disable all controls that are driven by EEG
                 blinkRateSlider.disabled = true;
                 blinkFrequencyInput.disabled = true;
                 blinkModeRadios.forEach(radio => radio.disabled = true);
@@ -953,7 +1140,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 blinkModeRadios.forEach(radio => radio.disabled = true);
                 runSession(currentSession);
             }
-            blinkLoop();
         }
         setLanguage(currentLanguage);
     });
@@ -962,7 +1148,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedValue = e.target.value;
         editSessionButton.style.display = (selectedValue === 'user1' || selectedValue === 'user2') ? 'block' : 'none';
         
-        if (selectedValue !== 'eeg' && eegSocket) {
+        if (selectedValue === 'user1' || selectedValue === 'user2') {
+            openCustomSessionModal(selectedValue);
+        } else if (selectedValue !== 'eeg' && eegSocket) {
             disconnectEEG();
         }
     });
@@ -1007,6 +1195,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    visualModeSelect.addEventListener('change', (e) => {
+        currentVisualMode = e.target.value; 
+    });
+
     blinkRateSlider.addEventListener('input', () => { blinkRateSlider.value = blinkRateSlider.value; handleFrequencyValidation(true); });
     blinkFrequencyInput.addEventListener('change', () => handleFrequencyValidation(true));
     blinkRateSlider.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(true); e.target.blur(); } });
@@ -1044,22 +1236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-    waveToggleButton.addEventListener('click', () => {
-        if (waveIsPlaying) {
-            stopWaves();
-        } else {
-            startWaves();
-        }
-    });
-
-    waveVolumeSlider.addEventListener('input', (e) => {
-        if (waveMasterVolume && audioContext) {
-            const newVolume = parseFloat(e.target.value) / 100;
-            waveMasterVolume.gain.setTargetAtTime(newVolume, audioContext.currentTime, 0.01);
-        }
-    });
-
+    // Écouteurs pour l'ASMR (indépendant)
     crackleToggleButton.addEventListener('click', () => {
         if (crackleIsPlaying) {
             stopCrackles();
@@ -1067,8 +1244,54 @@ document.addEventListener('DOMContentLoaded', () => {
             startCrackles();
         }
     });
-
     crackleVolumeSlider.addEventListener('input', updateCrackleVolume);
+    
+    // Logique pour le système d'ambiance hybride
+    const ambianceControllers = {
+        waves: { play: startWaves, pause: stopWaves, setVolume: (vol) => { if (waveMasterVolume) waveMasterVolume.gain.setValueAtTime(vol, audioContext.currentTime, 0.01) } },
+        forest: { audio: fileAmbianceSources.forest, play() { this.audio.play() }, pause() { this.audio.pause() }, setVolume(vol) { this.audio.volume = vol } },
+        fireplace: { audio: fileAmbianceSources.fireplace, play() { this.audio.play() }, pause() { this.audio.pause() }, setVolume(vol) { this.audio.volume = vol } },
+        birds: { audio: fileAmbianceSources.birds, play() { this.audio.play() }, pause() { this.audio.pause() }, setVolume(vol) { this.audio.volume = vol } },
+    };
+
+    ambianceSelect.addEventListener('change', (e) => {
+        if (currentAmbiance) {
+            currentAmbiance.pause();
+        }
+        
+        const selectedKey = e.target.value;
+        currentAmbiance = ambianceControllers[selectedKey] || null;
+        
+        if (currentAmbiance) {
+            const currentVolume = parseFloat(ambianceVolumeSlider.value) / 100;
+            currentAmbiance.setVolume(currentVolume);
+            currentAmbiance.play();
+            ambianceIsPlaying = true;
+            ambianceToggleButton.classList.add('active');
+        } else {
+            ambianceIsPlaying = false;
+            ambianceToggleButton.classList.remove('active');
+        }
+    });
+
+    ambianceToggleButton.addEventListener('click', () => {
+        if (!currentAmbiance) return;
+        ambianceIsPlaying = !ambianceIsPlaying;
+        if (ambianceIsPlaying) {
+            currentAmbiance.play();
+            ambianceToggleButton.classList.add('active');
+        } else {
+            currentAmbiance.pause();
+            ambianceToggleButton.classList.remove('active');
+        }
+    });
+
+    ambianceVolumeSlider.addEventListener('input', (e) => {
+        const newVolume = parseFloat(e.target.value) / 100;
+        if (currentAmbiance) {
+            currentAmbiance.setVolume(newVolume);
+        }
+    });
 
     alternophonyToggleButton.addEventListener('click', () => {
         if (alternophonyIsPlaying) {
@@ -1078,16 +1301,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Logique pour la boucle musicale
     musicLoopSelect.addEventListener('change', (e) => {
         const track = e.target.value;
+        musicLoopAudio.pause();
+        musicToggleButton.classList.remove('active');
+        musicIsPlaying = false;
+
         if (track === 'none') {
-            musicLoopAudio.pause();
             musicLoopAudio.src = '';
         } else {
             initAudioContext();
             musicLoopAudio.src = track;
+        }
+    });
+
+    musicToggleButton.addEventListener('click', () => {
+        if (!musicLoopAudio.src || musicLoopAudio.src === '') return;
+
+        musicIsPlaying = !musicIsPlaying;
+        if(musicIsPlaying) {
             synchronizeMusicLoop();
             musicLoopAudio.play();
+            musicToggleButton.classList.add('active');
+        } else {
+            musicLoopAudio.pause();
+            musicToggleButton.classList.remove('active');
         }
     });
 

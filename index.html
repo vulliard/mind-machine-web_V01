@@ -24,10 +24,15 @@
             </div>
 
             <div id="visual-panels-wrapper">
-                <div id="left-panel" class="panel"></div>
+                <div id="left-panel" class="panel">
+                    <canvas id="left-canvas" class="visual-canvas"></canvas>
+                </div>
                 <div id="center-panel" class="panel"></div>
-                <div id="right-panel" class="panel"></div>
+                <div id="right-panel" class="panel">
+                    <canvas id="right-canvas" class="visual-canvas"></canvas>
+                </div>
                 <div id="frequency-display-overlay"></div>
+                <div id="click-to-immerse-message" data-en="Click here for immersive mode" data-fr="Cliquez ici pour le mode immersif"></div>
             </div>
         </div>
 
@@ -70,6 +75,16 @@
             <div class="dashboard-column visual-controls">
                 <h3 class="dashboard-header" data-en="VISUALS" data-fr="VISUELS"></h3>
                 <div class="control-group">
+                    <label for="visualModeSelect" data-en="Visual Shape" data-fr="Forme Visuelle"></label>
+                    <select id="visualModeSelect" class="session-select">
+                        <option value="circle" data-en="Circle" data-fr="Cercle"></option>
+                        <option value="circleOfCircles" data-en="Circle of Circles" data-fr="Cercle de Cercles"></option>
+                        <option value="tunnel" data-en="Tunnel" data-fr="Tunnel"></option>
+                        <option value="mandala" data-en="Mandala" data-fr="Mandala"></option>
+                        <option value="fractal" data-en="Fractal" data-fr="Fractale"></option>
+                    </select>
+                </div>
+                <div class="control-group">
                     <label for="blinkRateSlider" data-en="Blink Freq (Hz)" data-fr="Fréq Clign (Hz)"></label>
                     <div class="slider-container">
                         <input type="range" id="blinkRateSlider" min="0.2" max="20" value="8" step="0.1">
@@ -86,8 +101,10 @@
                         <div class="radio-switch">
                             <input type="radio" id="mode-alternating" name="blinkMode" value="alternating" checked>
                             <label for="mode-alternating" data-en="Alternating" data-fr="Alterné"></label>
+                            
                             <input type="radio" id="mode-synchro" name="blinkMode" value="synchro">
                             <label for="mode-synchro" data-en="Synchro" data-fr="Synchro"></label>
+                            
                             <input type="radio" id="mode-crossed" name="blinkMode" value="crossed">
                             <label for="mode-crossed" data-en="Crossed" data-fr="Croisé"></label>
                         </div>
@@ -98,18 +115,29 @@
             <div class="dashboard-column ambiance-controls">
                 <h3 class="dashboard-header" data-en="AMBIANCE" data-fr="AMBIANCE"></h3>
                 <div class="ambiance-grid">
+                    
                     <div class="ambiance-group">
                         <div class="control-group">
-                            <label for="wave-toggle-button" data-en="Ocean Waves" data-fr="Vagues Océan"></label>
-                            <button id="wave-toggle-button"></button>
+                             <label for="ambiance-select" data-en="Natural Ambiance" data-fr="Ambiance Naturelle"></label>
+                             <div class="input-button-wrapper">
+                                <select id="ambiance-select" class="session-select">
+                                    <option value="none" data-en="None" data-fr="Aucune"></option>
+                                    <option value="waves" data-en="Ocean Waves" data-fr="Vagues Océan"></option>
+                                    <option value="forest" data-en="Forest" data-fr="Forêt"></option>
+                                    <option value="fireplace" data-en="Fireplace" data-fr="Feu de cheminée"></option>
+                                    <option value="birds" data-en="Birds Singing" data-fr="Chant d'oiseaux"></option>
+                                </select>
+                                <button id="ambiance-toggle-button"></button>
+                             </div>
                         </div>
                         <div class="control-group">
-                            <label for="wave-volume-slider" data-en="Waves Volume" data-fr="Volume Vagues"></label>
+                            <label for="ambiance-volume-slider" data-en="Ambiance Volume" data-fr="Volume Ambiance"></label>
                             <div class="slider-container">
-                                <input type="range" id="wave-volume-slider" min="0" max="100" value="30">
+                                <input type="range" id="ambiance-volume-slider" min="0" max="100" value="50">
                             </div>
                         </div>
                     </div>
+
                     <div class="ambiance-group">
                         <div class="control-group">
                             <label for="crackle-toggle-button" data-en="ASMR" data-fr="ASMR"></label>
@@ -122,20 +150,24 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="ambiance-group">
                         <div class="control-group">
                             <label for="music-loop-select" data-en="Music Loop" data-fr="Boucle Musicale"></label>
-                            <select id="music-loop-select" class="session-select">
-                                <option value="none" data-en="None" data-fr="Aucune"></option>
-                                <option value="loop1.mp3" data-en="Loop 1" data-fr="Boucle 1"></option>
-                                <option value="loop2.mp3" data-en="Loop 2" data-fr="Boucle 2"></option>
-                                <option value="new-age1.mp3" data-en="New-Age 1" data-fr="New-Age 1"></option>
-                                <option value="new-age2.mp3" data-en="New-Age 2" data-fr="New-Age 2"></option>
-                                <option value="new-age3.mp3" data-en="New-Age 3" data-fr="New-Age 3"></option>
-                                <option value="new-age4.mp3" data-en="New-Age 4." data-fr="New-Age 4."></option>
-                                <option value="ambiant1.mp3" data-en="Ambiant 1" data-fr="Ambiant 1"></option>
-                                <option value="ambiant2.mp3" data-en="Ambiant 2" data-fr="Ambiant 2"></option>
-                              </select>
+                             <div class="input-button-wrapper">
+                                <select id="music-loop-select" class="session-select">
+                                    <option value="none" data-en="None" data-fr="Aucune"></option>
+                                    <option value="loop1.mp3" data-en="Loop 1" data-fr="Boucle 1"></option>
+                                    <option value="loop2.mp3" data-en="Loop 2" data-fr="Boucle 2"></option>
+                                    <option value="new-age1.mp3" data-en="New-Age 1" data-fr="New-Age 1"></option>
+                                    <option value="new-age2.mp3" data-en="New-Age 2" data-fr="New-Age 2"></option>
+                                    <option value="new-age3.mp3" data-en="New-Age 3" data-fr="New-Age 3"></option>
+                                    <option value="new-age4.mp3" data-en="New-Age 4." data-fr="New-Age 4."></option>
+                                    <option value="ambiant1.mp3" data-en="Ambiant 1" data-fr="Ambiant 1"></option>
+                                    <option value="ambiant2.mp3" data-en="Ambiant 2" data-fr="Ambiant 2"></option>
+                                </select>
+                                <button id="music-toggle-button"></button>
+                            </div>
                         </div>
                         <div class="control-group music-volume-control">
                             <label for="music-loop-volume-slider" data-en="Music Volume" data-fr="Volume Musique"></label>
