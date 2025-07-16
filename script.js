@@ -211,6 +211,22 @@ function handleEEGData(jsonString) {
             }
         }
         
+        // NOUVEAU: Gestion du mode audio reçu du serveur
+        if (data.audioMode && data.audioMode !== currentAudioMode) {
+            currentAudioMode = data.audioMode;
+            document.querySelector(`input[name="audioMode"][value="${currentAudioMode}"]`).checked = true;
+            // Met à jour les sources audio si la stimulation est en cours
+            if (visualTimeoutId) {
+                stopBinauralBeats();
+                stopIsochronicTones();
+                stopAlternophony();
+
+                if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
+                if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
+                if (currentAudioMode === 'alternophony') startAlternophony();
+            }
+        }
+        
         const relValue = parseFloat(data.rel);
         if (!isNaN(relValue) && relValue >= 0 && relValue <= 1) {
             currentIsochronenVolume = minVol + (relValue * volRange);
@@ -542,7 +558,6 @@ function getProportionalFlashDuration(minDuty, maxDuty) {
     const minFreq = 0.2;
     const maxFreq = 20.0;
     
-    // Assure-toi de ne pas diviser par zéro si minFreq === maxFreq
     if (maxFreq === minFreq) {
         return (1000 / BLINK_FREQUENCY_HZ) * minDuty;
     }
@@ -563,14 +578,12 @@ function updateVisuals(isBlinking) {
         leftCanvas.style.display = 'block';
         rightCanvas.style.display = 'block';
         
-        let shouldAnimateNow = false;
-        if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
-            const flashDuration = getProportionalFlashDuration(0.9, 0.5); // 90% -> 50%
-            shouldAnimateNow = (performance.now() - lastBlinkTime < flashDuration);
-        } else { // synchro
-            const flashDuration = getProportionalFlashDuration(0.5, 0.2); // 50% -> 20%
-            shouldAnimateNow = (performance.now() - lastBlinkTime < flashDuration);
+        let shouldAnimateNow = true;
+        if (currentBlinkMode === 'synchro') {
+             const flashDuration = getProportionalFlashDuration(0.5, 0.2); 
+             shouldAnimateNow = isBlinking || (performance.now() - lastBlinkTime < flashDuration);
         }
+        
         animateCanvasVisuals(shouldAnimateNow);
     }
 }
@@ -581,16 +594,13 @@ function clearCircleVisuals() {
 
 function drawCircleVisual(isBlinking) {
     if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
-        const flashDuration = getProportionalFlashDuration(0.9, 0.5);
         if (isBlinking) {
             clearCircleVisuals();
             const targetPanel = isLeftLight ? leftPanel : rightPanel;
             targetPanel.appendChild(createSizedCircle(targetPanel));
-        } else if (performance.now() - lastBlinkTime > flashDuration) {
-             clearCircleVisuals();
         }
     } else { // synchro
-        const flashDuration = getProportionalFlashDuration(0.5, 0.2);
+        const flashDuration = getProportionalFlashDuration(0.5, 0.2); 
         if (isBlinking) {
             clearCircleVisuals();
             leftPanel.appendChild(createSizedCircle(leftPanel));
@@ -646,10 +656,8 @@ function animateCanvasVisuals(shouldDraw) {
     if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
         if (isLeftLight) {
             drawOnPanel(leftCtx, leftCanvas);
-            rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
         } else {
             drawOnPanel(rightCtx, rightCanvas);
-            leftCtx.clearRect(0, 0, leftCanvas.width, leftCanvas.height);
         }
     } else { // synchro
         drawOnPanel(leftCtx, leftCanvas);
