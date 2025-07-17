@@ -17,6 +17,7 @@ let rampIntervalId = null;
 let currentBlinkMode = 'alternating';
 let currentVisualMode = 'circle';
 let lastBlinkTime = 0;
+let isLightPhase = true; // NOUVEAU: Pour le mode "Balanced"
 
 let eegSocket = null;
 
@@ -211,11 +212,9 @@ function handleEEGData(jsonString) {
             }
         }
         
-        // NOUVEAU: Gestion du mode audio reçu du serveur
         if (data.audioMode && data.audioMode !== currentAudioMode) {
             currentAudioMode = data.audioMode;
             document.querySelector(`input[name="audioMode"][value="${currentAudioMode}"]`).checked = true;
-            // Met à jour les sources audio si la stimulation est en cours
             if (visualTimeoutId) {
                 stopBinauralBeats();
                 stopIsochronicTones();
@@ -388,20 +387,24 @@ function stopAlternophony() {
 }
 
 function playSound(panDirection) {
+    // En mode 'balanced', on ne joue le son qu'une fois sur deux
+    if (currentBlinkMode === 'balanced' && isLightPhase) {
+        return;
+    }
+
     const now = audioContext.currentTime;
     const soundDuration = 1 / BLINK_FREQUENCY_HZ;
 
     if (isochronicOscillator && (currentAudioMode === 'isochronen' || currentAudioMode === 'both')) {
         let panValue = 0;
-        if (panDirection === 'left') {
-            panValue = -1;
-        } else if (panDirection === 'right') {
-            panValue = 1;
-        }
         
-        if (currentBlinkMode === 'crossed') {
-            panValue = -panValue;
-        }
+        if (currentBlinkMode === 'alternating') {
+            // Formerly 'crossed' behavior
+            panValue = (panDirection === 'left') ? 1 : -1;
+        } else if (currentBlinkMode === 'crossed') {
+            // Formerly 'alternating' behavior
+            panValue = (panDirection === 'left') ? -1 : 1;
+        } // Pour 'synchro' et 'balanced', panValue reste 0 (centré)
         
         isochronicPanner.pan.setValueAtTime(panValue, now);
         isochronicMasterGain.gain.setValueAtTime(currentIsochronenVolume, now);
@@ -569,6 +572,12 @@ function getProportionalFlashDuration(minDuty, maxDuty) {
 }
 
 function updateVisuals(isBlinking) {
+    // En mode 'balanced', on n'affiche la lumière qu'une fois sur deux
+    if (currentBlinkMode === 'balanced' && !isLightPhase) {
+        clearAllVisuals();
+        return;
+    }
+
     if (currentVisualMode === 'circle') {
         leftCanvas.style.display = 'none';
         rightCanvas.style.display = 'none';
@@ -578,7 +587,7 @@ function updateVisuals(isBlinking) {
         leftCanvas.style.display = 'block';
         rightCanvas.style.display = 'block';
         
-        let shouldAnimateNow = true;
+        let shouldAnimateNow = true; 
         if (currentBlinkMode === 'synchro') {
              const flashDuration = getProportionalFlashDuration(0.5, 0.2); 
              shouldAnimateNow = isBlinking || (performance.now() - lastBlinkTime < flashDuration);
@@ -588,18 +597,27 @@ function updateVisuals(isBlinking) {
     }
 }
 
+function clearAllVisuals() {
+    clearCircleVisuals();
+    leftCtx.clearRect(0, 0, leftCanvas.width, leftCanvas.height);
+    rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
+}
+
 function clearCircleVisuals() {
     document.querySelectorAll('.visual-circle').forEach(c => c.remove());
 }
 
 function drawCircleVisual(isBlinking) {
     if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
+        const flashDuration = getProportionalFlashDuration(0.9, 0.5); 
         if (isBlinking) {
             clearCircleVisuals();
             const targetPanel = isLeftLight ? leftPanel : rightPanel;
             targetPanel.appendChild(createSizedCircle(targetPanel));
+        } else if (performance.now() - lastBlinkTime > flashDuration) {
+             clearCircleVisuals();
         }
-    } else { // synchro
+    } else { // synchro & balanced
         const flashDuration = getProportionalFlashDuration(0.5, 0.2); 
         if (isBlinking) {
             clearCircleVisuals();
@@ -659,7 +677,7 @@ function animateCanvasVisuals(shouldDraw) {
         } else {
             drawOnPanel(rightCtx, rightCanvas);
         }
-    } else { // synchro
+    } else { // synchro & balanced
         drawOnPanel(leftCtx, leftCanvas);
         drawOnPanel(rightCtx, rightCanvas);
     }
@@ -1070,6 +1088,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isBlinkingThisFrame) {
             lastBlinkTime = performance.now();
+            
+            if (currentBlinkMode === 'balanced') {
+                isLightPhase = !isLightPhase;
+            }
+
             playSound(isLeftLight ? 'left' : 'right');
             isLeftLight = !isLeftLight;
         }
