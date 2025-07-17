@@ -674,8 +674,10 @@ function animateCanvasVisuals(shouldDraw) {
     if (currentBlinkMode === 'alternating' || currentBlinkMode === 'crossed') {
         if (isLeftLight) {
             drawOnPanel(leftCtx, leftCanvas);
+            rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height); // CORRECTIF
         } else {
             drawOnPanel(rightCtx, rightCanvas);
+            leftCtx.clearRect(0, 0, leftCanvas.width, leftCanvas.height); // CORRECTIF
         }
     } else { // synchro & balanced
         drawOnPanel(leftCtx, leftCanvas);
