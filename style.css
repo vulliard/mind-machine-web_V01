@@ -702,21 +702,18 @@ input[type="color"]::-webkit-color-swatch {
     align-items: center;
 }
 
-/* MODIFICATION: La barre de titre devient une bande de 80px */
 #app-container.immersive-mode #app-title {
     height: 80px;
     padding: 0;
     border: none;
 }
 
-/* NOUVEAU: Cache le contenu de la barre de titre en mode immersif */
 #app-container.immersive-mode #app-title > * {
     display: none;
 }
 
-/* MODIFICATION: La barre de contrôle est dans le flux normal */
 #app-container.immersive-mode #controls {
-    flex-shrink: 0; /* Empêche la barre de rétrécir */
+    flex-shrink: 0; 
     height: 80px;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 50%, transparent), url('ronce-de-noyer.jpg');
     background-size: cover;
@@ -1022,5 +1019,25 @@ input[type="color"]::-webkit-color-swatch {
 @media (pointer: coarse) {
     .music-volume-control {
         display: none;
+    }
+}
+
+/* Styles for smartphones in landscape immersive mode */
+@media (orientation: landscape) and (max-width: 900px) {
+    
+    /* Reduce top bar height */
+    #app-container.immersive-mode #app-title {
+        height: 40px;
+    }
+
+    /* Reduce bottom bar height to maintain symmetry */
+    #app-container.immersive-mode #controls {
+        height: 40px;
+        padding: 0 15px; /* Less lateral padding */
+    }
+
+    /* Adjust exit button size */
+    #app-container.immersive-mode #immersive-exit-button {
+        font-size: 1em;
     }
 }
