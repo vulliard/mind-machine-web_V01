@@ -1,9 +1,10 @@
-// eeg_bridge_server.js (mis à jour)
+// eeg_bridge_server.js (version finale avec /met/exc restauré)
 const osc = require('node-osc');
 const WebSocket = require('ws');
 
 const OSC_LISTEN_PORT = 9000;
 const WEBSOCKET_PORT = 8081;
+const EXC_OVERRIDE_COOLDOWN = 2000; // 2 secondes de priorité pour les rotations manuelles
 
 const wss = new WebSocket.Server({ port: WEBSOCKET_PORT });
 console.log(`[+] Serveur WebSocket en écoute sur le port ${WEBSOCKET_PORT}`);
@@ -16,18 +17,26 @@ const oscServer = new osc.Server(OSC_LISTEN_PORT, '0.0.0.0', () => {
     console.log(`[+] Serveur OSC en écoute sur le port ${OSC_LISTEN_PORT}`);
 });
 
-// 1. Les valeurs sont initialisées
+let actionState = {
+    winkL: false,
+    blink: false,
+    winkR: false
+};
+
+// NOUVEAU : Variable pour suivre le temps de la dernière rotation manuelle
+let lastManualRotationTime = 0;
+
 let eegData = {
     att: 0.5,
-    eng: 0.5, 
-    exc: 0.5, 
+    eng: 0.5,
+    exc: 0.5,
     int: 0.5,
     rel: 0.5,
     str: 0.5,
-    audioMode: 'both' // NOUVEAU: Ajout du mode audio
+    audioMode: 'both',
+    blinkMode: 'synchro'
 };
 
-// 2. Suivi de l'activation des métriques
 let hasReceivedFirstValue = {
     att: false,
     eng: false,
@@ -37,18 +46,11 @@ let hasReceivedFirstValue = {
     str: false
 };
 
-// 3. Logique de rotation pour les modes
-const blinkModes = ['alternating', 'synchro', 'crossed'];
-let currentBlinkModeIndex = 1; 
+const blinkModes = ['alternating', 'synchro', 'crossed', 'balanced'];
+let currentBlinkModeIndex = 1;
 
 const audioModes = ['binaural', 'isochronen', 'both'];
-let currentAudioModeIndex = 2; // Index initial pour 'both'
-
-const modeToExcValue = {
-    'alternating': 0.1,
-    'synchro': 0.5,
-    'crossed': 0.8
-};
+let currentAudioModeIndex = 2;
 
 function rotateBlinkMode(direction) {
     if (direction === 'left') {
@@ -57,11 +59,11 @@ function rotateBlinkMode(direction) {
         currentBlinkModeIndex = (currentBlinkModeIndex + 1) % blinkModes.length;
     }
     const newMode = blinkModes[currentBlinkModeIndex];
-    eegData.exc = modeToExcValue[newMode];
-    console.log(`[+] Rotation du mode de CLIGNOTEMENT vers: ${newMode}`);
+    eegData.blinkMode = newMode;
+    lastManualRotationTime = Date.now(); // On enregistre le moment de l'action manuelle
+    console.log(`[+] Rotation manuelle du mode vers: ${newMode}`);
 }
 
-// NOUVEAU: Fonction pour faire tourner le mode AUDIO
 function rotateAudioMode() {
     currentAudioModeIndex = (currentAudioModeIndex + 1) % audioModes.length;
     const newMode = audioModes[currentAudioModeIndex];
@@ -69,49 +71,81 @@ function rotateAudioMode() {
     console.log(`[+] Rotation du mode AUDIO vers: ${newMode}`);
 }
 
-// Fonction pour traiter les messages OSC
 function processOscMessage(address, value) {
-    // Gestion prioritaire des clignements pour la rotation
-    if (address === '/fac/eyeAct/blink') {
-        rotateBlinkMode('left');
-        return; 
-    }
+
+    // --- Actions Manuelles (Priorité Haute) ---
     if (address === '/fac/eyeAct/winkL') {
-        rotateBlinkMode('right');
-        return; 
+        if (value > 0 && !actionState.winkL) {
+            actionState.winkL = true;
+            rotateBlinkMode('left');
+            setTimeout(() => { actionState.winkL = false; }, 500);
+        }
+        return;
     }
-    // NOUVEAU: Gestion du clignement droit pour le mode audio
+    if (address === '/fac/eyeAct/blink') {
+        if (value > 0 && !actionState.blink) {
+            actionState.blink = true;
+            rotateBlinkMode('right');
+            setTimeout(() => { actionState.blink = false; }, 500);
+        }
+        return;
+    }
     if (address === '/fac/eyeAct/winkR') {
-        rotateAudioMode();
+        if (value > 0 && !actionState.winkR) {
+            actionState.winkR = true;
+            rotateAudioMode();
+            setTimeout(() => { actionState.winkR = false; }, 500);
+        }
         return;
     }
 
-    let metric = null;
+    // --- Contrôle "Slider" /met/exc (Priorité Basse) ---
+    if (address === '/met/exc') {
+        // On ne traite ce message que si aucune rotation manuelle n'a eu lieu récemment
+        if (Date.now() - lastManualRotationTime < EXC_OVERRIDE_COOLDOWN) {
+            return; // On ignore la valeur passive pour ne pas écraser l'action de l'utilisateur
+        }
+
+        let newMode;
+        if (value < 0.25) {
+            newMode = 'alternating';
+            currentBlinkModeIndex = 0;
+        } else if (value < 0.5) {
+            newMode = 'synchro';
+            currentBlinkModeIndex = 1;
+        } else if (value < 0.8) {
+            newMode = 'crossed';
+            currentBlinkModeIndex = 2;
+        } else {
+            newMode = 'balanced';
+            currentBlinkModeIndex = 3;
+        }
+
+        if (eegData.blinkMode !== newMode) {
+            eegData.blinkMode = newMode;
+            console.log(`[+] Mode changé par /met/exc vers: ${newMode}`);
+        }
+        return;
+    }
     
-    // Association des autres adresses OSC
-    if (address === '/met/att' || address === '/fac/uAct/surprise') metric = 'att';
+    // --- Autres assignations de métriques ---
+    let metric = null;
+    if (address === '/fac/lAct/clench') metric = 'rel'; // clench -> volume isochrone
+    else if (address === '/met/att' || address === '/fac/uAct/surprise') metric = 'att';
     else if (address === '/met/eng' || address === '/fac/uAct/frown') metric = 'eng';
-    else if (address === '/met/exc' || address === '/fac/lAct/clench') metric = 'exc';
     else if (address === '/met/int' || address === '/fac/lAct/smile') metric = 'int';
     else if (address === '/met/rel') metric = 'rel';
     else if (address === '/met/str') metric = 'str';
     else return;
 
-    // Logique d'activation
     if (!hasReceivedFirstValue[metric] && value !== 0) {
-        console.log(`[+] Première valeur non-nulle reçue pour '${metric}'. Activation du suivi.`);
         hasReceivedFirstValue[metric] = true;
     }
-
     if (hasReceivedFirstValue[metric]) {
         eegData[metric] = value;
-        if (metric === 'exc') {
-            if (value < 0.33) currentBlinkModeIndex = 0;
-            else if (value < 0.66) currentBlinkModeIndex = 1;
-            else currentBlinkModeIndex = 2;
-        }
     }
 }
+
 
 oscServer.on('message', function (msg) {
     processOscMessage(msg[0], msg[1]);
