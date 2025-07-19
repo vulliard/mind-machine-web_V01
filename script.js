@@ -1075,13 +1075,10 @@ document.addEventListener('DOMContentLoaded', () => {
     currentAlternophonyVolume = parseFloat(alternophonyVolumeSlider.value) / 100;
     currentBlinkMode = document.querySelector('input[name="blinkMode"]:checked').value;
     
-    // CORRECTION FINALE : Logique de volume initialisée de manière conditionnelle
     if (window.matchMedia('(pointer: coarse)').matches) {
-        // Pour les appareils tactiles, on applique les volumes par défaut directement
         ambianceVolumeSlider.value = 40;
         musicLoopAudio.volume = 0.30;
     } else {
-        // Pour les ordinateurs, on lit la valeur du slider de musique
         musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
     }
     
@@ -1142,7 +1139,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             appContainer.classList.remove('stimulation-active');
 
-            // Re-enable all controls
             blinkRateSlider.disabled = false;
             blinkFrequencyInput.disabled = false;
             sessionSelect.disabled = false;
@@ -1280,7 +1276,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Écouteurs pour l'ASMR (indépendant)
     crackleToggleButton.addEventListener('click', () => {
         if (crackleIsPlaying) {
             stopCrackles();
@@ -1290,7 +1285,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     crackleVolumeSlider.addEventListener('input', updateCrackleVolume);
     
-    // Logique pour le système d'ambiance hybride
     const ambianceControllers = {
         waves: { play: startWaves, pause: stopWaves, setVolume: (vol) => { if (waveMasterVolume) waveMasterVolume.gain.setValueAtTime(vol, audioContext.currentTime, 0.01) } },
         forest: { audio: fileAmbianceSources.forest, play() { this.audio.play() }, pause() { this.audio.pause() }, setVolume(vol) { this.audio.volume = vol } },
@@ -1342,7 +1336,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Logique pour la boucle musicale
     musicLoopSelect.addEventListener('change', (e) => {
         const track = e.target.value;
         musicLoopAudio.pause();
@@ -1407,28 +1400,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === aboutModal) aboutModal.style.display = 'none';
         if (event.target === customSessionModal) customSessionModal.style.display = 'none';
     });
-
-    // Logique du mode immersif - Retour à la version simple et universelle
-    visualPanelsWrapper.addEventListener('click', () => {
-        if (!appContainer.classList.contains('immersive-mode')) {
-            appContainer.requestFullscreen().then(() => {
-                appContainer.classList.add('immersive-mode');
-            }).catch(err => {
-                console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
-        }
-    });
     
-    immersiveExitButton.addEventListener('click', () => {
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-        }
+    // --- IMMERSIVE MODE LOGIC (from your working file) ---
+    visualPanelsWrapper.addEventListener('click', (e) => {
+        if (e.target.id === 'immersive-exit-button' || immersiveExitButton.contains(e.target)) return;
+        appContainer.classList.add('immersive-mode');
     });
-
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-            appContainer.classList.remove('immersive-mode');
-        }
+    immersiveExitButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        appContainer.classList.remove('immersive-mode');
     });
     
     blinkModeRadios.forEach(radio => radio.addEventListener('change', (e) => {
