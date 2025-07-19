@@ -17,7 +17,7 @@ let rampIntervalId = null;
 let currentBlinkMode = 'alternating';
 let currentVisualMode = 'circle';
 let lastBlinkTime = 0;
-let isLightPhase = true; 
+let isLightPhase = true; // NOUVEAU: Pour le mode "Balanced"
 
 let eegSocket = null;
 
@@ -203,17 +203,12 @@ function handleEEGData(jsonString) {
         const excValue = parseFloat(data.exc);
         if (!isNaN(excValue) && excValue >= 0 && excValue <= 1) {
             let newMode;
-            if (excValue < 0.25) newMode = 'alternating';
-            else if (excValue < 0.50) newMode = 'synchro';
-            else if (excValue < 0.75) newMode = 'crossed';
-            else newMode = 'balanced';
-            
+            if (excValue < 0.33) newMode = 'alternating';
+            else if (excValue < 0.66) newMode = 'synchro';
+            else newMode = 'crossed';
             if (newMode !== currentBlinkMode) {
                 currentBlinkMode = newMode;
-                const radioToSelect = document.querySelector(`input[name="blinkMode"][value="${newMode}"]`);
-                if (radioToSelect) {
-                    radioToSelect.checked = true;
-                }
+                document.querySelector(`input[name="blinkMode"][value="${newMode}"]`).checked = true;
             }
         }
         
@@ -392,6 +387,7 @@ function stopAlternophony() {
 }
 
 function playSound(panDirection) {
+    // En mode 'balanced', on ne joue le son qu'une fois sur deux
     if (currentBlinkMode === 'balanced' && isLightPhase) {
         return;
     }
@@ -403,10 +399,12 @@ function playSound(panDirection) {
         let panValue = 0;
         
         if (currentBlinkMode === 'alternating') {
+            // Formerly 'crossed' behavior
             panValue = (panDirection === 'left') ? 1 : -1;
         } else if (currentBlinkMode === 'crossed') {
+            // Formerly 'alternating' behavior
             panValue = (panDirection === 'left') ? -1 : 1;
-        } 
+        } // Pour 'synchro' et 'balanced', panValue reste 0 (centré)
         
         isochronicPanner.pan.setValueAtTime(panValue, now);
         isochronicMasterGain.gain.setValueAtTime(currentIsochronenVolume, now);
@@ -574,6 +572,7 @@ function getProportionalFlashDuration(minDuty, maxDuty) {
 }
 
 function updateVisuals(isBlinking) {
+    // En mode 'balanced', on n'affiche la lumière qu'une fois sur deux
     if (currentBlinkMode === 'balanced' && !isLightPhase) {
         clearAllVisuals();
         return;
@@ -618,7 +617,7 @@ function drawCircleVisual(isBlinking) {
         } else if (performance.now() - lastBlinkTime > flashDuration) {
              clearCircleVisuals();
         }
-    } else { 
+    } else { // synchro & balanced
         const flashDuration = getProportionalFlashDuration(0.5, 0.2); 
         if (isBlinking) {
             clearCircleVisuals();
@@ -680,7 +679,7 @@ function animateCanvasVisuals(shouldDraw) {
             drawOnPanel(rightCtx, rightCanvas);
             leftCtx.clearRect(0, 0, leftCanvas.width, leftCanvas.height);
         }
-    } else { 
+    } else { // synchro & balanced
         drawOnPanel(leftCtx, leftCanvas);
         drawOnPanel(rightCtx, rightCanvas);
     }
