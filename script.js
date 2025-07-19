@@ -14,6 +14,7 @@ let currentLanguage = 'en';
 let currentSession = 'manual';
 let sessionTimeoutId = null;
 let rampIntervalId = null; 
+let htmlFadeInterval = null; // Pour le fondu des sons HTML
 let currentBlinkMode = 'alternating';
 let currentVisualMode = 'circle';
 let lastBlinkTime = 0;
@@ -177,6 +178,7 @@ function handleEEGData(jsonString) {
             const minFreq = 1;
             const maxFreq = 16;
             BLINK_FREQUENCY_HZ = minFreq + (attValue * (maxFreq - minFreq));
+            updateBinauralFrequencies();
         }
 
         const engValue = parseFloat(data.eng);
@@ -186,18 +188,7 @@ function handleEEGData(jsonString) {
             currentCarrierFrequency = minCarrier + (engValue * (maxCarrier - minCarrier));
             carrierFrequencyInput.value = currentCarrierFrequency.toFixed(0);
             carrierFrequencySlider.value = currentCarrierFrequency;
-            
-            if (visualTimeoutId && binauralOscillatorLeft && binauralOscillatorRight && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
-                const binauralBeatFreq = getSynchronizedBinauralBeatFrequency();
-                const freqLeftEar = currentCarrierFrequency - (binauralBeatFreq / 2);
-                const freqRightEar = currentCarrierFrequency + (binauralBeatFreq / 2);
-
-                if (freqLeftEar > 0 && freqRightEar > 0 && audioContext) {
-                    const now = audioContext.currentTime;
-                    binauralOscillatorLeft.frequency.setTargetAtTime(freqLeftEar, now, 0.015);
-                    binauralOscillatorRight.frequency.setTargetAtTime(freqRightEar, now, 0.015);
-                }
-            }
+            updateBinauralFrequencies();
         }
 
         const intValue = parseFloat(data.int);
@@ -223,11 +214,9 @@ function handleEEGData(jsonString) {
             if (visualTimeoutId) {
                 stopBinauralBeats();
                 stopIsochronicTones();
-                stopAlternophony();
-
+                
                 if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
                 if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
-                if (currentAudioMode === 'alternophony') startAlternophony();
             }
         }
         
@@ -284,6 +273,23 @@ function disconnectEEG() {
 
 function getSynchronizedBinauralBeatFrequency() {
     return BLINK_FREQUENCY_HZ * currentBBMultiplier;
+}
+
+function updateBinauralFrequencies() {
+    if (!visualTimeoutId || !binauralOscillatorLeft || (currentAudioMode !== 'binaural' && currentAudioMode !== 'both')) {
+        return;
+    }
+    
+    const binauralBeatFreq = getSynchronizedBinauralBeatFrequency();
+    const freqLeftEar = currentCarrierFrequency - (binauralBeatFreq / 2);
+    const freqRightEar = currentCarrierFrequency + (binauralBeatFreq / 2);
+
+    if (freqLeftEar > 0 && audioContext) {
+        const now = audioContext.currentTime;
+        binauralOscillatorLeft.frequency.setTargetAtTime(freqLeftEar, now, 0.015);
+        binauralOscillatorRight.frequency.setTargetAtTime(freqRightEar, now, 0.015);
+        updateFrequencyDisplays();
+    }
 }
 
 function startBinauralBeats() {
@@ -403,10 +409,10 @@ function playSound(panDirection) {
         let panValue = 0;
         
         if (currentBlinkMode === 'alternating') {
-            panValue = (panDirection === 'left') ? 1 : -1;
-        } else if (currentBlinkMode === 'crossed') {
             panValue = (panDirection === 'left') ? -1 : 1;
-        } 
+        } else if (currentBlinkMode === 'crossed') {
+            panValue = (panDirection === 'left') ? 1 : -1;
+        }
         
         isochronicPanner.pan.setValueAtTime(panValue, now);
         isochronicMasterGain.gain.setValueAtTime(currentIsochronenVolume, now);
@@ -776,6 +782,40 @@ function validateAndSetFrequency(inputElement, sliderElement, isBlinkFreq) {
     }
     sliderElement.value = newValue;
     updateFrequencyDisplays();
+    updateBinauralFrequencies();
+}
+
+function fadeHtmlAudio(durationInSeconds) {
+    clearInterval(htmlFadeInterval);
+
+    const activeAudios = [];
+    if (!musicLoopAudio.paused) activeAudios.push(musicLoopAudio);
+    if (currentAmbiance && currentAmbiance.audio && !currentAmbiance.audio.paused) {
+        activeAudios.push(currentAmbiance.audio);
+    }
+
+    if (activeAudios.length === 0) return;
+
+    const tickRate = 50; // ms
+    const totalTicks = (durationInSeconds * 1000) / tickRate;
+    let currentTick = 0;
+    const initialVolumes = activeAudios.map(audio => audio.volume);
+
+    htmlFadeInterval = setInterval(() => {
+        currentTick++;
+        const progress = currentTick / totalTicks;
+
+        if (progress >= 1) {
+            activeAudios.forEach(audio => audio.volume = 0);
+            clearInterval(htmlFadeInterval);
+            return;
+        }
+
+        activeAudios.forEach((audio, index) => {
+            audio.volume = initialVolumes[index] * (1 - progress);
+        });
+
+    }, tickRate);
 }
 
 function runSession(sessionKey, step = 0) {
@@ -806,6 +846,7 @@ function runSession(sessionKey, step = 0) {
         const progress = Math.min(elapsedTime / duration, 1);
         BLINK_FREQUENCY_HZ = startFreq + (endFreq - startFreq) * progress;
         updateFrequencyDisplays();
+        updateBinauralFrequencies();
     }, 100);
 
     if ((currentAudioMode === 'binaural' || currentAudioMode === 'both') && binauralOscillatorLeft && binauralOscillatorRight) {
@@ -813,6 +854,22 @@ function runSession(sessionKey, step = 0) {
         const endBeat = endFreq * currentBBMultiplier;
         binauralOscillatorLeft.frequency.linearRampToValueAtTime(currentCarrierFrequency - (endBeat / 2), now + duration);
         binauralOscillatorRight.frequency.linearRampToValueAtTime(currentCarrierFrequency + (endBeat / 2), now + duration);
+    }
+
+    // NOUVEAU : Logique pour le fondu de fin de session
+    const isLastStep = (step === sessionSteps.length - 1);
+    if (isLastStep) {
+        const fadeDuration = Math.min(duration, 15);
+        const fadeStartTime = (duration - fadeDuration) * 1000;
+
+        setTimeout(() => {
+            if (audioContext && masterGainNode) {
+                const now = audioContext.currentTime;
+                masterGainNode.gain.cancelScheduledValues(now);
+                masterGainNode.gain.linearRampToValueAtTime(0, now + fadeDuration);
+            }
+            fadeHtmlAudio(fadeDuration);
+        }, fadeStartTime);
     }
 
     sessionTimeoutId = setTimeout(() => {
@@ -1065,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Object.values(fileAmbianceSources).forEach(audio => audio.loop = true);
 
-    // Variable Initialization
+    // Initialisation des variables
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
     currentCarrierFrequency = parseFloat(carrierFrequencyInput.value);
     currentBBMultiplier = parseFloat(document.querySelector('input[name="bbMultiplier"]:checked').value);
@@ -1082,37 +1139,38 @@ document.addEventListener('DOMContentLoaded', () => {
         musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
     }
     
-    // Initial Setup
+    // Fin du chargement
     loadCustomSessions();
-    validateAndSetFrequency(carrierFrequencySlider, carrierFrequencyInput, false);
-    validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
+    validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
+    validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
     setLanguage(currentLanguage);
     if (warningModal) warningModal.style.display = 'flex';
 
-    // --- Main Animation Loop ---
+    // --- Boucle d'animation principale ---
     function animationLoop(timestamp) {
-        if (!visualTimeoutId) return; 
+        if (!visualTimeoutId) return;
 
         const interval = 1000 / BLINK_FREQUENCY_HZ;
         const isBlinkingThisFrame = (timestamp - lastBlinkTime >= interval);
 
         if (isBlinkingThisFrame) {
             lastBlinkTime = performance.now();
-            
             if (currentBlinkMode === 'balanced') {
                 isLightPhase = !isLightPhase;
             }
-
             playSound(isLeftLight ? 'left' : 'right');
-            isLeftLight = !isLeftLight;
         }
 
         updateVisuals(isBlinkingThisFrame);
+
+        if (isBlinkingThisFrame) {
+            isLeftLight = !isLeftLight;
+        }
         
         visualTimeoutId = requestAnimationFrame(animationLoop);
     }
     
-    // Event Listeners
+    // --- Écouteurs d'événements ---
     startButton.addEventListener('click', () => {
         initAudioContext();
         
@@ -1121,13 +1179,13 @@ document.addEventListener('DOMContentLoaded', () => {
             visualTimeoutId = null;
             clearTimeout(sessionTimeoutId);
             clearInterval(rampIntervalId);
+            clearInterval(htmlFadeInterval);
             sessionTimeoutId = null;
             rampIntervalId = null;
+            htmlFadeInterval = null;
             isLeftLight = false;
             
-            clearCircleVisuals();
-            leftCtx.clearRect(0,0,leftCanvas.width, leftCanvas.height);
-            rightCtx.clearRect(0,0,rightCanvas.width, rightCanvas.height);
+            clearAllVisuals();
 
             stopBinauralBeats();
             stopIsochronicTones();
@@ -1136,6 +1194,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if(musicLoopAudio) musicLoopAudio.pause();
             if (currentAmbiance) currentAmbiance.pause();
             disconnectEEG();
+            
+            if (masterGainNode) {
+                 masterGainNode.gain.cancelScheduledValues(audioContext.currentTime);
+                 masterGainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            }
             
             appContainer.classList.remove('stimulation-active');
 
@@ -1149,7 +1212,6 @@ document.addEventListener('DOMContentLoaded', () => {
             isochronenVolumeSlider.disabled = false;
             alternophonyVolumeSlider.disabled = false;
 
-
         } else {
             appContainer.classList.add('stimulation-active');
             currentSession = sessionSelect.value;
@@ -1162,7 +1224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             visualTimeoutId = requestAnimationFrame(animationLoop);
             
             if (currentSession === 'manual') {
-                validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
+                validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
             } else if (currentSession === 'eeg') {
                 connectEEG();
                 blinkRateSlider.disabled = true;
@@ -1183,6 +1245,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         setLanguage(currentLanguage);
     });
+    
+    carrierFrequencySlider.addEventListener('input', () => {
+        carrierFrequencyInput.value = carrierFrequencySlider.value;
+        validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
+    });
+    carrierFrequencyInput.addEventListener('change', () => validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false));
+    carrierFrequencyInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
+            e.target.blur();
+        }
+    });
+
+    blinkRateSlider.addEventListener('input', () => {
+        blinkFrequencyInput.value = blinkRateSlider.value;
+        validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
+    });
+    blinkFrequencyInput.addEventListener('change', () => validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true));
+    blinkFrequencyInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
+            e.target.blur();
+        }
+    });
+
+    if (set432hzButton) {
+        set432hzButton.addEventListener('click', () => {
+            carrierFrequencyInput.value = 432;
+            validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
+        });
+    }
 
     sessionSelect.addEventListener('change', (e) => {
         const selectedValue = e.target.value;
@@ -1215,51 +1308,24 @@ document.addEventListener('DOMContentLoaded', () => {
         customSessionModal.style.display = 'none';
     });
 
-    const handleFrequencyValidation = (isBlink) => {
-        if (isBlink) {
-            validateAndSetFrequency(blinkRateSlider, blinkFrequencyInput, true);
-        } else {
-            validateAndSetFrequency(carrierFrequencySlider, carrierFrequencyInput, false);
-        }
-        if (visualTimeoutId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) startBinauralBeats();
-    };
-
-    carrierFrequencySlider.addEventListener('input', () => { carrierFrequencyInput.value = carrierFrequencySlider.value; handleFrequencyValidation(false); });
-    carrierFrequencyInput.addEventListener('change', () => handleFrequencyValidation(false));
-    carrierFrequencyInput.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(false); e.target.blur(); } });
-
-    if (set432hzButton) {
-        set432hzButton.addEventListener('click', () => {
-            carrierFrequencyInput.value = 432;
-            carrierFrequencyInput.dispatchEvent(new Event('change'));
-        });
-    }
-
     visualModeSelect.addEventListener('change', (e) => {
         currentVisualMode = e.target.value; 
     });
-
-    blinkRateSlider.addEventListener('input', () => { blinkRateSlider.value = blinkRateSlider.value; handleFrequencyValidation(true); });
-    blinkFrequencyInput.addEventListener('change', () => handleFrequencyValidation(true));
-    blinkRateSlider.addEventListener('keydown', e => { if (e.key === 'Enter') { handleFrequencyValidation(true); e.target.blur(); } });
 
     audioModeRadios.forEach(radio => radio.addEventListener('change', e => {
         currentAudioMode = e.target.value;
         if (visualTimeoutId) {
             stopBinauralBeats();
             stopIsochronicTones();
-            stopAlternophony();
-
+            
             if (currentAudioMode === 'binaural' || currentAudioMode === 'both') startBinauralBeats();
             if (currentAudioMode === 'isochronen' || currentAudioMode === 'both') startIsochronicTones();
-            if (currentAudioMode === 'alternophony') startAlternophony();
         }
     }));
 
     bbMultiplierRadios.forEach(radio => radio.addEventListener('change', e => {
         currentBBMultiplier = parseFloat(e.target.value);
-        updateFrequencyDisplays();
-        if (visualTimeoutId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) startBinauralBeats();
+        updateBinauralFrequencies();
     }));
 
     binauralVolumeSlider.addEventListener('input', e => {
@@ -1371,12 +1437,9 @@ document.addEventListener('DOMContentLoaded', () => {
         musicLoopAudio.volume = parseFloat(e.target.value) / 100;
     });
 
-
-    // Language selection
     flagFr.addEventListener('click', () => setLanguage('fr'));
     flagEn.addEventListener('click', () => setLanguage('en'));
 
-    // Modal logic
     warningButton.addEventListener('click', () => warningModal.style.display = 'flex');
     understoodButton.addEventListener('click', () => warningModal.style.display = 'none');
     warningCloseButton.addEventListener('click', () => warningModal.style.display = 'none');
@@ -1401,7 +1464,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === customSessionModal) customSessionModal.style.display = 'none';
     });
     
-    // --- IMMERSIVE MODE LOGIC (from your working file) ---
     visualPanelsWrapper.addEventListener('click', (e) => {
         if (e.target.id === 'immersive-exit-button' || immersiveExitButton.contains(e.target)) return;
         appContainer.classList.add('immersive-mode');
