@@ -186,18 +186,8 @@ function handleEEGData(jsonString) {
             currentCarrierFrequency = minCarrier + (engValue * (maxCarrier - minCarrier));
             carrierFrequencyInput.value = currentCarrierFrequency.toFixed(0);
             carrierFrequencySlider.value = currentCarrierFrequency;
-            
-            // CORRECTED PART: Smoothly update binaural frequencies instead of restarting
-            if (visualTimeoutId && binauralOscillatorLeft && binauralOscillatorRight && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
-                const binauralBeatFreq = getSynchronizedBinauralBeatFrequency();
-                const freqLeftEar = currentCarrierFrequency - (binauralBeatFreq / 2);
-                const freqRightEar = currentCarrierFrequency + (binauralBeatFreq / 2);
-
-                if (freqLeftEar > 0 && freqRightEar > 0 && audioContext) {
-                    const now = audioContext.currentTime;
-                    binauralOscillatorLeft.frequency.setTargetAtTime(freqLeftEar, now, 0.015);
-                    binauralOscillatorRight.frequency.setTargetAtTime(freqRightEar, now, 0.015);
-                }
+            if (visualTimeoutId && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
+                startBinauralBeats();
             }
         }
 
@@ -210,12 +200,20 @@ function handleEEGData(jsonString) {
             }
         }
 
-        // MODIFIED FOR ROBUSTNESS: Read the mode name directly
-        if (data.blinkMode && data.blinkMode !== currentBlinkMode) {
-            currentBlinkMode = data.blinkMode;
-            const radioToSelect = document.querySelector(`input[name="blinkMode"][value="${currentBlinkMode}"]`);
-            if(radioToSelect) {
-                radioToSelect.checked = true;
+        const excValue = parseFloat(data.exc);
+        if (!isNaN(excValue) && excValue >= 0 && excValue <= 1) {
+            let newMode;
+            if (excValue < 0.25) newMode = 'alternating';
+            else if (excValue < 0.50) newMode = 'synchro';
+            else if (excValue < 0.75) newMode = 'crossed';
+            else newMode = 'balanced';
+            
+            if (newMode !== currentBlinkMode) {
+                currentBlinkMode = newMode;
+                const radioToSelect = document.querySelector(`input[name="blinkMode"][value="${newMode}"]`);
+                if (radioToSelect) {
+                    radioToSelect.checked = true;
+                }
             }
         }
         
@@ -1358,6 +1356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         musicIsPlaying = !musicIsPlaying;
         if(musicIsPlaying) {
+            synchronizeMusicLoop();
             musicLoopAudio.play();
             musicToggleButton.classList.add('active');
         } else {
@@ -1365,66 +1364,62 @@ document.addEventListener('DOMContentLoaded', () => {
             musicToggleButton.classList.remove('active');
         }
     });
-    
+
     musicLoopVolumeSlider.addEventListener('input', (e) => {
         musicLoopAudio.volume = parseFloat(e.target.value) / 100;
     });
 
-
-    // Language selection
-    flagFr.addEventListener('click', () => setLanguage('fr'));
-    flagEn.addEventListener('click', () => setLanguage('en'));
-
-    // Modal logic
-    warningButton.addEventListener('click', () => warningModal.style.display = 'flex');
-    understoodButton.addEventListener('click', () => warningModal.style.display = 'none');
+    warningButton.addEventListener('click', () => {
+        warningModal.style.display = 'flex';
+        if (visualTimeoutId) startButton.click();
+    });
     warningCloseButton.addEventListener('click', () => warningModal.style.display = 'none');
-
-    helpButton.addEventListener('click', () => helpModal.style.display = 'flex');
-    helpCloseButton.addEventListener('click', () => helpModal.style.display = 'none');
+    understoodButton.addEventListener('click', () => warningModal.style.display = 'none');
     
-    aboutButton.addEventListener('click', () => aboutModal.style.display = 'flex');
-    aboutModalCloseButton.addEventListener('click', () => aboutModal.style.display = 'none');
-
+    helpButton.addEventListener('click', () => {
+        helpModal.style.display = 'flex';
+    });
+    helpCloseButton.addEventListener('click', () => {
+        helpModal.style.display = 'none';
+    });
+    
     sessionHelpButton.addEventListener('click', () => {
         generateAllSessionGraphs();
         sessionGraphModal.style.display = 'flex';
     });
-    sessionGraphModalCloseButton.addEventListener('click', () => sessionGraphModal.style.display = 'none');
-
-    window.addEventListener('click', (event) => {
-        if (event.target === warningModal) warningModal.style.display = 'none';
-        if (event.target === helpModal) helpModal.style.display = 'none';
-        if (event.target === sessionGraphModal) sessionGraphModal.style.display = 'none';
-        if (event.target === aboutModal) aboutModal.style.display = 'none';
-        if (event.target === customSessionModal) customSessionModal.style.display = 'none';
+    sessionGraphModalCloseButton.addEventListener('click', () => {
+        sessionGraphModal.style.display = 'none';
     });
 
-    // Immersive mode logic
-    visualPanelsWrapper.addEventListener('click', () => {
-        if (!appContainer.classList.contains('immersive-mode')) {
-            appContainer.requestFullscreen().then(() => {
-                appContainer.classList.add('immersive-mode');
-            }).catch(err => {
-                console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
-        }
+    aboutButton.addEventListener('click', () => {
+        aboutModal.style.display = 'flex';
     });
+    aboutModalCloseButton.addEventListener('click', () => {
+        aboutModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', e => { 
+        if (e.target == warningModal) warningModal.style.display = 'none';
+        if (e.target == helpModal) helpModal.style.display = 'none';
+        if (e.target == sessionGraphModal) sessionGraphModal.style.display = 'none';
+        if (e.target == aboutModal) aboutModal.style.display = 'none';
+        if (e.target == customSessionModal) customSessionModal.style.display = 'none';
+    });
+
+    flagFr.addEventListener('click', () => setLanguage('fr'));
+    flagEn.addEventListener('click', () => setLanguage('en'));
     
-    immersiveExitButton.addEventListener('click', () => {
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-        }
-    });
-
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-            appContainer.classList.remove('immersive-mode');
-        }
-    });
-    
-    blinkModeRadios.forEach(radio => radio.addEventListener('change', (e) => {
+    blinkModeRadios.forEach(radio => radio.addEventListener('change', e => {
         currentBlinkMode = e.target.value;
     }));
-    
+
+    // --- IMMERSIVE MODE LOGIC ---
+    visualPanelsWrapper.addEventListener('click', (e) => {
+        if (e.target.id === 'immersive-exit-button' || immersiveExitButton.contains(e.target)) return;
+        appContainer.classList.add('immersive-mode');
+    });
+    immersiveExitButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        appContainer.classList.remove('immersive-mode');
+    });
 });
