@@ -1074,7 +1074,16 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIsochronenVolume = parseFloat(isochronenVolumeSlider.value) / 100;
     currentAlternophonyVolume = parseFloat(alternophonyVolumeSlider.value) / 100;
     currentBlinkMode = document.querySelector('input[name="blinkMode"]:checked').value;
-    musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
+    
+    // CORRECTION FINALE : Logique de volume initialisée de manière conditionnelle
+    if (window.matchMedia('(pointer: coarse)').matches) {
+        // Pour les appareils tactiles, on applique les volumes par défaut directement
+        ambianceVolumeSlider.value = 40;
+        musicLoopAudio.volume = 0.30;
+    } else {
+        // Pour les ordinateurs, on lit la valeur du slider de musique
+        musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
+    }
     
     // Initial Setup
     loadCustomSessions();
