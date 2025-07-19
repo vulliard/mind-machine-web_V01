@@ -1065,7 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Object.values(fileAmbianceSources).forEach(audio => audio.loop = true);
 
-    // NOUVEAU : Réglage des volumes par défaut pour les appareils tactiles
     if (window.matchMedia('(pointer: coarse)').matches) {
         if (ambianceVolumeSlider) {
             ambianceVolumeSlider.value = 40;
@@ -1409,8 +1408,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === customSessionModal) customSessionModal.style.display = 'none';
     });
 
-    // Immersive mode logic
-    visualPanelsWrapper.addEventListener('click', () => {
+    // CORRECTION : Logique du mode immersif rendue plus robuste pour les appareils tactiles
+    function enterImmersiveMode(event) {
+        // Empêche le "clic" émulé de se déclencher après l'événement tactile
+        if (event.type === 'touchend') {
+            event.preventDefault();
+        }
         if (!appContainer.classList.contains('immersive-mode')) {
             appContainer.requestFullscreen().then(() => {
                 appContainer.classList.add('immersive-mode');
@@ -1418,7 +1421,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
             });
         }
-    });
+    }
+
+    visualPanelsWrapper.addEventListener('click', enterImmersiveMode);
+    visualPanelsWrapper.addEventListener('touchend', enterImmersiveMode);
     
     immersiveExitButton.addEventListener('click', () => {
         if (document.fullscreenElement) {
