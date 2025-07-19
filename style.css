@@ -93,7 +93,7 @@ body, html {
     letter-spacing: 3px;
     color: #fff;
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ffc107, 0 0 30px #ffc107, 0 0 40px #ffc107;
-    transition: font-size 0.4s ease-in-out;
+    transition: font-size: 0.4s ease-in-out;
 }
 
 #app-title p {
@@ -101,7 +101,7 @@ body, html {
     font-size: 1.8em;
     color: #f5e6d3;
      text-shadow: 0 0 4px #fff, 0 0 10px #ffc107, 0 0 20px #ffc107;
-     transition: font-size 0.4s ease-in-out;
+     transition: font-size: 0.4s ease-in-out;
 }
 
 #app-logo-left, #app-logo-right {
@@ -370,13 +370,10 @@ body, html {
     animation: pulse-start 1.5s infinite;
 }
 
-#app-container.stimulation-active #startButton {
-    animation: none;
-}
-
 #startButton:hover {
     background: linear-gradient(145deg, #2dbd4e, #218838);
 }
+
 #startButton:active {
     transform: translateY(1px);
     box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4);
