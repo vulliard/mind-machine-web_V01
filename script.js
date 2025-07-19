@@ -1408,7 +1408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === customSessionModal) customSessionModal.style.display = 'none';
     });
 
-    // CORRECTION : Retour à la méthode simple et fiable pour le mode immersif
+    // Logique du mode immersif - Retour à la version simple et universelle
     visualPanelsWrapper.addEventListener('click', () => {
         if (!appContainer.classList.contains('immersive-mode')) {
             appContainer.requestFullscreen().then(() => {
