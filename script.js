@@ -1065,6 +1065,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Object.values(fileAmbianceSources).forEach(audio => audio.loop = true);
 
+    // NOUVEAU : Réglage des volumes par défaut pour les appareils tactiles
+    if (window.matchMedia('(pointer: coarse)').matches) {
+        if (ambianceVolumeSlider) {
+            ambianceVolumeSlider.value = 40;
+        }
+        if (musicLoopVolumeSlider) {
+            musicLoopVolumeSlider.value = 30;
+        }
+    }
+
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
     currentCarrierFrequency = parseFloat(carrierFrequencyInput.value);
@@ -1074,16 +1084,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIsochronenVolume = parseFloat(isochronenVolumeSlider.value) / 100;
     currentAlternophonyVolume = parseFloat(alternophonyVolumeSlider.value) / 100;
     currentBlinkMode = document.querySelector('input[name="blinkMode"]:checked').value;
-    
-    // CORRECTION FINALE : Logique de volume initialisée de manière conditionnelle
-    if (window.matchMedia('(pointer: coarse)').matches) {
-        // Pour les appareils tactiles, on applique les volumes par défaut directement
-        ambianceVolumeSlider.value = 40;
-        musicLoopAudio.volume = 0.30;
-    } else {
-        // Pour les ordinateurs, on lit la valeur du slider de musique
-        musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
-    }
+    musicLoopAudio.volume = parseFloat(musicLoopVolumeSlider.value) / 100;
     
     // Initial Setup
     loadCustomSessions();
@@ -1408,7 +1409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === customSessionModal) customSessionModal.style.display = 'none';
     });
 
-    // Logique du mode immersif - Retour à la version simple et universelle
+    // Immersive mode logic
     visualPanelsWrapper.addEventListener('click', () => {
         if (!appContainer.classList.contains('immersive-mode')) {
             appContainer.requestFullscreen().then(() => {
