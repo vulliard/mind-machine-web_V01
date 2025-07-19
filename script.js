@@ -187,6 +187,7 @@ function handleEEGData(jsonString) {
             carrierFrequencyInput.value = currentCarrierFrequency.toFixed(0);
             carrierFrequencySlider.value = currentCarrierFrequency;
             
+            // CORRECTED PART: Smoothly update binaural frequencies instead of restarting
             if (visualTimeoutId && binauralOscillatorLeft && binauralOscillatorRight && (currentAudioMode === 'binaural' || currentAudioMode === 'both')) {
                 const binauralBeatFreq = getSynchronizedBinauralBeatFrequency();
                 const freqLeftEar = currentCarrierFrequency - (binauralBeatFreq / 2);
@@ -209,6 +210,7 @@ function handleEEGData(jsonString) {
             }
         }
 
+        // MODIFIED FOR ROBUSTNESS: Read the mode name directly
         if (data.blinkMode && data.blinkMode !== currentBlinkMode) {
             currentBlinkMode = data.blinkMode;
             const radioToSelect = document.querySelector(`input[name="blinkMode"][value="${currentBlinkMode}"]`);
@@ -1065,16 +1067,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Object.values(fileAmbianceSources).forEach(audio => audio.loop = true);
 
-    // NOUVEAU : Réglage des volumes par défaut pour les appareils tactiles
-    if (window.matchMedia('(pointer: coarse)').matches) {
-        if (ambianceVolumeSlider) {
-            ambianceVolumeSlider.value = 40;
-        }
-        if (musicLoopVolumeSlider) {
-            musicLoopVolumeSlider.value = 30;
-        }
-    }
-
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
     currentCarrierFrequency = parseFloat(carrierFrequencyInput.value);
@@ -1310,9 +1302,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentAmbiance) {
             const currentVolume = parseFloat(ambianceVolumeSlider.value) / 100;
             currentAmbiance.setVolume(currentVolume);
-            if (ambianceIsPlaying) {
-                currentAmbiance.play();
-            }
+            currentAmbiance.play();
+            ambianceIsPlaying = true;
+            ambianceToggleButton.classList.add('active');
+        } else {
+            ambianceIsPlaying = false;
+            ambianceToggleButton.classList.remove('active');
         }
     });
 
@@ -1355,10 +1350,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             initAudioContext();
             musicLoopAudio.src = track;
-            if(musicIsPlaying) {
-               musicLoopAudio.play();
-               musicToggleButton.classList.add('active');
-            }
         }
     });
 
