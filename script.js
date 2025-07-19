@@ -1065,15 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Object.values(fileAmbianceSources).forEach(audio => audio.loop = true);
 
-    if (window.matchMedia('(pointer: coarse)').matches) {
-        if (ambianceVolumeSlider) {
-            ambianceVolumeSlider.value = 40;
-        }
-        if (musicLoopVolumeSlider) {
-            musicLoopVolumeSlider.value = 30;
-        }
-    }
-
     // Variable Initialization
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
     currentCarrierFrequency = parseFloat(carrierFrequencyInput.value);
