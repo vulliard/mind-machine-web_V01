@@ -10,7 +10,7 @@
     <div id="app-container">
         <div id="main-content-wrapper">
             <div id="app-title">
-                <button id="helpButton">? <span data-en="User Guide" data-fr="Mode d'emploi"></span></button>
+                <button id="helpButton">? <span data-en="User Guide" data-fr="Mode d'emploi" data-de="Benutzerhandbuch" data-es="Guía de Usuario" data-it="Guida Utente" data-nl="Gebruikershandleiding"></span></button>
                 <img src="Gemini_Generated_Image_01.png" alt="Left Logo" id="app-logo-left"> 
                 <div id="title-text-container"> 
                     <h1>e-mindmachine</h1>
@@ -20,6 +20,10 @@
                 <div id="language-flags">
                     <img src="https://flagcdn.com/w40/fr.png" alt="French Flag" id="flag-fr" class="lang-flag" data-lang="fr">
                     <img src="https://flagcdn.com/w40/gb.png" alt="English Flag" id="flag-en" class="lang-flag" data-lang="en">
+                    <img src="https://flagcdn.com/w40/de.png" alt="German Flag" id="flag-de" class="lang-flag" data-lang="de">
+                    <img src="https://flagcdn.com/w40/es.png" alt="Spanish Flag" id="flag-es" class="lang-flag" data-lang="es">
+                    <img src="https://flagcdn.com/w40/it.png" alt="Italian Flag" id="flag-it" class="lang-flag" data-lang="it">
+                    <img src="https://flagcdn.com/w40/nl.png" alt="Dutch Flag" id="flag-nl" class="lang-flag" data-lang="nl">
                 </div>
             </div>
 
@@ -32,109 +36,133 @@
                     <canvas id="right-canvas" class="visual-canvas"></canvas>
                 </div>
                 <div id="frequency-display-overlay"></div>
-                <div id="click-to-immerse-message" data-en="Click here for immersive mode" data-fr="Cliquez ici pour le mode immersif"></div>
+                <div id="click-to-immerse-message" data-en="Click here for immersive mode" data-fr="Cliquez ici pour le mode immersif" data-de="Klicken Sie hier für den immersiven Modus" data-es="Haga clic aquí para el modo inmersivo" data-it="Clicca qui per la modalità immersiva" data-nl="Klik hier voor de meeslepende modus"></div>
             </div>
         </div>
 
         <div id="controls">
-            <div id="immersive-message" data-en="Caution: Close your eyes" data-fr="Attention : Fermez les yeux"></div>
+            <div id="immersive-message" data-en="Caution: Close your eyes" data-fr="Attention : Fermez les yeux" data-de="Achtung: Augen schließen" data-es="Precaución: Cierre los ojos" data-it="Attenzione: Chiudere gli occhi" data-nl="Let op: Sluit uw ogen"></div>
 
             <div class="dashboard-column master-controls">
-                <button id="startButton" data-en="Start" data-fr="Démarrer"></button>
-                <button id="warningButton" class="attention-button" data-en="WARNING !" data-fr="ATTENTION !"></button>
-                <button id="aboutButton" data-en="About" data-fr="À Propos"></button>
+                <button id="startButton" data-en="Start" data-fr="Démarrer" data-de="Start" data-es="Iniciar" data-it="Avvia" data-nl="Start"></button>
+                <button id="warningButton" class="attention-button" data-en="WARNING !" data-fr="ATTENTION !" data-de="WARNUNG !" data-es="¡ADVERTENCIA !" data-it="ATTENZIONE !" data-nl="WAARSCHUWING !"></button>
+                <button id="aboutButton" data-en="About" data-fr="À Propos" data-de="Über" data-es="Acerca de" data-it="Informazioni" data-nl="Over"></button>
             </div>
             
-            <button id="immersive-exit-button">&times; <span data-en="Back" data-fr="Retour"></span></button>
+            <button id="immersive-exit-button">&times; <span data-en="Back" data-fr="Retour" data-de="Zurück" data-es="Volver" data-it="Indietro" data-nl="Terug"></span></button>
             
             <div class="dashboard-column session-controls">
-                <h3 class="dashboard-header" data-en="SESSIONS" data-fr="SESSIONS"></h3>
+                <h3 class="dashboard-header" data-en="SESSIONS" data-fr="SESSIONS" data-de="SITZUNGEN" data-es="SESIONES" data-it="SESSIONI" data-nl="SESSIES"></h3>
                 <div class="control-group">
-                    <label for="session-select" data-en="Select a session" data-fr="Choisir une session"></label>
+                    <label for="session-select" data-en="Select a session" data-fr="Choisir une session" data-de="Sitzung auswählen" data-es="Seleccionar una sesión" data-it="Seleziona una sessione" data-nl="Selecteer een sessie"></label>
                     <div class="session-selector-wrapper">
                         <select id="session-select" class="session-select">
-                            <option value="manual" data-en="Manual Mode" data-fr="Mode Manuel"></option>
-                            <option value="eeg" data-en="EEG Feedback" data-fr="Retour EEG"></option>
-                            <option value="deepRelaxation" data-en="Deep Relaxation" data-fr="Relaxation Profonde"></option>
-                            <option value="concentration" data-en="Concentration" data-fr="Concentration"></option>
-                            <option value="sleep" data-en="Sleep" data-fr="Sommeil"></option>
-                            <option value="meditation" data-en="Meditation" data-fr="Méditation"></option>
-                            <option value="fastRelaxation" data-en="Fast Relaxation" data-fr="Relaxation Rapide"></option>
-                            <option value="fastMeditation" data-en="Fast Meditation" data-fr="Méditation Rapide"></option>
-                            <option value="user1" data-en="Custom Session 1" data-fr="Session Perso 1"></option>
-                            <option value="user2" data-en="Custom Session 2" data-fr="Session Perso 2"></option>
+                            <option value="manual" data-en="Manual Mode" data-fr="Mode Manuel" data-de="Manueller Modus" data-es="Modo Manual" data-it="Modalità Manuale" data-nl="Handmatige modus"></option>
+                            <option value="eeg" data-en="EEG Feedback" data-fr="Retour EEG" data-de="EEG-Feedback" data-es="Feedback EEG" data-it="Feedback EEG" data-nl="EEG-feedback"></option>
+                            <option value="deepRelaxation" data-en="Deep Relaxation" data-fr="Relaxation Profonde" data-de="Tiefenentspannung" data-es="Relajación Profunda" data-it="Rilassamento Profondo" data-nl="Diepe Ontspanning"></option>
+                            <option value="concentration" data-en="Concentration" data-fr="Concentration" data-de="Konzentration" data-es="Concentración" data-it="Concentrazione" data-nl="Concentratie"></option>
+                            <option value="sleep" data-en="Sleep" data-fr="Sommeil" data-de="Schlaf" data-es="Sueño" data-it="Sonno" data-nl="Slaap"></option>
+                            <option value="meditation" data-en="Meditation" data-fr="Méditation" data-de="Meditation" data-es="Meditación" data-it="Meditazione" data-nl="Meditatie"></option>
+                            <option value="fastRelaxation" data-en="Fast Relaxation" data-fr="Relaxation Rapide" data-de="Schnelle Entspannung" data-es="Relajación Rápida" data-it="Rilassamento Rapido" data-nl="Snelle Ontspanning"></option>
+                            <option value="fastMeditation" data-en="Fast Meditation" data-fr="Méditation Rapide" data-de="Schnelle Meditation" data-es="Meditación Rápida" data-it="Meditazione Rapida" data-nl="Snelle Meditatie"></option>
+                            <option value="user1" data-en="Custom Session 1" data-fr="Session Perso 1" data-de="Eigene Sitzung 1" data-es="Sesión Personalizada 1" data-it="Sessione Personalizzata 1" data-nl="Aangepaste Sessie 1"></option>
+                            <option value="user2" data-en="Custom Session 2" data-fr="Session Perso 2" data-de="Eigene Sitzung 2" data-es="Sesión Personalizada 2" data-it="Sessione Personalizzata 2" data-nl="Aangepaste Sessie 2"></option>
                         </select>
                         <button id="editSessionButton" class="info-button edit-button" title="Éditer la session personnalisée" style="display: none;">✎</button>
                     </div>
-                </div>
-                <div class="control-group">
                     <button id="sessionHelpButton" class="info-button" title="Voir les graphiques des sessions">?</button>
+                </div>
+                
+                <div class="control-group">
+                    <label for="sophrology-select" data-en="Guided Sessions (Sophrology)" data-fr="Séances Guidées (Sophrologie)" data-de="Geführte Sitzungen (Sophrologie)" data-es="Sesiones Guiadas (Sofrología)" data-it="Sessioni Guidate (Sofrologia)" data-nl="Begeleide Sessies (Sofrologie)"></label>
+                    <div class="session-selector-wrapper">
+                        <select id="sophrology-select" class="session-select">
+                            <option value="none" data-en="-- Select a session --" data-fr="-- Choisir une séance --" data-de="-- Sitzung auswählen --" data-es="-- Seleccionar una sesión --" data-it="-- Seleziona una sessione --" data-nl="-- Selecteer een sessie --"></option>
+                            <option value="sommeil" data-en="Sleep Induction" data-fr="Induction au Sommeil" data-de="Schlafinduktion" data-es="Inducción del Sueño" data-it="Induzione del Sonno" data-nl="Slaapinductie"></option>
+                            <option value="relaxation" data-en="Deep Relaxation" data-fr="Relaxation Profonde" data-de="Tiefenentspannung" data-es="Relajación Profunda" data-it="Rilassamento Profondo" data-nl="Diepe Ontspanning"></option>
+                            <option value="antiStress" data-en="Stress Management" data-fr="Gestion du Stress" data-de="Stressbewältigung" data-es="Manejo del Estrés" data-it="Gestione dello Stress" data-nl="Stressbeheer"></option>
+                            <option value="meditation" data-en="Guided Meditation" data-fr="Méditation Guidée" data-de="Geführte Meditation" data-es="Meditación Guiada" data-it="Meditazione Guidata" data-nl="Begeleide Meditatie"></option>
+                            <option value="confiance" data-en="Self-Confidence" data-fr="Confiance en Soi" data-de="Selbstvertrauen" data-es="Confianza en sí mismo" data-it="Fiducia in se stessi" data-nl="Zelfvertrouwen"></option>
+                            <option value="arretTabac" data-en="Smoking Cessation" data-fr="Arrêt du Tabac" data-de="Raucherentwöhnung" data-es="Dejar de Fumar" data-it="Smettere di Fumare" data-nl="Stoppen met Roken"></option>
+                            <option value="amincissement" data-en="Weight Management" data-fr="Gestion du Poids" data-de="Gewichtsmanagement" data-es="Control de Peso" data-it="Gestione del Peso" data-nl="Gewichtsbeheersing"></option>
+                            <option value="douleur" data-en="Pain Management" data-fr="Gestion de la Douleur" data-de="Schmerztherapie" data-es="Manejo del Dolor" data-it="Gestione del Dolore" data-nl="Pijnbestrijding"></option>
+                            <option value="alcool" data-en="Alcohol Abstinence" data-fr="Abstinence Alcoolique" data-de="Alkoholabstinenz" data-es="Abstinencia de Alcohol" data-it="Astinenza da Alcol" data-nl="Alcoholabstinentie"></option>
+                        </select>
+                    </div>
+                    <fieldset class="voice-selection">
+                        <div class="radio-switch">
+                            <input type="radio" id="voice-female" name="voiceGender" value="female" checked>
+                            <label for="voice-female" data-en="Female" data-fr="Féminine" data-de="Weiblich" data-es="Femenina" data-it="Femminile" data-nl="Vrouwelijk"></label>
+                            <input type="radio" id="voice-male" name="voiceGender" value="male">
+                            <label for="voice-male" data-en="Male" data-fr="Masculine" data-de="Männlich" data-es="Masculina" data-it="Maschile" data-nl="Mannelijk"></label>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
 
             <div class="dashboard-column visual-controls">
-                <h3 class="dashboard-header" data-en="VISUALS" data-fr="VISUELS"></h3>
+                <h3 class="dashboard-header" data-en="VISUALS" data-fr="VISUELS" data-de="VISUELLES" data-es="VISUALES" data-it="VISUALI" data-nl="BEELDEN"></h3>
                 <div class="control-group">
-                    <label for="visualModeSelect" data-en="Visual Shape" data-fr="Forme Visuelle"></label>
+                    <label for="visualModeSelect" data-en="Visual Shape" data-fr="Forme Visuelle" data-de="Visuelle Form" data-es="Forma Visual" data-it="Forma Visiva" data-nl="Visuele Vorm"></label>
                     <select id="visualModeSelect" class="session-select">
-                        <option value="circle" data-en="Circle" data-fr="Cercle"></option>
-                        <option value="circleOfCircles" data-en="Circle of Circles" data-fr="Cercle de Cercles"></option>
-                        <option value="tunnel" data-en="Tunnel" data-fr="Tunnel"></option>
-                        <option value="mandala" data-en="Mandala" data-fr="Mandala"></option>
-                        <option value="fractal" data-en="Fractal" data-fr="Fractale"></option>
+                        <option value="circle" data-en="Circle" data-fr="Cercle" data-de="Kreis" data-es="Círculo" data-it="Cerchio" data-nl="Cirkel"></option>
+                        <option value="circleOfCircles" data-en="Circle of Circles" data-fr="Cercle de Cercles" data-de="Kreis aus Kreisen" data-es="Círculo de Círculos" data-it="Cerchio di Cerchi" data-nl="Cirkel van Cirkels"></option>
+                        <option value="tunnel" data-en="Tunnel" data-fr="Tunnel" data-de="Tunnel" data-es="Túnel" data-it="Tunnel" data-nl="Tunnel"></option>
+                        <option value="mandala" data-en="Mandala" data-fr="Mandala" data-de="Mandala" data-es="Mandala" data-it="Mandala" data-nl="Mandala"></option>
+                        <option value="fractal" data-en="Fractal" data-fr="Fractale" data-de="Fraktal" data-es="Fractal" data-it="Frattale" data-nl="Fractal"></option>
                     </select>
                 </div>
                 <div class="control-group">
-                    <label for="blinkRateSlider" data-en="Blink Freq (Hz)" data-fr="Fréq Clign (Hz)"></label>
+                    <label for="blinkRateSlider" data-en="Blink Freq (Hz)" data-fr="Fréq Clign (Hz)" data-de="Blink-Freq (Hz)" data-es="Frec de parpadeo (Hz)" data-it="Freq Lampeggio (Hz)" data-nl="Knipperfreq (Hz)"></label>
                     <div class="slider-container">
                         <input type="range" id="blinkRateSlider" min="0.2" max="20" value="8" step="0.1">
                         <input type="number" id="blinkFrequencyInputDisplay" min="0.2" max="20" value="8" step="0.1" class="frequency-input">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label for="colorPicker" data-en="Circle Color" data-fr="Couleur Cercle"></label>
+                    <label for="colorPicker" data-en="Circle Color" data-fr="Couleur Cercle" data-de="Kreisfarbe" data-es="Color del Círculo" data-it="Colore Cerchio" data-nl="Cirkelkleur"></label>
                     <input type="color" id="colorPicker" value="#FFFFFF">
                 </div>
                 <div class="control-group">
                     <fieldset class="blink-mode">
-                        <legend data-en="Blink Mode" data-fr="Mode Clign."></legend>
+                        <legend data-en="Blink Mode" data-fr="Mode Clign." data-de="Blink-Modus" data-es="Modo Parpadeo" data-it="Modalità Lampeggio" data-nl="Knippermodus"></legend>
                         <div class="radio-switch">
                             <input type="radio" id="mode-alternating" name="blinkMode" value="alternating" checked>
-                            <label for="mode-alternating" data-en="Alternating" data-fr="Alterné"></label>
+                            <label for="mode-alternating" data-en="Alternating" data-fr="Alterné" data-de="Abwechselnd" data-es="Alterno" data-it="Alternato" data-nl="Afwisselend"></label>
                             
                             <input type="radio" id="mode-synchro" name="blinkMode" value="synchro">
-                            <label for="mode-synchro" data-en="Synchro" data-fr="Synchro"></label>
+                            <label for="mode-synchro" data-en="Synchro" data-fr="Synchro" data-de="Synchron" data-es="Sincro" data-it="Sincro" data-nl="Synchro"></label>
                             
                             <input type="radio" id="mode-crossed" name="blinkMode" value="crossed">
-                            <label for="mode-crossed" data-en="Crossed" data-fr="Croisé"></label>
+                            <label for="mode-crossed" data-en="Crossed" data-fr="Croisé" data-de="Gekreuzt" data-es="Cruzado" data-it="Incrociato" data-nl="Gekruist"></label>
                             
                             <input type="radio" id="mode-balanced" name="blinkMode" value="balanced">
-                            <label for="mode-balanced" data-en="Balanced" data-fr="Équilibré"></label>
+                            <label for="mode-balanced" data-en="Balanced" data-fr="Équilibré" data-de="Ausgeglichen" data-es="Equilibrado" data-it="Bilanciato" data-nl="Gebalanceerd"></label>
                         </div>
                     </fieldset>
                 </div>
             </div>
 
             <div class="dashboard-column ambiance-controls">
-                <h3 class="dashboard-header" data-en="AMBIANCE" data-fr="AMBIANCE"></h3>
+                <h3 class="dashboard-header" data-en="AMBIANCE" data-fr="AMBIANCE" data-de="AMBIENTE" data-es="AMBIENTE" data-it="AMBIENTE" data-nl="SFEER"></h3>
                 <div class="ambiance-grid">
                     
                     <div class="ambiance-group">
                         <div class="control-group">
-                             <label for="ambiance-select" data-en="Natural Ambiance" data-fr="Ambiance Naturelle"></label>
+                             <label for="ambiance-select" data-en="Natural Ambiance" data-fr="Ambiance Naturelle" data-de="Natürliches Ambiente" data-es="Ambiente Natural" data-it="Ambiente Naturale" data-nl="Natuurlijke Sfeer"></label>
                              <div class="input-button-wrapper">
                                 <select id="ambiance-select" class="session-select">
-                                    <option value="none" data-en="None" data-fr="Aucune"></option>
-                                    <option value="waves" data-en="Ocean Waves" data-fr="Vagues Océan"></option>
-                                    <option value="forest" data-en="Forest" data-fr="Forêt"></option>
-                                    <option value="fireplace" data-en="Fireplace" data-fr="Feu de cheminée"></option>
-                                    <option value="birds" data-en="Birds Singing" data-fr="Chant d'oiseaux"></option>
+                                    <option value="none" data-en="None" data-fr="Aucune" data-de="Keine" data-es="Ninguna" data-it="Nessuna" data-nl="Geen"></option>
+                                    <option value="waves" data-en="Ocean Waves" data-fr="Vagues Océan" data-de="Meereswellen" data-es="Olas del Mar" data-it="Onde dell'Oceano" data-nl="Oceaangolven"></option>
+                                    <option value="forest" data-en="Forest" data-fr="Forêt" data-de="Wald" data-es="Bosque" data-it="Foresta" data-nl="Bos"></option>
+                                    <option value="fireplace" data-en="Fireplace" data-fr="Feu de cheminée" data-de="Kaminfeuer" data-es="Chimenea" data-it="Camino" data-nl="Open haard"></option>
+                                    <option value="birds" data-en="Birds Singing" data-fr="Chant d'oiseaux" data-de="Vogelgesang" data-es="Canto de Pájaros" data-it="Canto degli Uccelli" data-nl="Vogelgezang"></option>
                                 </select>
                                 <button id="ambiance-toggle-button"></button>
                              </div>
                         </div>
                         <div class="control-group">
-                            <label for="ambiance-volume-slider" data-en="Ambiance Volume" data-fr="Volume Ambiance"></label>
+                            <label for="ambiance-volume-slider" data-en="Ambiance Volume" data-fr="Volume Ambiance" data-de="Ambiente-Lautstärke" data-es="Volumen Ambiente" data-it="Volume Ambiente" data-nl="Sfeervolume"></label>
                             <div class="slider-container">
                                 <input type="range" id="ambiance-volume-slider" min="0" max="100" value="50">
                             </div>
@@ -143,11 +171,11 @@
 
                     <div class="ambiance-group">
                         <div class="control-group">
-                            <label for="crackle-toggle-button" data-en="ASMR" data-fr="ASMR"></label>
+                            <label for="crackle-toggle-button" data-en="ASMR" data-fr="ASMR" data-de="ASMR" data-es="ASMR" data-it="ASMR" data-nl="ASMR"></label>
                             <button id="crackle-toggle-button"></button>
                         </div>
                         <div class="control-group">
-                            <label for="crackle-volume-slider" data-en="ASMR Volume" data-fr="Volume ASMR"></label>
+                            <label for="crackle-volume-slider" data-en="ASMR Volume" data-fr="Volume ASMR" data-de="ASMR-Lautstärke" data-es="Volumen ASMR" data-it="Volume ASMR" data-nl="ASMR-volume"></label>
                             <div class="slider-container">
                                 <input type="range" id="crackle-volume-slider" min="0" max="100" value="40">
                             </div>
@@ -156,24 +184,24 @@
                     
                     <div class="ambiance-group">
                         <div class="control-group">
-                            <label for="music-loop-select" data-en="Music Loop" data-fr="Boucle Musicale"></label>
+                            <label for="music-loop-select" data-en="Music Loop" data-fr="Boucle Musicale" data-de="Musik-Loop" data-es="Bucle de Música" data-it="Loop Musicale" data-nl="Muziekloop"></label>
                              <div class="input-button-wrapper">
                                 <select id="music-loop-select" class="session-select">
-                                    <option value="none" data-en="None" data-fr="Aucune"></option>
-                                    <option value="loop1.mp3" data-en="Loop 1" data-fr="Boucle 1"></option>
-                                    <option value="loop2.mp3" data-en="Loop 2" data-fr="Boucle 2"></option>
-                                    <option value="new-age1.mp3" data-en="New-Age 1" data-fr="New-Age 1"></option>
-                                    <option value="new-age2.mp3" data-en="New-Age 2" data-fr="New-Age 2"></option>
-                                    <option value="new-age3.mp3" data-en="New-Age 3" data-fr="New-Age 3"></option>
-                                    <option value="new-age4.mp3" data-en="New-Age 4." data-fr="New-Age 4."></option>
-                                    <option value="ambiant1.mp3" data-en="Ambiant 1" data-fr="Ambiant 1"></option>
-                                    <option value="ambiant2.mp3" data-en="Ambiant 2" data-fr="Ambiant 2"></option>
+                                    <option value="none" data-en="None" data-fr="Aucune" data-de="Keine" data-es="Ninguna" data-it="Nessuna" data-nl="Geen"></option>
+                                    <option value="loop1.mp3" data-en="Loop 1" data-fr="Boucle 1" data-de="Loop 1" data-es="Bucle 1" data-it="Loop 1" data-nl="Loop 1"></option>
+                                    <option value="loop2.mp3" data-en="Loop 2" data-fr="Boucle 2" data-de="Loop 2" data-es="Bucle 2" data-it="Loop 2" data-nl="Loop 2"></option>
+                                    <option value="new-age1.mp3" data-en="New-Age 1" data-fr="New-Age 1" data-de="New-Age 1" data-es="New-Age 1" data-it="New-Age 1" data-nl="New-Age 1"></option>
+                                    <option value="new-age2.mp3" data-en="New-Age 2" data-fr="New-Age 2" data-de="New-Age 2" data-es="New-Age 2" data-it="New-Age 2" data-nl="New-Age 2"></option>
+                                    <option value="new-age3.mp3" data-en="New-Age 3" data-fr="New-Age 3" data-de="New-Age 3" data-es="New-Age 3" data-it="New-Age 3" data-nl="New-Age 3"></option>
+                                    <option value="new-age4.mp3" data-en="New-Age 4." data-fr="New-Age 4." data-de="New-Age 4." data-es="New-Age 4." data-it="New-Age 4." data-nl="New-Age 4."></option>
+                                    <option value="ambiant1.mp3" data-en="Ambiant 1" data-fr="Ambiant 1" data-de="Ambiant 1" data-es="Ambiant 1" data-it="Ambiant 1" data-nl="Ambiant 1"></option>
+                                    <option value="ambiant2.mp3" data-en="Ambiant 2" data-fr="Ambiant 2" data-de="Ambiant 2" data-es="Ambiant 2" data-it="Ambiant 2" data-nl="Ambiant 2"></option>
                                 </select>
                                 <button id="music-toggle-button"></button>
                             </div>
                         </div>
                         <div class="control-group music-volume-control">
-                            <label for="music-loop-volume-slider" data-en="Music Volume" data-fr="Volume Musique"></label>
+                            <label for="music-loop-volume-slider" data-en="Music Volume" data-fr="Volume Musique" data-de="Musiklautstärke" data-es="Volumen de Música" data-it="Volume Musica" data-nl="Muziekvolume"></label>
                             <div class="slider-container">
                                 <input type="range" id="music-loop-volume-slider" min="0" max="100" value="50">
                             </div>
@@ -183,11 +211,11 @@
             </div>
 
             <div class="dashboard-column audio-controls">
-                <h3 class="dashboard-header" data-en="AUDIO" data-fr="AUDIO"></h3>
+                <h3 class="dashboard-header" data-en="AUDIO" data-fr="AUDIO" data-de="AUDIO" data-es="AUDIO" data-it="AUDIO" data-nl="AUDIO"></h3>
                 <div class="audio-layout-grid">
                     <div class="audio-main-controls">
                         <div class="control-group">
-                            <label for="carrierFrequencySlider" data-en="Carrier Freq (Hz)" data-fr="Fréq Porteuse (Hz)"></label>
+                            <label for="carrierFrequencySlider" data-en="Carrier Freq (Hz)" data-fr="Fréq Porteuse (Hz)" data-de="Trägerfreq. (Hz)" data-es="Frec Portadora (Hz)" data-it="Freq Portante (Hz)" data-nl="Draaggolffreq (Hz)"></label>
                             <div class="slider-container">
                                 <input type="range" id="carrierFrequencySlider" min="55" max="1000" value="110">
                                 <input type="number" id="carrierFrequencyInputDisplay" min="55" max="1000" value="110" step="1" class="frequency-input">
@@ -196,37 +224,37 @@
                         </div>
                         <div class="control-group">
                             <fieldset class="audio-mode">
-                                <legend data-en="Audio Mode" data-fr="Mode Audio"></legend>
+                                <legend data-en="Audio Mode" data-fr="Mode Audio" data-de="Audio-Modus" data-es="Modo de Audio" data-it="Modalità Audio" data-nl="Audiomodus"></legend>
                                 <div class="radio-switch">
                                     <input type="radio" id="mode-binaural" name="audioMode" value="binaural">
-                                    <label for="mode-binaural" data-en="Binaural" data-fr="Binaural"></label>
-                                    <input type="radio" id="mode-isochronen" name="audioMode" value="isochronen">
-                                    <label for="mode-isochronen" data-en="Isochronic" data-fr="Isochrone"></label>
+                                    <label for="mode-binaural" data-en="Binaural" data-fr="Binaural" data-de="Binaural" data-es="Binaural" data-it="Binaurale" data-nl="Binaural"></label>
+                                    <input type="radio" id="mode-isochronic" name="audioMode" value="isochronic">
+                                    <label for="mode-isochronic" data-en="Isochronic" data-fr="Isochrone" data-de="Isochron" data-es="Isocrónico" data-it="Isocrono" data-nl="Isochronisch"></label>
                                     <input type="radio" id="mode-both" name="audioMode" value="both" checked>
-                                    <label for="mode-both" data-en="Both" data-fr="Les Deux"></label>
+                                    <label for="mode-both" data-en="Both" data-fr="Les Deux" data-de="Beide" data-es="Ambos" data-it="Entrambi" data-nl="Beide"></label>
                                 </div>
                             </fieldset>
                         </div>
                          <div class="control-group">
-                            <label for="alternophony-toggle-button" data-en="Alternophony" data-fr="Alternophonie"></label>
+                            <label for="alternophony-toggle-button" data-en="Alternophony" data-fr="Alternophonie" data-de="Alternophonie" data-es="Alternofonía" data-it="Alternofonia" data-nl="Alternofonie"></label>
                             <button id="alternophony-toggle-button"></button>
                         </div>
                     </div>
                     <div class="audio-volume-controls">
                          <div class="control-group">
-                            <label for="binauralVolumeSlider" data-en="BB Volume" data-fr="Volume BB"></label>
+                            <label for="binauralVolumeSlider" data-en="BB Volume" data-fr="Volume BB" data-de="BB Lautstärke" data-es="Volumen BB" data-it="Volume BB" data-nl="BB-volume"></label>
                             <div class="slider-container">
                                 <input type="range" id="binauralVolumeSlider" min="0" max="100" value="50">
                             </div>
                         </div>
                         <div class="control-group">
-                            <label for="isochronenVolumeSlider" data-en="Isochronic Vol" data-fr="Volume Isochrone"></label>
+                            <label for="isochronicVolumeSlider" data-en="Isochronic Vol" data-fr="Volume Isochrone" data-de="Isochron Lautst." data-es="Vol Isocrónico" data-it="Vol Isocrono" data-nl="Isochronisch Vol"></label>
                             <div class="slider-container">
-                                <input type="range" id="isochronenVolumeSlider" min="0" max="100" value="50">
+                                <input type="range" id="isochronicVolumeSlider" min="0" max="100" value="50">
                             </div>
                         </div>
                         <div class="control-group">
-                            <label for="alternophony-volume-slider" data-en="Alterno Volume" data-fr="Volume Alterno"></label>
+                            <label for="alternophony-volume-slider" data-en="Alterno Volume" data-fr="Volume Alterno" data-de="Alterno-Lautst." data-es="Vol Alterno" data-it="Volume Alterno" data-nl="Alterno-volume"></label>
                             <div class="slider-container">
                                 <input type="range" id="alternophony-volume-slider" min="0" max="100" value="50">
                             </div>
@@ -236,10 +264,10 @@
             </div>
 
             <div class="dashboard-column binaural-controls">
-                <h3 class="dashboard-header" data-en="BINAURAL BEAT" data-fr="BATTEMENT BINAURAL"></h3>
+                <h3 class="dashboard-header" data-en="BINAURAL BEAT" data-fr="BATTEMENT BINAURAL" data-de="BINAURALER BEAT" data-es="PULSO BINAURAL" data-it="BATTITO BINAURALE" data-nl="BINAURALE BEAT"></h3>
                 <div class="control-group">
                     <fieldset class="binaural-sync-multiplier">
-                        <legend data-en="BB x Blink Freq" data-fr="BB x Fréq Cligno"></legend>
+                        <legend data-en="BB x Blink Freq" data-fr="BB x Fréq Cligno" data-de="BB x Blink-Freq" data-es="BB x Frec Parpadeo" data-it="BB x Freq Lampeggio" data-nl="BB x Knipperfreq"></legend>
                         <div class="radio-switch">
                              <input type="radio" id="multiplier-0-5" name="bbMultiplier" value="0.5">
                              <label for="multiplier-0-5">x0.5</label>
@@ -262,21 +290,61 @@
     <div id="warningModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2 data-en="⚠️ Important Warning ⚠️" data-fr="⚠️ Avertissement Important ⚠️"></h2>
-            <p data-en="This visual and auditory stimulation application is designed to be used **with EYES CLOSED**." data-fr="Cette application de stimulation visuelle et auditive est conçue pour être utilisée **les YEUX FERMÉS**."></p>
-            <p data-en="Rapid light stimulation is very intense and can have adverse effects." data-fr="La stimulation lumineuse rapide est très intense et peut avoir des effets indésirables."></p>
+            <h2 data-en="⚠️ Important Warning ⚠️" data-fr="⚠️ Avertissement Important ⚠️" data-de="⚠️ Wichtige Warnung ⚠️" data-es="⚠️ Advertencia Importante ⚠️" data-it="⚠️ Avviso Importante ⚠️" data-nl="⚠️ Belangrijke Waarschuwing ⚠️"></h2>
+            <p data-en="This visual and auditory stimulation application is designed to be used **with EYES CLOSED**." data-fr="Cette application de stimulation visuelle et auditive est conçue pour être utilisée **les YEUX FERMÉS**." data-de="Diese visuelle und auditive Stimulationsanwendung ist für die Verwendung **mit GESCHLOSSENEN AUGEN** konzipiert." data-es="Esta aplicación de estimulación visual y auditiva está diseñada para ser utilizada **con los OJOS CERRADOS**." data-it="Questa applicazione di stimolazione visiva e uditiva è progettata per essere utilizzata **con gli OCCHI CHIUSI**." data-nl="Deze visuele en auditieve stimulatietoepassing is ontworpen om te worden gebruikt **met GESLOTEN OGEN**."></p>
+            <p data-en="Rapid light stimulation is very intense and can have adverse effects." data-fr="La stimulation lumineuse rapide est très intense et peut avoir des effets indésirables." data-de="Schnelle Lichtstimulation ist sehr intensiv und kann negative Auswirkungen haben." data-es="La estimulación lumínica rápida es muy intensa y puede tener efectos adversos." data-it="La stimolazione luminosa rapida è molto intensa e può avere effetti avversi." data-nl="Snelle lichtstimulatie is zeer intens en kan nadelige effecten hebben."></p>
             <ul>
-                <li data-en="It is **STRONGLY DISCOURAGED** for individuals prone to **photosensitive epilepsy**, even with eyes closed." data-fr="Il est **FORTEMENT DÉCONSEILLÉ** aux personnes sujettes à l'**épilepsie photosensible**, même les yeux fermés."></li>
-                <li data-en="**Not recommended for pregnant women.**" data-fr="**Déconseillé aux femmes enceintes.**"></li>
-                <li data-en="**Not recommended for individuals with a history of neurological disorders, severe migraines, or heart problems.**" data-fr="**Déconseillé aux personnes ayant des antécédents de troubles neurologiques, de migraines sévères ou de problèmes cardiaques.**"></li>
-                <li data-en="Always start with low settings (frequency, volume) and gradually increase if desired." data-fr="Commencez toujours avec des réglages bas (fréquence, volume) et augmentez progressivement si désiré."></li>
-                <li data-en="Use it in a safe and relaxed environment." data-fr="Utilisez-le dans un environnement sûr et détendu."></li>
-                <li data-en="**Stop immediately** if you experience any discomfort, nausea, headaches, dizziness, disorientation, or any other unusual symptoms." data-fr="**Arrêtez immédiatement** si vous ressentez un inconfort, des nausées, des maux de tête, des vertiges, une désorientation ou tout autre symptôme inhabituel."></li>
-                <li data-en="Do not use while driving, operating heavy machinery, or in any situation requiring sustained attention." data-fr="Ne pas utiliser en conduisant, en utilisant des machines lourdes, ou dans toute situation nécessitant une attention soutenue."></li>
-                <li data-en="For binaural beats, the use of **headphones** is essential for the effect to be perceptible." data-fr="Pour les battements binauraux, l'utilisation d'un **casque audio** est indispensable pour que l'effet soit perceptible."></li>
+                <li data-en="It is **STRONGLY DISCOURAGED** for individuals prone to **photosensitive epilepsy**, even with eyes closed." 
+                    data-fr="Il est **FORTEMENT DÉCONSEILLÉ** aux personnes sujettes à l'**épilepsie photosensible**, même les yeux fermés."
+                    data-de="Es wird **DRINGEND ABGERATEN** für Personen, die zu **lichtempfindlicher Epilepsie** neigen, selbst bei geschlossenen Augen."
+                    data-es="Está **TOTALMENTE DESACONSEJADO** para personas propensas a la **epilepsia fotosensible**, incluso con los ojos cerrados."
+                    data-it="È **FORTEMENTE SCONSIGLIATO** per gli individui soggetti a **epilessia fotosensibile**, anche con gli occhi chiusi."
+                    data-nl="Het wordt **STERK AFGERADEN** voor personen die gevoelig zijn voor **fotosensitieve epilepsie**, zelfs met gesloten ogen."></li>
+                <li data-en="**Not recommended for pregnant women.**" 
+                    data-fr="**Déconseillé aux femmes enceintes.**"
+                    data-de="**Nicht für schwangere Frauen empfohlen.**"
+                    data-es="**No recomendado para mujeres embarazadas.**"
+                    data-it="**Sconsigliato alle donne in gravidanza.**"
+                    data-nl="**Niet aanbevolen voor zwangere vrouwen.**"></li>
+                <li data-en="**Not recommended for individuals with a history of neurological disorders, severe migraines, or heart problems.**" 
+                    data-fr="**Déconseillé aux personnes ayant des antécédents de troubles neurologiques, de migraines sévères ou de problèmes cardiaques.**"
+                    data-de="**Nicht empfohlen für Personen mit neurologischen Störungen, schweren Migränen oder Herzproblemen in der Vorgeschichte.**"
+                    data-es="**No recomendado para personas con antecedentes de trastornos neurológicos, migrañas graves o problemas cardíacos.**"
+                    data-it="**Sconsigliato a persone con una storia di disturbi neurologici, emicranie gravi o problemi cardiaci.**"
+                    data-nl="**Niet aanbevolen voor personen met een voorgeschiedenis van neurologische aandoeningen, ernstige migraine of hartproblemen.**"></li>
+                <li data-en="Always start with low settings (frequency, volume) and gradually increase if desired." 
+                    data-fr="Commencez toujours avec des réglages bas (fréquence, volume) et augmentez progressivement si désiré."
+                    data-de="Beginnen Sie immer mit niedrigen Einstellungen (Frequenz, Lautstärke) und steigern Sie diese bei Bedarf schrittweise."
+                    data-es="Comience siempre con ajustes bajos (frecuencia, volumen) y auméntelos gradualmente si lo desea."
+                    data-it="Iniziare sempre con impostazioni basse (frequenza, volume) e aumentare gradualmente se lo si desidera."
+                    data-nl="Begin altijd met lage instellingen (frequentie, volume) en verhoog geleidelijk indien gewenst."></li>
+                <li data-en="Use it in a safe and relaxed environment." 
+                    data-fr="Utilisez-le dans un environnement sûr et détendu."
+                    data-de="Verwenden Sie es in einer sicheren und entspannten Umgebung."
+                    data-es="Úselo en un entorno seguro y relajado."
+                    data-it="Utilizzare in un ambiente sicuro e rilassato."
+                    data-nl="Gebruik het in een veilige en ontspannen omgeving."></li>
+                <li data-en="**Stop immediately** if you experience any discomfort, nausea, headaches, dizziness, disorientation, or any other unusual symptoms." 
+                    data-fr="**Arrêtez immédiatement** si vous ressentez un inconfort, des nausées, des maux de tête, des vertiges, une désorientation ou tout autre symptôme inhabituel."
+                    data-de="**Beenden Sie die Anwendung sofort**, wenn Sie Unbehagen, Übelkeit, Kopfschmerzen, Schwindel, Orientierungslosigkeit oder andere ungewöhnliche Symptome verspüren."
+                    data-es="**Deténgase inmediatamente** si experimenta alguna molestia, náuseas, dolores de cabeza, mareos, desorientación o cualquier otro síntoma inusual."
+                    data-it="**Interrompere immediatamente** in caso di disagio, nausea, mal di testa, vertigini, disorientamento o qualsiasi altro sintomo insolito."
+                    data-nl="**Stop onmiddellijk** als u ongemak, misselijkheid, hoofdpijn, duizeligheid, desoriëntatie of andere ongebruikelijke symptomen ervaart."></li>
+                <li data-en="Do not use while driving, operating heavy machinery, or in any situation requiring sustained attention." 
+                    data-fr="Ne pas utiliser en conduisant, en utilisant des machines lourdes, ou dans toute situation nécessitant une attention soutenue."
+                    data-de="Nicht beim Fahren, Bedienen von schweren Maschinen oder in Situationen verwenden, die eine anhaltende Aufmerksamkeit erfordern."
+                    data-es="No lo use mientras conduce, opera maquinaria pesada o en cualquier situación que requiera atención sostenida."
+                    data-it="Non utilizzare durante la guida, l'uso di macchinari pesanti o in qualsiasi situazione che richieda un'attenzione prolungata."
+                    data-nl="Niet gebruiken tijdens het rijden, het bedienen van zware machines of in een situatie die aanhoudende aandacht vereist."></li>
+                <li data-en="For binaural beats, the use of **headphones** is essential for the effect to be perceptible." 
+                    data-fr="Pour les battements binauraux, l'utilisation d'un **casque audio** est indispensable pour que l'effet soit perceptible."
+                    data-de="Für binaurale Beats ist die Verwendung von **Kopfhörern** unerlässlich, damit der Effekt wahrnehmbar ist."
+                    data-es="Para los ritmos binaurales, el uso de **auriculares** es esencial para que el efecto sea perceptible."
+                    data-it="Per i battiti binaurali, l'uso di **cuffie** è essenziale affinché l'effetto sia percepibile."
+                    data-nl="Voor binaural beats is het gebruik van een **koptelefoon** essentieel om het effect waarneembaar te maken."></li>
             </ul>
-            <p data-en="By using this application, you acknowledge having read and understood these warnings and assume full responsibility for your use." data-fr="En utilisant cette application, vous reconnaissez avoir lu et compris ces avertissements et assumez l'entière responsabilité de votre utilisation."></p>
-            <button id="understoodButton" data-en="I Understand" data-fr="J'ai compris"></button>
+            <p data-en="By using this application, you acknowledge having read and understood these warnings and assume full responsibility for your use." data-fr="En utilisant cette application, vous reconnaissez avoir lu et compris ces avertissements et assumez l'entière responsabilité de votre utilisation." data-de="Durch die Nutzung dieser Anwendung bestätigen Sie, dass Sie diese Warnungen gelesen und verstanden haben und die volle Verantwortung für Ihre Nutzung übernehmen." data-es="Al utilizar esta aplicación, usted reconoce haber leído y entendido estas advertencias y asume toda la responsabilidad por su uso." data-it="Utilizzando questa applicazione, dichiari di aver letto e compreso queste avvertenze e ti assumi la piena responsabilità per il tuo utilizzo." data-nl="Door deze applicatie te gebruiken, erkent u dat u deze waarschuwingen hebt gelezen en begrepen en de volledige verantwoordelijkheid voor uw gebruik op u neemt."></p>
+            <button id="understoodButton" data-en="I Understand" data-fr="J'ai compris" data-de="Ich verstehe" data-es="Entendido" data-it="Ho capito" data-nl="Ik begrijp het"></button>
         </div>
     </div>
     
@@ -284,46 +352,7 @@
         <div class="modal-content help-modal-content">
             <span class="close-button">&times;</span>
             <h2 data-en="User Guide" data-fr="Mode d'emploi"></h2>
-            
-            <h3 data-en="Recommended Use" data-fr="Utilisation Recommandée"></h3>
-            <p data-en="For an optimal experience, place your smartphone in a **VR headset**. Use **headphones** (e.g., Bluetooth) and **close your eyes** during the session." data-fr="Pour une expérience optimale, placez votre smartphone dans un **boîtier de réalité virtuelle**. Utilisez un **casque audio** (ex: Bluetooth) et **fermez les yeux** pendant la session."></p>
-            
-            <h3 data-en="Features" data-fr="Fonctionnalités"></h3>
-            <ul>
-                <li><strong data-en="Pre-programmed Sessions:" data-fr="Sessions Pré-programmées :"></strong>
-                    <ul data-en="Choose a pre-programmed session (Relaxation, Concentration, etc.). The blink frequency and mode will evolve automatically. Manual controls are disabled during a session." data-fr="Choisissez une session pré-programmée (Relaxation, Concentration, etc.). La fréquence et le mode des clignotements évolueront automatiquement. Les contrôles manuels sont désactivés pendant une session."></ul>
-                </li>
-                <li><strong data-en="Custom Sessions:" data-fr="Sessions Personnalisées :"></strong>
-                    <ul data-en="Select 'Custom Session 1' or '2' to open the editor. Program up to 6 segments with custom frequencies, durations, and blink modes. Your creations are saved automatically." data-fr="Sélectionnez 'Session Perso 1' ou '2' pour ouvrir l'éditeur. Programmez jusqu'à 6 segments avec des fréquences, durées et modes de clignotement personnalisés. Vos créations sont sauvegardées automatiquement."></ul>
-                </li>
-                <li><strong data-en="EEG Feedback:" data-fr="Retour EEG :"></strong>
-                    <ul data-en="This mode works with an 'Emotiv' EEG headset and requires a specific technical setup. Contact us for more information at phvulliard@gmail.com" data-fr="Ce mode fonctionne avec un casque EEG 'Emotiv' et nécessite une installation technique spécifique. Contactez-nous pour plus d'informations à phvulliard@gmail.com"></ul>
-                </li>
-                <li><strong data-en="Visuals:" data-fr="Visuels :"></strong>
-                    <ul data-en="In Manual Mode, adjust the frequency of the light flashes and their color. You can choose between several visual forms:" data-fr="En Mode Manuel, ajustez la fréquence des clignotements lumineux et leur couleur. Vous pouvez choisir entre plusieurs formes visuelles :">
-                        <li data-en="**Circle:** The classic and most direct form of stimulation." data-fr="**Cercle :** La forme de stimulation classique et la plus directe."></li>
-                        <li data-en="**Circle of Circles:** A ring of small rotating circles for a hypnotic effect." data-fr="**Cercle de Cercles :** Un anneau de petits cercles en rotation pour un effet hypnotique."></li>
-                        <li data-en="**Tunnel:** Rectangles that create a sensation of moving through a tunnel." data-fr="**Tunnel :** Des rectangles qui créent une sensation d'avancement dans un tunnel."></li>
-                        <li data-en="**Mandala:** A complex and evolving geometric figure for contemplation." data-fr="**Mandala :** Une figure géométrique complexe et évolutive, propice à la contemplation."></li>
-                        <li data-en="**Fractal:** A representation of a tree that grows with organic variations." data-fr="**Fractale :** Une représentation d'arbre qui grandit avec des variations organiques."></li>
-                    </ul>
-                </li>
-                <li><strong data-en="Ambiance:" data-fr="Ambiance :"></strong>
-                    <ul data-en="Activate and mix two distinct ambiance sounds: soothing ocean waves and/or random ASMR-style crackles. Each has its own volume control." data-fr="Activez et mélangez deux ambiances sonores distinctes : des vagues d'océan apaisantes et/ou des craquements aléatoires de type ASMR. Chacune possède son propre contrôle de volume."></ul>
-                </li>
-                <li><strong data-en="Audio:" data-fr="Audio :"></strong>
-                    <ul data-en="Choose your audio stimulation mode. 'Binaural' requires headphones to be effective. 'Isochronic' works with or without headphones. 'Both' combines the two." data-fr="Choisissez votre mode de stimulation audio. Le mode 'Binaural' nécessite un casque pour être efficace. Le mode 'Isochrone' fonctionne avec ou sans casque. 'Les Deux' combine les deux."></ul>
-                </li>
-                <li><strong data-en="Alternophony:" data-fr="Alternophonie :"></strong>
-                    <ul data-en="Activates a rhythmic sweep of white noise that pans from ear to ear, synchronized with the visual flashes. It has its own toggle button and volume control in the Audio panel." data-fr="Active un balayage rythmique de bruit blanc qui passe d'une oreille à l'autre, synchronisé avec les flashs visuels. Il possède son propre bouton d'activation et son propre contrôle de volume dans le panneau Audio."></ul>
-                </li>
-                 <li><strong data-en="Binaural Beat:" data-fr="Battement Binaural :"></strong>
-                    <ul data-en="This panel allows you to synchronize the frequency of the binaural beats with the blink frequency, using a multiplier." data-fr="Ce panneau permet de synchroniser la fréquence des battements binauraux sur celle des clignotements, via un multiplicateur."></ul>
-                </li>
-                 <li><strong data-en="Immersive Mode:" data-fr="Mode Immersif :"></strong>
-                    <ul data-en="Click on the visual stimulation area (the black zone) to expand it and hide the controls for total immersion. Click the 'Back' button to return to normal view." data-fr="Cliquez sur la zone de stimulation visuelle (la zone noire) pour l'agrandir et masquer les contrôles pour une immersion totale. Cliquez sur le bouton 'Retour' pour revenir à la vue normale."></ul>
-                </li>
-            </ul>
+            <p data-en="For an optimal experience, place your smartphone in a **VR headset**. Use **headphones** and **close your eyes** during the session." data-fr="Pour une expérience optimale, placez votre smartphone dans un **boîtier de réalité virtuelle**. Utilisez un **casque audio** et **fermez les yeux** pendant la session."></p>
         </div>
     </div>
 
@@ -331,70 +360,62 @@
         <div class="modal-content graph-modal-content">
             <span class="close-button">&times;</span>
             <h2 data-en="Session Graphs" data-fr="Graphiques des Sessions"></h2>
-            <div id="session-graphs-container">
-            </div>
+            <div id="session-graphs-container"></div>
         </div>
     </div>
 
     <div id="aboutModal" class="modal">
         <div class="modal-content help-modal-content">
             <span class="close-button">&times;</span>
-            <h2 data-en="About & Terms of Use" data-fr="À Propos & Conditions d'Utilisation"></h2>
-          
-            <h3 data-en="Terms of Service" data-fr="Conditions Générales d'Utilisation (CGU)"></h3>
-	        <p data-en="By using this application, you agree to the terms outlined here." data-fr="En utilisant cette application, vous acceptez les termes décrits ici."></p>
+            <h2 data-en="About & Terms of Use" data-fr="À Propos & Conditions d'Utilisation" data-de="Über & Nutzungsbedingungen" data-es="Acerca de & Condiciones de Uso" data-it="Informazioni & Condizioni d'Uso" data-nl="Over & Gebruiksvoorwaarden"></h2>
 
-            <ul>
-                <li><strong data-en="Preamble" data-fr="Préambule"></strong>
-                    <ul data-en="This section describes the purpose of the ToS and introduces the  'e-mindmachine' application and its publisher Arts Sciences Information." data-fr="En utilisant cette application, vous acceptez les termes décrits ici. L'application  **e-mindmachine ** et son éditeur Arts Sciences Information."></ul>
-                </li>
-                <li><strong data-en="Article 1: Definitions" data-fr="Article 1 : Définitions"></strong>
-                    <ul data-en="This section defines the key terms used in the document (e.g.,  'Application,'  'User,'  'Service,'  'Content')." data-fr="Définition des termes clés utilisés dans le document (par ex:  'Application',  'Utilisateur',  'Service',  'Contenu')."></ul>
-                </li>
-                <li><strong data-en="Article 2: Purpose and Scope" data-fr="Article 2 : Objet et Champ d'Application"></strong>
-                    <ul data-en="This section specifies that this document defines the terms and conditions for accessing and using the application." data-fr="Ce document définit les conditions d'accès et d'utilisation de l'application."></ul>
-                </li>
-                <li><strong data-en="Article 3: Access and Use of the Service" data-fr="Article 3 : Accès et Utilisation de l'Application"></strong>
-                    <ul data-en="Health Warning: Reiterates the essential warnings (epilepsy, pregnancy, etc.). It is crucial to state that the application is NOT a medical device and does not replace professional medical advice or treatment." data-fr="La stimulation lumineuse rapide est très intense et peut avoir des effets indésirables.
-Il est **FORTEMENT DÉCONSEILLÉ** aux personnes sujettes à l'**épilepsie photosensible**, même les yeux fermés.
-**Déconseillé aux femmes enceintes.**
-**Déconseillé aux personnes ayant des antécédents de troubles neurologiques, de migraines sévères ou de problèmes cardiaques.**
-Commencez toujours avec des réglages bas (fréquence, volume) et augmentez progressivement si désiré.
-Utilisez-le dans un environnement sûr et détendu.
-**Arrêtez immédiatement** si vous ressentez un inconfort, des nausées, des maux de tête, des vertiges, une désorientation ou tout autre symptôme inhabituel.
-Ne pas utiliser en conduisant, en utilisant des machines lourdes, ou dans toute situation nécessitant une attention soutenue."></ul>
-                    <ul data-en="Access Conditions: Defines requirements for users, such as being of legal age and having the full legal capacity to enter into an agreement." data-fr="Conditions d'accès : Majorité légale, pleine capacité juridique de l'utilisateur."></ul>
-                    <ul data-en="Rules of Use: The user agrees to use the application in accordance with its intended purpose and the provided warnings." data-fr="L'utilisateur s'engage à utiliser l'application conformément à sa destination et aux avertissements."></ul>
-                </li>
-                <li><strong data-en="Article 4: Intellectual Property" data-fr="Article 4 : Propriété Intellectuelle"></strong>
-                    <ul data-en="This clause stipulates that all elements of the application (source code, visual design, text, images, logos, textures, sounds, etc.) are your exclusive property and are protected by copyright and trademark law." data-fr="Tous les éléments de l'application (code source, design visuel, textes, images, logos, textures, sons, etc.) sont la propriété exclusive de l'éditeur et sont protégés par le droit d'auteur et le droit des marques."></ul>
-                    <ul data-en="It prohibits any reproduction, copying, or reuse of these elements without your written permission." data-fr="Elle interdit toute reproduction, copie, ou réutilisation des éléments sans son autorisation écrite."></ul>
-                </li>
-                <li><strong data-en="Article 5: User’s Responsibility" data-fr="Article 5 : Responsabilité de l'Utilisateur"></strong>
-                    <ul data-en="The user acknowledges using the application at their own risk." data-fr="L'utilisateur reconnaît utiliser l'application à ses propres risques et périls."></ul>
-                    <ul data-en="The user is solely responsible for heeding the health warnings." data-fr="L'utilisateur est seul responsable du respect des avertissements de santé."></ul>
-                </li>
-                <li><strong data-en="Article 6: Limitation of Liability (Most Important Clause)" data-fr="Article 6 : Limitation de Responsabilité de l'Éditeur (Clause la plus importante)"></strong>
-                    <ul data-en="This clause must clearly state that you provide the application  **as is, ** without any warranty of performance, results, or well-being." data-fr="Nous ne fournissons aucune garantie de performance, de résultat ou de bien-être."></ul>
-                    <ul data-en="It should stipulate that you cannot be held liable for any direct or indirect damages (physical, psychological, material) suffered by the user as a result of using the application." data-fr="Nous ne pouvons être tenu responsable des dommages directs ou indirects (physiques, psychologiques, matériels) subis par l'utilisateur suite à l'utilisation de l'application."></ul>
-                    <ul data-en="It reinforces that the application is a tool for entertainment and relaxation, not a therapeutic tool." data-fr="L'application est un outil de divertissement et de relaxation et non un outil thérapeutique."></ul>
-                </li>
-                <li><strong data-en="Article 7: Applicable Law and Jurisdiction" data-fr="Article 7 : Droit Applicable et Juridiction Compétente"></strong>
-                    <ul data-en="This section specifies which country's laws govern the ToS." data-fr="Les présentes CGU sont soumises au droit français."></ul>
-                    <ul data-en="In the event of a dispute, it designates the competent court." data-fr="En cas de litige, le tribunal compétent est celui de Bordeaux."></ul>
-                </li>
-                <li><strong data-en="Article 8: Copyright Notice" data-fr="Article 8 : Mention de Copyright"></strong>
-                    <ul data-en="© 2025 PHV. All rights reserved." data-fr="© 2025 PHV. Tous droits réservés."></ul>
-                </li>
-          </ul>
-            
-            <h3 data-en="Limitation of Liability" data-fr="Clause de Limitation de Responsabilité"></h3>
-            <p data-en="This application is provided 'as is', without any warranty. It is not a medical device. The creator cannot be held responsible for any direct or indirect damage resulting from its use." data-fr="Cette application est fournie 'en l'état', sans aucune garantie. Ce n'est pas un appareil médical. Le créateur ne pourra être tenu responsable de tout dommage direct ou indirect résultant de son utilisation."></p>
+            <h3 data-en="About" data-fr="À Propos" data-de="Über" data-es="Acerca de" data-it="Informazioni" data-nl="Over"></h3>
+            <p data-en="e-mindmachine is an audiovisual stimulation web application designed for relaxation, meditation, and consciousness exploration. Developed by PHV, it is inspired by mind machine technologies and sophrology techniques." 
+               data-fr="e-mindmachine est une application web de stimulation audiovisuelle conçue pour la relaxation, la méditation et l'exploration de la conscience. Développée par PHV, elle s'inspire des technologies des machines psychédéliques (mind machines) et des techniques de sophrologie."
+               data-de="e-mindmachine ist eine audiovisuelle Stimulations-Webanwendung, die für Entspannung, Meditation und Bewusstseinserforschung entwickelt wurde. Sie wurde von PHV entwickelt und ist von Mind-Machine-Technologien und Sophrologie-Techniken inspiriert."
+               data-es="e-mindmachine es una aplicación web de estimulación audiovisual diseñada para la relajación, la meditación y la exploración de la conciencia. Desarrollada por PHV, se inspira en las tecnologías de las máquinas mentales (mind machines) y las técnicas de sofrología."
+               data-it="e-mindmachine è un'applicazione web di stimolazione audiovisiva progettata per il rilassamento, la meditazione e l'esplorazione della coscienza. Sviluppata da PHV, si ispira alle tecnologie delle macchine mentali (mind machines) e alle tecniche di sofrologia."
+               data-nl="e-mindmachine is een audiovisuele stimulatie webapplicatie ontworpen voor ontspanning, meditatie en bewustzijnsverkenning. Ontwikkeld door PHV, is het geïnspireerd door mind machine technologieën en sofrologie technieken."></p>
+            <p data-en="The application combines light stimulations (stroboscopic flashes) with advanced sound stimulations, such as: binaural beats, isochronic tones, alternophony, and natural sound ambiances. It offers pre-programmed sessions, guided sophrology sessions with text-to-speech in several languages, and a biofeedback feature via connection to an EEG device (not provided)."
+               data-fr="L'application combine des stimulations lumineuses (clignotements stroboscopiques) avec des stimulations sonores avancées, telles que : des battements binauraux, des sons isochrones, de l'alternophonie, et des ambiances sonores naturelles. Elle propose des sessions préprogrammées, des séances de sophrologie guidées par synthèse vocale en plusieurs langues, et une fonctionnalité de biofeedback via connexion à un appareil EEG (non fourni)."
+               data-de="Die Anwendung kombiniert Lichtstimulationen (stroboskopische Blitze) mit fortschrittlichen Klangstimulationen wie: binaurale Beats, isochrone Töne, Alternophonie und natürliche Klanglandschaften. Sie bietet vorprogrammierte Sitzungen, geführte Sophrologie-Sitzungen mit Text-to-Speech in mehreren Sprachen und eine Biofeedback-Funktion über eine Verbindung zu einem EEG-Gerät (nicht im Lieferumfang enthalten)."
+               data-es="La aplicación combina estimulaciones luminosas (destellos estroboscópicos) con estimulaciones sonoras avanzadas, como: ritmos binaurales, tonos isocrónicos, alternofonía y ambientes sonoros naturales. Ofrece sesiones preprogramadas, sesiones de sofrología guiadas con texto a voz en varios idiomas y una función de biorretroalimentación mediante conexión a un dispositivo EEG (no incluido)."
+               data-it="L'applicazione combina stimolazioni luminose (lampi stroboscopici) con stimolazioni sonore avanzate, come: battiti binaurali, toni isocroni, alternofonia e ambienti sonori naturali. Offre sessioni pre-programmate, sessioni di sofrologia guidate con sintesi vocale in diverse lingue e una funzione di biofeedback tramite connessione a un dispositivo EEG (non fornito)."
+               data-nl="De applicatie combineert lichtstimulaties (stroboscopische flitsen) met geavanceerde geluidsstimulaties, zoals: binaural beats, isochrone tonen, alternofonie en natuurlijke geluidsambiances. Het biedt voorgeprogrammeerde sessies, begeleide sofrologiesessies met tekst-naar-spraak in meerdere talen, en een biofeedbackfunctie via verbinding met een EEG-apparaat (niet meegeleverd)."></p>
 
-            <h3 data-en="Intellectual Property" data-fr="Propriété Intellectuelle"></h3>
-            <p data-en="All elements of this application (code, design, text, images) are the exclusive property of its creator and are protected by copyright law." data-fr="Tous les éléments de cette application (code, design, textes, images) sont la propriété exclusive de son créateur et sont protégés par le droit d'auteur."></p>
+            <h3 data-en="Terms of Use" data-fr="Conditions d'Utilisation" data-de="Nutzungsbedingungen" data-es="Condiciones de Uso" data-it="Condizioni d'Uso" data-nl="Gebruiksvoorwaarden"></h3>
+            <p data-en="By using the 'e-mindmachine' application, you fully accept these terms of use."
+               data-fr="En utilisant l'application 'e-mindmachine', vous acceptez sans réserve les présentes conditions d'utilisation."
+               data-de="Durch die Nutzung der Anwendung 'e-mindmachine' akzeptieren Sie diese Nutzungsbedingungen vollständig."
+               data-es="Al utilizar la aplicación 'e-mindmachine', usted acepta plenamente estas condiciones de uso."
+               data-it="Utilizzando l'applicazione 'e-mindmachine', accetti integralmente queste condizioni d'uso."
+               data-nl="Door de 'e-mindmachine' applicatie te gebruiken, accepteert u deze gebruiksvoorwaarden volledig."></p>
+            <p data-en="This application is not a medical device. It is not intended to diagnose, treat, cure, or prevent any disease or medical condition. The sessions offered are for entertainment and personal well-being purposes. Never replace professional medical advice or treatment with the information or sessions from this application."
+               data-fr="Cette application n'est pas un dispositif médical. Elle n'est pas destinée à diagnostiquer, traiter, guérir ou prévenir une quelconque maladie ou condition médicale. Les sessions proposées sont à but de divertissement et de bien-être personnel. Ne remplacez jamais un avis ou un traitement médical professionnel par les informations ou les sessions de cette application."
+               data-de="Diese Anwendung ist kein medizinisches Gerät. Sie ist nicht dazu bestimmt, Krankheiten oder medizinische Zustände zu diagnostizieren, zu behandeln, zu heilen oder zu verhindern. Die angebotenen Sitzungen dienen der Unterhaltung und dem persönlichen Wohlbefinden. Ersetzen Sie niemals professionellen medizinischen Rat oder eine Behandlung durch die Informationen oder Sitzungen aus dieser Anwendung."
+               data-es="Esta aplicación no es un dispositivo médico. No está destinada a diagnosticar, tratar, curar o prevenir ninguna enfermedad o condición médica. Las sesiones ofrecidas son para fines de entretenimiento y bienestar personal. Nunca reemplace el consejo o tratamiento médico profesional con la información o las sesiones de esta aplicación."
+               data-it="Questa applicazione non è un dispositivo medico. Non è destinata a diagnosticare, trattare, curare o prevenire alcuna malattia o condizione medica. Le sessioni offerte sono a scopo di intrattenimento e benessere personale. Non sostituire mai la consulenza o il trattamento medico professionale con le informazioni o le sessioni di questa applicazione."
+               data-nl="Deze applicatie is geen medisch apparaat. Het is niet bedoeld om een ziekte of medische aandoening te diagnosticeren, behandelen, genezen of voorkomen. De aangeboden sessies zijn voor entertainment en persoonlijk welzijn. Vervang nooit professioneel medisch advies of behandeling door de informatie of sessies van deze applicatie."></p>
+            <p data-en="The use of this application is at your sole and entire responsibility. You agree to have read and understood all the warnings provided in the 'WARNING!' section, including contraindications regarding photosensitive epilepsy, pregnancy, and other medical conditions."
+               data-fr="L'utilisation de cette application se fait sous votre seule et entière responsabilité. Vous vous engagez à avoir lu et compris tous les avertissements fournis dans la section 'ATTENTION !', notamment les contre-indications concernant l'épilepsie photosensible, la grossesse et autres conditions médicales."
+               data-de="Die Nutzung dieser Anwendung erfolgt auf Ihre alleinige und vollständige Verantwortung. Sie stimmen zu, alle Warnhinweise im Abschnitt 'WARNUNG!' gelesen und verstanden zu haben, einschließlich der Kontraindikationen bezüglich lichtempfindlicher Epilepsie, Schwangerschaft und anderer medizinischer Zustände."
+               data-es="El uso de esta aplicación es de su única y total responsabilidad. Usted acepta haber leído y comprendido todas las advertencias proporcionadas en la sección '¡ADVERTENCIA!', incluidas las contraindicaciones relativas a la epilepsia fotosensible, el embarazo y otras condiciones médicas."
+               data-it="L'uso di questa applicazione è sotto la tua unica e totale responsabilità. Dichiari di aver letto e compreso tutte le avvertenze fornite nella sezione 'ATTENZIONE!', incluse le controindicazioni relative all'epilessia fotosensibile, alla gravidanza e ad altre condizioni mediche."
+               data-nl="Het gebruik van deze applicatie is geheel voor uw eigen verantwoordelijkheid. U gaat ermee akkoord alle waarschuwingen in de sectie 'WAARSCHUWING!' te hebben gelezen en begrepen, inclusief contra-indicaties met betrekking tot fotosensitieve epilepsie, zwangerschap en andere medische aandoeningen."></p>
+            <p data-en="The creator of the application, PHV, cannot be held responsible for any direct or indirect damages of any kind resulting from the use or inability to use this application."
+               data-fr="Le créateur de l'application, PHV, ne pourra être tenu responsable des dommages directs ou indirects, de quelque nature que ce soit, résultant de l'utilisation ou de l'incapacité à utiliser cette application."
+               data-de="Der Ersteller der Anwendung, PHV, kann nicht für direkte oder indirekte Schäden jeglicher Art haftbar gemacht werden, die sich aus der Nutzung oder der Unfähigkeit zur Nutzung dieser Anwendung ergeben."
+               data-es="El creador de la aplicación, PHV, no se hace responsable de los daños directos o indirectos de ningún tipo que resulten del uso o la imposibilidad de usar esta aplicación."
+               data-it="Il creatore dell'applicazione, PHV, non può essere ritenuto responsabile per eventuali danni diretti o indiretti di qualsiasi tipo derivanti dall'uso o dall'impossibilità di utilizzare questa applicazione."
+               data-nl="De maker van de applicatie, PHV, kan niet verantwoordelijk worden gehouden voor enige directe of indirecte schade van welke aard dan ook die voortvloeit uit het gebruik of de onmogelijkheid om deze applicatie te gebruiken."></p>
+            <p data-en="All elements of the application (source code, design, sophrology session texts, generated or provided audio files) are the intellectual property of PHV. Any unauthorized reproduction or distribution is prohibited. A personal, non-commercial, and non-transferable user license is granted to you."
+               data-fr="Tous les éléments de l'application (code source, design, textes des sessions de sophrologie, fichiers audio générés ou fournis) sont la propriété intellectuelle de PHV. Toute reproduction ou distribution non autorisée est interdite. Une licence d'utilisation personnelle, non-commerciale et non-transférable vous est accordée."
+               data-de="Alle Elemente der Anwendung (Quellcode, Design, Texte der Sophrologie-Sitzungen, generierte oder bereitgestellte Audiodateien) sind geistiges Eigentum von PHV. Jede unerlaubte Vervielfältigung oder Verbreitung ist untersagt. Ihnen wird eine persönliche, nicht-kommerzielle und nicht übertragbare Nutzungslizenz gewährt."
+               data-es="Todos los elementos de la aplicación (código fuente, diseño, textos de las sesiones de sofrología, archivos de audio generados o proporcionados) son propiedad intelectual de PHV. Queda prohibida cualquier reproducción o distribución no autorizada. Se le concede una licencia de usuario personal, no comercial e intransferible."
+               data-it="Tutti gli elementi dell'applicazione (codice sorgente, design, testi delle sessioni di sofrologia, file audio generati o forniti) sono di proprietà intellettuale di PHV. Qualsiasi riproduzione o distribuzione non autorizzata è vietata. Viene concessa una licenza d'uso personale, non commerciale e non trasferibile."
+               data-nl="Alle elementen van de applicatie (broncode, ontwerp, teksten van sofrologiesessies, gegenereerde of geleverde audiobestanden) zijn het intellectuele eigendom van PHV. Elke ongeoorloofde reproductie of distributie is verboden. U krijgt een persoonlijke, niet-commerciële en niet-overdraagbare gebruikerslicentie."></p>
             
-            <p class="copyright-notice" data-en="© 2025 PHV. All rights reserved." data-fr="© 2025 PHV. Tous droits réservés."></p>
+            <p class="copyright-notice" data-en="© 2025 PHV. All rights reserved." data-fr="© 2025 PHV. Tous droits réservés." data-de="© 2025 PHV. Alle Rechte vorbehalten." data-es="© 2025 PHV. Todos los derechos reservados." data-it="© 2025 PHV. Tutti i diritti riservati." data-nl="© 2025 PHV. Alle rechten voorbehouden."></p>
         </div>
     </div>
 
@@ -413,8 +434,7 @@ Ne pas utiliser en conduisant, en utilisant des machines lourdes, ou dans toute 
                             <th data-en="Blink Mode" data-fr="Mode Clign."></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        </tbody>
+                    <tbody></tbody>
                 </table>
                 <div class="custom-session-buttons">
                     <button type="submit" id="saveCustomSessionButton" data-en="Save and Close" data-fr="Sauvegarder et Fermer"></button>
