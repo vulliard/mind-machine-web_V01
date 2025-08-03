@@ -1044,3 +1044,16 @@ input[type="color"]::-webkit-color-swatch {
         font-size: 1em;
     }
 }
+
+/* Réorganisation des modes de clignotement sur deux lignes */
+.blink-mode .radio-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+}
+
+.blink-mode .radio-switch label {
+  border-radius: 3px;
+  text-align: center;
+}
