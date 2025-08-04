@@ -504,7 +504,7 @@ function selectVoice(utterance, voices) {
     let filteredVoices = voices.filter(voice => voice.lang === ttsLang);
     let genderedVoices = [];
 
-    const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
+    const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
     const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
 
 
