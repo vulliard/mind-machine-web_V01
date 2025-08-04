@@ -467,7 +467,7 @@ function playGuidedText(sessionKey) {
         }
 
         const utterance = new SpeechSynthesisUtterance(sentences[sentenceIndex].trim());
-        utterance.rate = 0.8; // Conserve une vitesse de parole lente
+        utterance.rate = 0.7; // Conserve une vitesse de parole lente
 
         const setVoiceAndSpeak = () => {
             const voices = window.speechSynthesis.getVoices();
