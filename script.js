@@ -501,26 +501,40 @@ function selectVoice(utterance, voices) {
 
     const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
     
-    let filteredVoices = voices.filter(voice => voice.lang === ttsLang);
-    let genderedVoices = [];
-
+    // Mots-clés pour le genre (inchangés)
     const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
     const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
 
+    // --- NOUVELLE LOGIQUE DE SÉLECTION AMÉLIORÉE ---
 
-    if (selectedGender === 'female') {
-        genderedVoices = filteredVoices.filter(voice => femaleKeywords.some(kw => voice.name.toLowerCase().includes(kw)));
-    } else if (selectedGender === 'male') {
-        genderedVoices = filteredVoices.filter(voice => maleKeywords.some(kw => voice.name.toLowerCase().includes(kw)));
-    }
+    // 1. Obtenir toutes les voix pour la langue cible
+    const allLangVoices = voices.filter(voice => voice.lang === ttsLang);
+    if (allLangVoices.length === 0) return; // Quitter si aucune voix n'est trouvée
 
-    if (genderedVoices.length > 0) {
-        utterance.voice = genderedVoices[0];
-    } else if (filteredVoices.length > 0) {
-        utterance.voice = filteredVoices[0];
+    // 2. Filtrer par genre
+    const keywords = (selectedGender === 'female') ? femaleKeywords : maleKeywords;
+    const genderedVoices = allLangVoices.filter(voice => keywords.some(kw => voice.name.toLowerCase().includes(kw)));
+    
+    // Utiliser les voix filtrées par genre si disponibles, sinon toutes les voix de la langue
+    const voicePool = genderedVoices.length > 0 ? genderedVoices : allLangVoices;
+
+    // 3. NOUVEAU : Rechercher et prioriser une voix de HAUTE QUALITÉ
+    const highQualityKeywords = ['améliorée', 'enhanced', 'premium', 'hd'];
+    const highQualityVoice = voicePool.find(voice => 
+        highQualityKeywords.some(kw => voice.name.toLowerCase().includes(kw))
+    );
+
+    if (highQualityVoice) {
+        // Si une voix de haute qualité est trouvée, l'utiliser en priorité absolue
+        utterance.voice = highQualityVoice;
+        console.log(`Voix de haute qualité sélectionnée : ${highQualityVoice.name}`);
+    } else if (voicePool.length > 0) {
+        // Sinon, utiliser la première voix disponible dans le groupe (ancien comportement)
+        utterance.voice = voicePool[0];
+        console.log(`Voix standard sélectionnée : ${voicePool[0].name}`);
     }
+    // Si aucune voix n'est trouvée, le navigateur utilisera son propre défaut.
 }
-
 
 function stopGuidedText() {
     if ('speechSynthesis' in window) {
