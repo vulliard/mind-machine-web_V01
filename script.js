@@ -273,9 +273,10 @@ let customSessionModal, customSessionForm, customSessionTableBody, saveCustomSes
 let visualModeSelect;
 let leftCanvas, rightCanvas, leftCtx, rightCtx;
 
+let voiceSelectWrapper, voiceSelect, availableVoices = [], speechApiIsReady = false;
+
 // DOM References for the ambiance system
 let ambianceSelect, ambianceToggleButton, ambianceVolumeSlider;
-
 
 // --- Global Functions ---
 
@@ -495,45 +496,48 @@ function playGuidedText(sessionKey) {
     speak();
 }
 function selectVoice(utterance, voices) {
+    // Si le menu de sélection de voix est visible et a une valeur, on l'utilise en priorité
+    if (voiceSelectWrapper && voiceSelectWrapper.style.display !== 'none' && voiceSelect.value) {
+        const selectedOption = voiceSelect.options[voiceSelect.selectedIndex];
+        if (selectedOption) {
+            const selectedVoiceName = selectedOption.getAttribute('data-voice-name');
+            const selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+                utterance.lang = selectedVoice.lang; // On s'assure que la langue correspond bien à la voix
+                console.log(`Voix sélectionnée par l'utilisateur : ${selectedVoice.name}`);
+                return;
+            }
+        }
+    }
+
+    // --- Logique de secours si le menu n'est pas disponible ---
     const langMap = { en: 'en-US', fr: 'fr-FR', de: 'de-DE', es: 'es-ES', it: 'it-IT', nl: 'nl-NL' };
     const ttsLang = langMap[currentLanguage] || 'fr-FR';
     utterance.lang = ttsLang;
 
     const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
-    
-    // Mots-clés pour le genre (inchangés)
     const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
     const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
-
-    // --- NOUVELLE LOGIQUE DE SÉLECTION AMÉLIORÉE ---
-
-    // 1. Obtenir toutes les voix pour la langue cible
+    
     const allLangVoices = voices.filter(voice => voice.lang === ttsLang);
-    if (allLangVoices.length === 0) return; // Quitter si aucune voix n'est trouvée
+    if (allLangVoices.length === 0) return;
 
-    // 2. Filtrer par genre
     const keywords = (selectedGender === 'female') ? femaleKeywords : maleKeywords;
     const genderedVoices = allLangVoices.filter(voice => keywords.some(kw => voice.name.toLowerCase().includes(kw)));
     
-    // Utiliser les voix filtrées par genre si disponibles, sinon toutes les voix de la langue
     const voicePool = genderedVoices.length > 0 ? genderedVoices : allLangVoices;
 
-    // 3. NOUVEAU : Rechercher et prioriser une voix de HAUTE QUALITÉ
     const highQualityKeywords = ['améliorée', 'enhanced', 'premium', 'hd'];
-    const highQualityVoice = voicePool.find(voice => 
-        highQualityKeywords.some(kw => voice.name.toLowerCase().includes(kw))
-    );
+    const highQualityVoice = voicePool.find(voice => highQualityKeywords.some(kw => voice.name.toLowerCase().includes(kw)));
 
     if (highQualityVoice) {
-        // Si une voix de haute qualité est trouvée, l'utiliser en priorité absolue
         utterance.voice = highQualityVoice;
         console.log(`Voix de haute qualité sélectionnée : ${highQualityVoice.name}`);
     } else if (voicePool.length > 0) {
-        // Sinon, utiliser la première voix disponible dans le groupe (ancien comportement)
         utterance.voice = voicePool[0];
         console.log(`Voix standard sélectionnée : ${voicePool[0].name}`);
     }
-    // Si aucune voix n'est trouvée, le navigateur utilisera son propre défaut.
 }
 
 function stopGuidedText() {
@@ -545,6 +549,71 @@ function stopGuidedText() {
         }
         // Arrête la synthèse vocale en cours
         window.speechSynthesis.cancel();
+    }
+}
+
+function initializeSpeechApi() {
+    // Si l'API est déjà prête, on ne fait rien
+    if (speechApiIsReady || !('speechSynthesis' in window)) return;
+
+    function loadVoices() {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            availableVoices = voices;
+            speechApiIsReady = true;
+            console.log("API Vocale prête. Voix disponibles :", availableVoices.length);
+            // On peuple la liste pour la première fois, maintenant qu'on est sûr qu'elle est complète
+            populateVoiceList(); 
+            // On peut retirer l'écouteur, son travail est fait
+            window.speechSynthesis.onvoiceschanged = null;
+        }
+    }
+
+    // On vérifie si les voix sont déjà là par hasard
+    loadVoices();
+
+    // Si elles ne sont pas encore prêtes, on met en place l'écouteur
+    if (!speechApiIsReady) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+}
+
+function populateVoiceList() {
+    // On vérifie si l'API est prête et si les éléments HTML existent
+    if (!speechApiIsReady || !voiceSelectWrapper || !voiceSelect) return;
+
+    voiceSelect.innerHTML = '';
+    const langMap = { en: 'en', fr: 'fr', de: 'de', es: 'es', it: 'it', nl: 'nl' };
+    const ttsLangPrefix = langMap[currentLanguage] || 'fr';
+
+    const languageVoices = availableVoices.filter(voice => voice.lang.startsWith(ttsLangPrefix));
+
+    // Filtrage par genre (logique inchangée)
+    const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
+    const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
+    const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
+    
+    const keywords = (selectedGender === 'female') ? femaleKeywords : maleKeywords;
+    let genderedVoices = languageVoices.filter(voice => keywords.some(kw => voice.name.toLowerCase().includes(kw)));
+    
+    // Si aucun genre ne correspond, on affiche toutes les voix de la langue
+    const voicePool = genderedVoices.length > 0 ? genderedVoices : languageVoices;
+
+    if (voicePool.length > 0) {
+        voicePool.forEach(voice => {
+            const option = document.createElement('option');
+            
+            // NOUVELLE MÉTHODE DE NETTOYAGE PLUS ROBUSTE
+            // Retire les descriptions de langue entre parenthèses
+            let cleanedName = voice.name.replace(/\s\((français|french|deutsch|german|español|spanish|italiano|italian|nederlands|dutch).*\)/i, '');
+            
+            option.textContent = cleanedName; 
+            option.setAttribute('data-voice-name', voice.name);
+            voiceSelect.appendChild(option);
+        });
+        voiceSelectWrapper.style.display = 'flex';
+    } else {
+        voiceSelectWrapper.style.display = 'none';
     }
 }
 
@@ -1386,7 +1455,10 @@ document.addEventListener('DOMContentLoaded', () => {
     rightCanvas = document.getElementById('right-canvas');
     leftCtx = leftCanvas.getContext('2d');
     rightCtx = rightCanvas.getContext('2d');
-    
+
+    voiceSelectWrapper = document.getElementById('voice-selector-wrapper');
+    voiceSelect = document.getElementById('voice-select');
+
     // Assignations DOM pour le système d'ambiance
     ambianceSelect = document.getElementById('ambiance-select');
     ambianceToggleButton = document.getElementById('ambiance-toggle-button');
@@ -1427,6 +1499,10 @@ document.addEventListener('DOMContentLoaded', () => {
     validateAndSetFrequency(blinkFrequencyInput, blinkRateSlider, true);
     validateAndSetFrequency(carrierFrequencyInput, carrierFrequencySlider, false);
     setLanguage(currentLanguage);
+
+    // NOUVEL APPEL DE FONCTION
+    initializeSpeechApi(); // Lance le chargement sécurisé des voix
+
     if (warningModal) warningModal.style.display = 'flex';
 
     // --- Boucle d'animation principale ---
@@ -1638,7 +1714,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBinauralFrequencies();
     }));
 
-    voiceGenderRadios.forEach(radio => radio.addEventListener('change', e => {
+    voiceGenderRadios.forEach(radio => radio.addEventListener('change', () => {
+        // Met à jour la liste des voix affichées en fonction du nouveau genre
+        populateVoiceList(); 
+        // Si une séance est en cours, relance la parole pour utiliser une voix du nouveau genre
         if (visualTimeoutId && sophrologySelect.value !== 'none') {
             playGuidedText(sophrologySelect.value);
         }
@@ -1753,12 +1832,13 @@ document.addEventListener('DOMContentLoaded', () => {
         musicLoopAudio.volume = parseFloat(e.target.value) / 100;
     });
 
-    flagFr.addEventListener('click', () => setLanguage('fr'));
-    flagEn.addEventListener('click', () => setLanguage('en'));
-    flagDe.addEventListener('click', () => setLanguage('de'));
-    flagEs.addEventListener('click', () => setLanguage('es'));
-    flagIt.addEventListener('click', () => setLanguage('it'));
-    flagNl.addEventListener('click', () => setLanguage('nl'));
+    // MODIFIER LES ÉCOUTEURS D'ÉVÉNEMENTS POUR LES DRAPEAUX
+    flagFr.addEventListener('click', () => { setLanguage('fr'); populateVoiceList(); });
+    flagEn.addEventListener('click', () => { setLanguage('en'); populateVoiceList(); });
+    flagDe.addEventListener('click', () => { setLanguage('de'); populateVoiceList(); });
+    flagEs.addEventListener('click', () => { setLanguage('es'); populateVoiceList(); });
+    flagIt.addEventListener('click', () => { setLanguage('it'); populateVoiceList(); });
+    flagNl.addEventListener('click', () => { setLanguage('nl'); populateVoiceList(); });
 
     warningButton.addEventListener('click', () => warningModal.style.display = 'flex');
     understoodButton.addEventListener('click', () => warningModal.style.display = 'none');
