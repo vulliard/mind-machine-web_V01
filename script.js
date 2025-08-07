@@ -579,16 +579,24 @@ function initializeSpeechApi() {
 }
 
 function populateVoiceList() {
-    // On vérifie si l'API est prête et si les éléments HTML existent
-    if (!speechApiIsReady || !voiceSelectWrapper || !voiceSelect) return;
+    if (!('speechSynthesis' in window) || !voiceSelect) return;
+
+    // ... (le début de la fonction reste identique) ...
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+        window.speechSynthesis.onvoiceschanged = populateVoiceList;
+        return;
+    }
+    window.speechSynthesis.onvoiceschanged = null;
 
     voiceSelect.innerHTML = '';
     const langMap = { en: 'en', fr: 'fr', de: 'de', es: 'es', it: 'it', nl: 'nl' };
     const ttsLangPrefix = langMap[currentLanguage] || 'fr';
 
-    const languageVoices = availableVoices.filter(voice => voice.lang.startsWith(ttsLangPrefix));
+    // LA CORRECTION EST SUR LA LIGNE SUIVANTE :
+    const languageVoices = availableVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
 
-    // Filtrage par genre (logique inchangée)
+    // Le reste de la fonction est inchangé
     const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
     const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
     const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
@@ -596,17 +604,12 @@ function populateVoiceList() {
     const keywords = (selectedGender === 'female') ? femaleKeywords : maleKeywords;
     let genderedVoices = languageVoices.filter(voice => keywords.some(kw => voice.name.toLowerCase().includes(kw)));
     
-    // Si aucun genre ne correspond, on affiche toutes les voix de la langue
     const voicePool = genderedVoices.length > 0 ? genderedVoices : languageVoices;
 
     if (voicePool.length > 0) {
         voicePool.forEach(voice => {
             const option = document.createElement('option');
-            
-            // NOUVELLE MÉTHODE DE NETTOYAGE PLUS ROBUSTE
-            // Retire les descriptions de langue entre parenthèses
             let cleanedName = voice.name.replace(/\s\((français|french|deutsch|german|español|spanish|italiano|italian|nederlands|dutch).*\)/i, '');
-            
             option.textContent = cleanedName; 
             option.setAttribute('data-voice-name', voice.name);
             voiceSelect.appendChild(option);
