@@ -581,22 +581,38 @@ function initializeSpeechApi() {
 function populateVoiceList() {
     if (!('speechSynthesis' in window) || !voiceSelect) return;
 
-    // ... (le début de la fonction reste identique) ...
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length === 0) {
-        window.speechSynthesis.onvoiceschanged = populateVoiceList;
+    if (!speechApiIsReady) {
+        console.warn("API Vocale non prête, impossible de peupler la liste.");
         return;
     }
-    window.speechSynthesis.onvoiceschanged = null;
 
     voiceSelect.innerHTML = '';
     const langMap = { en: 'en', fr: 'fr', de: 'de', es: 'es', it: 'it', nl: 'nl' };
     const ttsLangPrefix = langMap[currentLanguage] || 'fr';
 
-    // LA CORRECTION EST SUR LA LIGNE SUIVANTE :
-    const languageVoices = availableVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
+    let languageVoices;
 
-    // Le reste de la fonction est inchangé
+    // --- DÉTECTION DE LA PLATEFORME ET LOGIQUE ADAPTÉE ---
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+    if (isIOS) {
+        // Logique de filtrage STRICTE pour iOS
+        const langMapIOS = {
+            fr: ['fr-FR'],
+            en: ['en-US', 'en-GB'],
+            de: ['de-DE'],
+            es: ['es-ES', 'es-MX'],
+            it: ['it-IT'],
+            nl: ['nl-NL']
+        };
+        const targetLangs = langMapIOS[ttsLangPrefix] || ['fr-FR'];
+        languageVoices = availableVoices.filter(voice => targetLangs.includes(voice.lang));
+    } else {
+        // Logique de filtrage SOUPLE pour PC et autres systèmes
+        languageVoices = availableVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
+    }
+
+    // --- Le reste de la logique est commun ---
     const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
     const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
     const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
@@ -609,7 +625,10 @@ function populateVoiceList() {
     if (voicePool.length > 0) {
         voicePool.forEach(voice => {
             const option = document.createElement('option');
+            
+            // Logique de nettoyage du nom (la plus efficace à ce stade)
             let cleanedName = voice.name.replace(/\s\((français|french|deutsch|german|español|spanish|italiano|italian|nederlands|dutch).*\)/i, '');
+            
             option.textContent = cleanedName; 
             option.setAttribute('data-voice-name', voice.name);
             voiceSelect.appendChild(option);
