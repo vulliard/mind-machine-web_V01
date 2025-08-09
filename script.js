@@ -590,6 +590,18 @@ function populateVoiceList() {
     const langMap = { en: 'en', fr: 'fr', de: 'de', es: 'es', it: 'it', nl: 'nl' };
     const ttsLangPrefix = langMap[currentLanguage] || 'fr';
 
+    // --- NOUVEAU : LISTE NOIRE DES VOIX FANTASIE ET EFFETS SONORES D'IOS ---
+    const noveltyVoiceBlacklist = [
+        'albert', 'bahh', 'bells', 'boing', 'bubbles', 'cellos', 'deranged', 'eddy', 'flo', 'fred', 'good news', 'grandma', 'grandpa', 'jester',
+        'junior', 'kathy', 'murmur', 'organ', 'ralph', 'reed', 'rocko', 'sandy', 'shelley', 'superstar', 'trinoids', 'whisper', 'wobble',
+        'zarvox', 'bad news', 'cloches', 'bouffon', 'orgue', 'violoncelles', 'murmure', 'bonnes nouvelles', 'mauvaises nouvelles', 'bulles', 'trinoïde',
+        'boing', 'violon', 'voix de robot'
+    ].map(name => name.toLowerCase());
+
+    // On filtre la liste initiale pour ne garder que les voix qui ne sont PAS dans la liste noire
+    const humanVoices = availableVoices.filter(voice => !noveltyVoiceBlacklist.includes(voice.name.toLowerCase()));
+
+    // --- Le reste du code travaille maintenant sur cette liste "propre" de voix humaines ---
     let languageVoices;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
@@ -603,14 +615,14 @@ function populateVoiceList() {
             nl: ['nl-NL']
         };
         const targetLangs = langMapIOS[ttsLangPrefix] || ['fr-FR'];
-        languageVoices = availableVoices.filter(voice => targetLangs.includes(voice.lang));
+        languageVoices = humanVoices.filter(voice => targetLangs.includes(voice.lang));
     } else {
-        languageVoices = availableVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
+        languageVoices = humanVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
     }
 
     const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
     const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
-    const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
+    const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank', 'xander', 'jacques'];
     
     const keywords = (selectedGender === 'female') ? femaleKeywords : maleKeywords;
     let genderedVoices = languageVoices.filter(voice => keywords.some(kw => voice.name.toLowerCase().includes(kw)));
@@ -621,22 +633,16 @@ function populateVoiceList() {
         voicePool.forEach(voice => {
             const option = document.createElement('option');
             let cleanedName = voice.name;
-
-            // --- NOUVELLE LOGIQUE DE NETTOYAGE SPÉCIFIQUE AU PC ---
             if (!isIOS) {
-                // 1. On enlève "Microsoft" au début
                 if (cleanedName.startsWith('Microsoft ')) {
-                    cleanedName = cleanedName.substring(10); // Retire les 10 premiers caractères
+                    cleanedName = cleanedName.substring(10);
                 }
-                // 2. On enlève la description de la langue après le tiret
                 const hyphenIndex = cleanedName.indexOf(' - ');
                 if (hyphenIndex !== -1) {
                     cleanedName = cleanedName.substring(0, hyphenIndex);
                 }
             }
-            // (La logique pour iOS reste la même, car le nom est déjà propre)
-            
-            option.textContent = cleanedName.trim(); // .trim() pour enlever les espaces superflus
+            option.textContent = cleanedName.trim();
             option.setAttribute('data-voice-name', voice.name);
             voiceSelect.appendChild(option);
         });
