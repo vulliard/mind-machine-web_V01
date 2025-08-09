@@ -591,12 +591,9 @@ function populateVoiceList() {
     const ttsLangPrefix = langMap[currentLanguage] || 'fr';
 
     let languageVoices;
-
-    // --- DÉTECTION DE LA PLATEFORME ET LOGIQUE ADAPTÉE ---
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
     if (isIOS) {
-        // Logique de filtrage STRICTE pour iOS
         const langMapIOS = {
             fr: ['fr-FR'],
             en: ['en-US', 'en-GB'],
@@ -608,11 +605,9 @@ function populateVoiceList() {
         const targetLangs = langMapIOS[ttsLangPrefix] || ['fr-FR'];
         languageVoices = availableVoices.filter(voice => targetLangs.includes(voice.lang));
     } else {
-        // Logique de filtrage SOUPLE pour PC et autres systèmes
         languageVoices = availableVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
     }
 
-    // --- Le reste de la logique est commun ---
     const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
     const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
     const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank'];
@@ -625,11 +620,23 @@ function populateVoiceList() {
     if (voicePool.length > 0) {
         voicePool.forEach(voice => {
             const option = document.createElement('option');
+            let cleanedName = voice.name;
+
+            // --- NOUVELLE LOGIQUE DE NETTOYAGE SPÉCIFIQUE AU PC ---
+            if (!isIOS) {
+                // 1. On enlève "Microsoft" au début
+                if (cleanedName.startsWith('Microsoft ')) {
+                    cleanedName = cleanedName.substring(10); // Retire les 10 premiers caractères
+                }
+                // 2. On enlève la description de la langue après le tiret
+                const hyphenIndex = cleanedName.indexOf(' - ');
+                if (hyphenIndex !== -1) {
+                    cleanedName = cleanedName.substring(0, hyphenIndex);
+                }
+            }
+            // (La logique pour iOS reste la même, car le nom est déjà propre)
             
-            // Logique de nettoyage du nom (la plus efficace à ce stade)
-            let cleanedName = voice.name.replace(/\s\((français|french|deutsch|german|español|spanish|italiano|italian|nederlands|dutch).*\)/i, '');
-            
-            option.textContent = cleanedName; 
+            option.textContent = cleanedName.trim(); // .trim() pour enlever les espaces superflus
             option.setAttribute('data-voice-name', voice.name);
             voiceSelect.appendChild(option);
         });
