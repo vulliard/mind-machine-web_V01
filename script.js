@@ -580,17 +580,20 @@ function initializeSpeechApi() {
 
 function populateVoiceList() {
     if (!('speechSynthesis' in window) || !voiceSelect) return;
-
     if (!speechApiIsReady) {
         console.warn("API Vocale non prête, impossible de peupler la liste.");
         return;
     }
 
     voiceSelect.innerHTML = '';
-    const langMap = { en: 'en', fr: 'fr', de: 'de', es: 'es', it: 'it', nl: 'nl' };
-    const ttsLangPrefix = langMap[currentLanguage] || 'fr';
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    // On cache les boutons de genre sur iOS car le tri n'est pas fiable
+    const voiceGenderFieldset = document.querySelector('.voice-selection');
+    if (voiceGenderFieldset) {
+        voiceGenderFieldset.style.display = isIOS ? 'none' : 'block';
+    }
 
-    // --- NOUVEAU : LISTE NOIRE DES VOIX FANTASIE ET EFFETS SONORES D'IOS ---
     const noveltyVoiceBlacklist = [
         'albert', 'bahh', 'bells', 'boing', 'bubbles', 'cellos', 'deranged', 'eddy', 'flo', 'fred', 'good news', 'grandma', 'grandpa', 'jester',
         'junior', 'kathy', 'murmur', 'organ', 'ralph', 'reed', 'rocko', 'sandy', 'shelley', 'superstar', 'trinoids', 'whisper', 'wobble',
@@ -598,49 +601,37 @@ function populateVoiceList() {
         'boing', 'violon', 'voix de robot'
     ].map(name => name.toLowerCase());
 
-    // On filtre la liste initiale pour ne garder que les voix qui ne sont PAS dans la liste noire
     const humanVoices = availableVoices.filter(voice => !noveltyVoiceBlacklist.includes(voice.name.toLowerCase()));
-
-    // --- Le reste du code travaille maintenant sur cette liste "propre" de voix humaines ---
-    let languageVoices;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    let voicePool;
 
     if (isIOS) {
-        const langMapIOS = {
-            fr: ['fr-FR'],
-            en: ['en-US', 'en-GB'],
-            de: ['de-DE'],
-            es: ['es-ES', 'es-MX'],
-            it: ['it-IT'],
-            nl: ['nl-NL']
-        };
-        const targetLangs = langMapIOS[ttsLangPrefix] || ['fr-FR'];
-        languageVoices = humanVoices.filter(voice => targetLangs.includes(voice.lang));
+        // SUR IPHONE : On ne filtre RIEN (ni langue, ni genre). On affiche toutes les voix humaines.
+        voicePool = humanVoices;
     } else {
-        languageVoices = humanVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
+        // SUR PC, ANDROID, etc. : On garde la logique de filtrage qui fonctionne.
+        const langMap = { en: 'en', fr: 'fr', de: 'de', es: 'es', it: 'it', nl: 'nl' };
+        const ttsLangPrefix = langMap[currentLanguage] || 'fr';
+        let languageVoices = humanVoices.filter(voice => voice.lang.toLowerCase().startsWith(ttsLangPrefix));
+
+        const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
+        const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
+        const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank', 'xander', 'jacques'];
+        
+        const keywords = (selectedGender === 'female') ? femaleKeywords : maleKeywords;
+        let genderedVoices = languageVoices.filter(voice => keywords.some(kw => voice.name.toLowerCase().includes(kw)));
+        
+        voicePool = genderedVoices.length > 0 ? genderedVoices : languageVoices;
     }
 
-    const selectedGender = document.querySelector('input[name="voiceGender"]:checked').value;
-    const femaleKeywords = ['female', 'femme', 'weiblich', 'mujer', 'donna', 'aurelie', 'audrey', 'amelie', 'chantal', 'julie', 'anna', 'elena', 'laura', 'vrouw', 'zira', 'susan', 'hazel', 'catherine', 'elizabeth', 'amy', 'emma', 'serena', 'paola', 'lotte', 'femke'];
-    const maleKeywords = ['male', 'homme', 'männlich', 'hombre', 'uomo', 'man', 'david', 'mark', 'james', 'george', 'paul', 'thomas', 'antoine', 'hans', 'klaus', 'jorge', 'pablo', 'diego', 'luca', 'paolo', 'roberto', 'daan', 'rik', 'willem', 'alex', 'daniel', 'oliver', 'yannick', 'christoph', 'cosimo', 'frank', 'xander', 'jacques'];
-    
-    const keywords = (selectedGender === 'female') ? femaleKeywords : maleKeywords;
-    let genderedVoices = languageVoices.filter(voice => keywords.some(kw => voice.name.toLowerCase().includes(kw)));
-    
-    const voicePool = genderedVoices.length > 0 ? genderedVoices : languageVoices;
-
+    // --- Affichage des voix ---
     if (voicePool.length > 0) {
         voicePool.forEach(voice => {
             const option = document.createElement('option');
             let cleanedName = voice.name;
             if (!isIOS) {
-                if (cleanedName.startsWith('Microsoft ')) {
-                    cleanedName = cleanedName.substring(10);
-                }
+                if (cleanedName.startsWith('Microsoft ')) { cleanedName = cleanedName.substring(10); }
                 const hyphenIndex = cleanedName.indexOf(' - ');
-                if (hyphenIndex !== -1) {
-                    cleanedName = cleanedName.substring(0, hyphenIndex);
-                }
+                if (hyphenIndex !== -1) { cleanedName = cleanedName.substring(0, hyphenIndex); }
             }
             option.textContent = cleanedName.trim();
             option.setAttribute('data-voice-name', voice.name);
