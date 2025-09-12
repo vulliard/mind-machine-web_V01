@@ -1195,6 +1195,10 @@ function drawCircleOfCircles(ctx, cx, cy, time) {
     const mainRadius = Math.min(cx, cy) * 0.6;
     const smallRadius = mainRadius / 5;
     for (let i = 0; i < numCircles; i++) {
+        // Calcule une teinte (Hue) qui change avec le temps et la position du cercle
+        const hue = (time * 20 + i * (360 / numCircles)) % 360;
+        ctx.fillStyle = `hsl(${hue}, 100%, 70%)`; // Applique la couleur dynamique
+
         const angle = (i / numCircles) * 2 * Math.PI + time;
         const x = cx + mainRadius * Math.cos(angle);
         const y = cy + mainRadius * Math.sin(angle);
@@ -1208,7 +1212,12 @@ function drawTunnel(ctx, cx, cy, time) {
     const numRects = 10;
     const maxDim = Math.max(cx, cy);
     ctx.lineWidth = 2;
+
     for (let i = 0; i < numRects; i++) {
+        // Calcule une teinte qui change avec le temps et pour chaque rectangle
+        const hue = (time * 40 + i * 15) % 360;
+        ctx.strokeStyle = `hsl(${hue}, 100%, 70%)`; // Applique la couleur dynamique
+
         const size = (maxDim * 2) * ((i - (time * 2 % 1) + 1) / numRects);
         ctx.strokeRect(cx - size / 2, cy - size / 2, size, size);
     }
@@ -1218,7 +1227,12 @@ function drawMandala(ctx, cx, cy, time) {
     const numLines = 18;
     const radius = Math.min(cx, cy) * 0.8;
     ctx.lineWidth = 2;
+
     for (let i = 0; i < numLines; i++) {
+        // Calcule une teinte (Hue) qui change avec le temps et pour chaque ligne
+        const hue = (time * 30 + i * 20) % 360;
+        ctx.strokeStyle = `hsl(${hue}, 100%, 70%)`; // Applique la couleur dynamique
+
         const angle = (i / numLines) * 2 * Math.PI;
         ctx.save();
         ctx.translate(cx, cy);
@@ -1234,17 +1248,26 @@ function drawMandala(ctx, cx, cy, time) {
 
 function drawFractal(ctx, cx, cy, time) {
     ctx.lineWidth = 1;
+
     function drawBranch(x, y, len, angle, depth) {
         if (depth === 0) return;
+
+        // Calcule une teinte basée sur la profondeur de la branche et le temps
+        const hue = (time * 20 + depth * 25) % 360;
+        ctx.strokeStyle = `hsl(${hue}, 100%, 70%)`; // Applique la couleur dynamique
+
         ctx.beginPath();
         ctx.moveTo(x, y);
         const newX = x + len * Math.cos(angle);
         const newY = y + len * Math.sin(angle);
         ctx.lineTo(newX, newY);
         ctx.stroke();
-        drawBranch(newX, newY, len * 0.8, angle - 0.5 + Math.sin(time/2)/2, depth - 1);
-        drawBranch(newX, newY, len * 0.8, angle + 0.5 + Math.cos(time/2)/2, depth - 1);
+
+        // Appels récursifs pour les branches suivantes
+        drawBranch(newX, newY, len * 0.8, angle - 0.5 + Math.sin(time / 2) / 2, depth - 1);
+        drawBranch(newX, newY, len * 0.8, angle + 0.5 + Math.cos(time / 2) / 2, depth - 1);
     }
+
     drawBranch(cx, cy * 1.4, Math.min(cx, cy) / 4, -Math.PI / 2, 7);
 }
 
