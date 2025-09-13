@@ -1090,6 +1090,67 @@ input[type="color"]::-webkit-color-swatch {
     border: 1px solid rgba(0, 255, 255, 0.5);
     background: rgba(0,0,0,0.2);
 }
+/* Redéfinition des icônes pour les boutons à bascule dans le thème moderne */
+/* --- Styles dédiés aux boutons à icônes pour le Thème Moderne --- */
+
+#app-container.modern-theme #ambiance-toggle-button,
+#app-container.modern-theme #music-toggle-button,
+#app-container.modern-theme #crackle-toggle-button,
+#app-container.modern-theme #alternophony-toggle-button {
+    background-color: transparent;
+    border: 1px solid #00ffff;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#app-container.modern-theme #ambiance-toggle-button,
+#app-container.modern-theme #music-toggle-button {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M11 5L6 9H2v6h4l5 4V5z'/%3e%3cpath d='M15.54 8.46a5 5 0 0 1 0 7.07'/%3e%3c/svg%3e");
+    background-size: 60%;
+}
+
+#app-container.modern-theme #crackle-toggle-button {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300ffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.25l-2.05 5.05a2 2 0 0 0 2.37 2.82l5.05-2.05 6.87-6.83z'%3e%3c/path%3e%3c/svg%3e");
+    background-size: 50%;
+}
+
+#app-container.modern-theme #alternophony-toggle-button {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M18 8L6 16M6 8l12 8'/%3e%3c/svg%3e");
+    background-size: 50%;
+}
+
+/* Style des icônes quand le bouton est actif */
+#app-container.modern-theme #ambiance-toggle-button.active,
+#app-container.modern-theme #music-toggle-button.active,
+#app-container.modern-theme #crackle-toggle-button.active,
+#app-container.modern-theme #alternophony-toggle-button.active {
+    background-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+}
+
+#app-container.modern-theme #ambiance-toggle-button.active,
+#app-container.modern-theme #music-toggle-button.active {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M11 5L6 9H2v6h4l5 4V5z'/%3e%3cpath d='M15.54 8.46a5 5 0 0 1 0 7.07'/%3e%3c/svg%3e");
+}
+
+#app-container.modern-theme #crackle-toggle-button.active {
+     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.25l-2.05 5.05a2 2 0 0 0 2.37 2.82l5.05-2.05 6.87-6.83z'%3e%3c/path%3e%3c/svg%3e");
+}
+
+#app-container.modern-theme #alternophony-toggle-button.active {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M18 8L6 16M6 8l12 8'/%3e%3c/svg%3e");
+}
+/* L'icône passe en noir sur fond cyan pour être visible */
+#app-container.modern-theme #ambiance-toggle-button.active,
+#app-container.modern-theme #music-toggle-button.active {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M11 5L6 9H2v6h4l5 4V5z'/%3e%3cpath d='M15.54 8.46a5 5 0 0 1 0 7.07'/%3e%3c/svg%3e");
+}
+#app-container.modern-theme #crackle-toggle-button.active {
+     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.25l-2.05 5.05a2 2 0 0 0 2.37 2.82l5.05-2.05 6.87-6.83z'%3e%3c/path%3e%3c/svg%3e");
+}
+#app-container.modern-theme #alternophony-toggle-button.active {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M18 8L6 16M6 8l12 8'/%3e%3c/svg%3e");
+}
 
 /* Bouton de changement de thème */
 #theme-switcher-button {
@@ -1172,14 +1233,16 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 /* Boutons divers */
-#app-container.modern-theme #controls button:not(#startButton):not(.attention-button),
+#app-container.modern-theme #controls button:not(#startButton):not(.attention-button):not(#ambiance-toggle-button):not(#music-toggle-button):not(#crackle-toggle-button):not(#alternophony-toggle-button),
 #app-container.modern-theme .info-button,
 #app-container.modern-theme .quick-set-button {
+    /* Le reste du code ne change pas */
     background: transparent;
     border: 1px solid #00ffff;
     color: #00ffff;
     box-shadow: none;
 }
+
 #app-container.modern-theme #controls button:not(#startButton):not(.attention-button):hover,
 #app-container.modern-theme .info-button:hover,
 #app-container.modern-theme .quick-set-button:hover {
