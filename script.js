@@ -1678,6 +1678,26 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Object.values(fileAmbianceSources).forEach(audio => audio.loop = true);
 
+
+    const themeSwitcherButton = document.getElementById('theme-switcher-button');
+    
+    // Appliquer le thème sauvegardé au chargement
+    const savedTheme = localStorage.getItem('eMindMachineTheme');
+    if (savedTheme === 'modern') {
+        appContainer.classList.add('modern-theme');
+    }
+
+    // Gérer le clic sur le bouton
+    themeSwitcherButton.addEventListener('click', () => {
+        appContainer.classList.toggle('modern-theme');
+        if (appContainer.classList.contains('modern-theme')) {
+            localStorage.setItem('eMindMachineTheme', 'modern');
+        } else {
+            localStorage.setItem('eMindMachineTheme', 'classic');
+        }
+    });
+
+
     // Initialisation des variables
     BLINK_FREQUENCY_HZ = parseFloat(blinkRateSlider.value);
     currentCarrierFrequency = parseFloat(carrierFrequencyInput.value);

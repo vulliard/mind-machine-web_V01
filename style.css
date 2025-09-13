@@ -117,12 +117,18 @@ body, html {
 }
 
 #language-flags {
+    /* On retire position: absolute, right, top, transform */
+    display: flex;
+    gap: 10px;
+}
+#top-right-controls {
     position: absolute;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 15px; /* Espace entre le bouton et les drapeaux */
 }
 
 .lang-flag {
@@ -1056,4 +1062,128 @@ input[type="color"]::-webkit-color-swatch {
 .blink-mode .radio-switch label {
   border-radius: 3px;
   text-align: center;
+}
+
+
+/* --- THÈME MODERNE --- */
+
+/* Fond général et police */
+#app-container.modern-theme {
+    font-family: 'Segoe UI', 'Roboto', sans-serif; /* Police plus neutre et moderne */
+}
+
+/* Barre de titre */
+#app-container.modern-theme #app-title {
+    background-image: none;
+    background-color: #0a1423; /* Bleu nuit profond */
+    border-bottom: 1px solid rgba(0, 255, 255, 0.5);
+}
+#app-container.modern-theme #app-title h1 {
+    text-shadow: 0 0 5px #fff, 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #ff00ff;
+}
+#app-container.modern-theme #app-title p {
+    color: #00ffff;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+}
+#app-container.modern-theme #app-logo-left,
+#app-container.modern-theme #app-logo-right {
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    background: rgba(0,0,0,0.2);
+}
+
+/* Bouton de changement de thème */
+#theme-switcher-button {
+    /* On retire position: absolute et right: 280px */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid white;
+    background-color: rgba(0, 0, 0, 0.6); 
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+#theme-switcher-button:hover {
+    background-color: white;
+    color: black;
+    transform: scale(1.1); /* Correction ici */
+}
+
+/* Panneau de contrôle principal */
+#app-container.modern-theme #controls {
+    background-image: none;
+    background-color: rgba(10, 20, 35, 0.75); /* Effet verre dépoli */
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 255, 255, 0.5);
+    box-shadow: 0 -5px 25px rgba(0, 255, 255, 0.1);
+}
+
+/* Colonnes du tableau de bord */
+#app-container.modern-theme .dashboard-column {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: none; /* On évite les superpositions de flou */
+}
+
+/* Titres des colonnes */
+#app-container.modern-theme .dashboard-header {
+    color: #00ffff; /* Cyan */
+    border-bottom-color: rgba(0, 255, 255, 0.5);
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+}
+
+/* Sliders */
+#app-container.modern-theme input[type="range"] {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 255, 255, 0.5);
+}
+#app-container.modern-theme input[type="range"]::-webkit-slider-thumb {
+    background: #00ffff;
+    border: 2px solid #0a1423;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 1);
+}
+#app-container.modern-theme input[type="range"]::-moz-range-thumb {
+    background: #00ffff;
+    border: 2px solid #0a1423;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 1);
+}
+
+/* Champs de texte et menus déroulants */
+#app-container.modern-theme .frequency-input,
+#app-container.modern-theme .session-select {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.5);
+}
+#app-container.modern-theme .session-select:focus {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+/* Boutons radio */
+#app-container.modern-theme .radio-switch {
+    border-color: rgba(0, 255, 255, 0.5);
+}
+#app-container.modern-theme .radio-switch input[type="radio"]:checked + label {
+    background: #00ffff;
+    color: #000;
+    text-shadow: none;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+/* Boutons divers */
+#app-container.modern-theme #controls button:not(#startButton):not(.attention-button),
+#app-container.modern-theme .info-button,
+#app-container.modern-theme .quick-set-button {
+    background: transparent;
+    border: 1px solid #00ffff;
+    color: #00ffff;
+    box-shadow: none;
+}
+#app-container.modern-theme #controls button:not(#startButton):not(.attention-button):hover,
+#app-container.modern-theme .info-button:hover,
+#app-container.modern-theme .quick-set-button:hover {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
 }
