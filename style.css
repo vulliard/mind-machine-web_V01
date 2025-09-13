@@ -1186,4 +1186,28 @@ input[type="color"]::-webkit-color-swatch {
     background: #00ffff;
     color: #000;
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+
+/* --- AMÉLIORATIONS POUR L'AFFICHAGE MOBILE (PORTRAIT) --- */
+
+@media (max-width: 500px) {
+    /* On force les colonnes principales à prendre toute la largeur et à s'empiler */
+    #controls {
+        grid-template-columns: 1fr;
+        padding: 8px;
+    }
+
+    .dashboard-column {
+        width: 95%;
+        margin: 0 auto 10px auto; /* Centre les colonnes empilées */
+    }
+
+    /* On s'assure que la colonne des contrôles principaux ne prend pas trop de place */
+    .master-controls {
+        order: -1; /* Place les boutons Start/Warning/About en premier */
+        flex-direction: row;
+        justify-content: space-around;
+        background: transparent;
+        border: none;
+    }
+}
 }
