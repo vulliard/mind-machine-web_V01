@@ -1273,4 +1273,104 @@ input[type="color"]::-webkit-color-swatch {
         border: none;
     }
 }
+
+/* --- AMÉLIORATIONS POUR L'AFFICHAGE MOBILE (PORTRAIT) --- */
+
+@media (max-width: 500px) {
+    /* On force les colonnes principales à prendre toute la largeur et à s'empiler */
+    #controls {
+        grid-template-columns: 1fr;
+        padding: 8px;
+    }
+
+    .dashboard-column {
+        width: 95%;
+        margin: 0 auto 10px auto; /* Centre les colonnes empilées */
+    }
+
+    /* On s'assure que la colonne des contrôles principaux ne prend pas trop de place */
+    .master-controls {
+        order: -1; /* Place les boutons Start/Warning/About en premier */
+        flex-direction: row;
+        justify-content: space-around;
+        background: transparent;
+        border: none;
+    }
+
+    /* --- Étape 2 : Simplification des sections complexes --- */
+
+    /* On empile verticalement les groupes dans la section Ambiance */
+    .ambiance-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* On empile verticalement les contrôles audio et les volumes */
+    .audio-layout-grid {
+        display: block;
+    }
+    .audio-volume-controls {
+        border-left: none;
+        padding-left: 0;
+        margin-top: 15px;
+    }
+
+    /* --- Étape 3 : Optimisation de la barre de titre --- */
+
+    #app-title h1 {
+        font-size: 1.5em;
+    }
+    #app-title p {
+        font-size: 0.9em;
+    }
+    #app-logo-left, 
+    #app-logo-right {
+        height: 50px;
+    }
+    #top-right-controls {
+        gap: 10px; /* On réduit l'espace entre le bouton thème et les drapeaux */
+    }
 }
+
+}
+
+/* --- Style pour le bouton Donate/Sponsor --- */
+.donate-button {
+    display: block;
+    width: 60%;
+    max-width: 250px;
+    margin: 30px auto 20px auto;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* Style pour le thème Classique */
+.donate-button {
+    background: #4CAF50; /* Un vert engageant */
+    color: white;
+    border: 1px solid #fff;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+}
+.donate-button:hover {
+    background: #45a049;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 1);
+}
+
+/* Style pour le thème Moderne */
+#app-container.modern-theme .donate-button {
+    background: transparent;
+    color: #00ffff;
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+#app-container.modern-theme .donate-button:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 1);
+}
+
